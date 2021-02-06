@@ -9,6 +9,7 @@ import androidx.room.Query;
 import com.ongbengchia.temipatrol.model.TemiRoute;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Dao
 public interface TemiRouteDao {
@@ -21,5 +22,5 @@ public interface TemiRouteDao {
     // Todo Deleting only one entry
 
     @Query("SELECT * FROM routeTable ORDER BY routeIdx ASC")
-    LiveData<ArrayList<TemiRoute>> getRoutes();
+    LiveData<List<TemiRoute>> getRoutes();
 }
