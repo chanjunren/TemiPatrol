@@ -1,4 +1,4 @@
-package com.ongbengchia.temipatrol.view;
+package com.ongbengchia.temipatrol.views;
 
 import android.os.Bundle;
 
