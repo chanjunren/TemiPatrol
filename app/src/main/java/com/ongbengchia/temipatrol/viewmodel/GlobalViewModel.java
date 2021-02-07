@@ -11,11 +11,17 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.ongbengchia.temipatrol.google.DriveServiceHelper;
+import com.ongbengchia.temipatrol.temi.TemiController;
 
 import java.util.Collections;
 
 public class GlobalViewModel extends ViewModel {
     private DriveServiceHelper mDriveServiceHelper;
+    private TemiController temiController;
+
+    public void initializeTemiRobot() {
+        temiController = new TemiController();
+    }
 
     public void initializeGoogleServices(GoogleSignInAccount googleSignInAccount, Context context) {
         GoogleAccountCredential credential =
@@ -31,4 +37,11 @@ public class GlobalViewModel extends ViewModel {
         mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
     }
 
+    public DriveServiceHelper getmDriveServiceHelper() {
+        return mDriveServiceHelper;
+    }
+
+    public TemiController getTemiController() {
+        return temiController;
+    }
 }
