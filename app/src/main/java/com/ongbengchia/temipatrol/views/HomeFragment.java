@@ -1,4 +1,4 @@
-package com.ongbengchia.temipatrol.view;
+package com.ongbengchia.temipatrol.views;
 
 import androidx.lifecycle.ViewModelProvider;
 
@@ -19,21 +19,20 @@ public class HomeFragment extends Fragment {
 
     private GlobalViewModel mViewModel;
 
-    public static HomeFragment newInstance() {
-        return new HomeFragment();
+    public HomeFragment () {
+
+        // Err required? not sure
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        mViewModel = new ViewModelProvider(this).get(GlobalViewModel.class);
         return inflater.inflate(R.layout.home_fragment, container, false);
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(GlobalViewModel.class);
-        // TODO: Use the ViewModel
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
-
 }
