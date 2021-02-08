@@ -20,17 +20,27 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/saveRouteBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="404dp"
-            android:layout_marginTop="304dp"
-            android:text="Button"
+            android:layout_marginStart="476dp"
+            android:layout_marginTop="300dp"
+            android:text="SAVE"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/addLocationBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="356dp"
+            android:layout_marginTop="300dp"
+            android:text="ADD"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/locationsRv"
+            android:id="@+id/routeRv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="344dp"

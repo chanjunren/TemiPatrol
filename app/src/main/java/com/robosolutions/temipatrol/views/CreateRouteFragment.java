@@ -6,7 +6,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +25,13 @@ import java.util.ArrayList;
 
 
 public class CreateRouteFragment extends Fragment {
+    private final String TAG = "CreateRouteFragment";
     private RouteAdapter routeAdapter;
-    private Button saveRouteBtn;
+    private Button addLocationBtn, saveRouteBtn;
+    private RecyclerView routeRv;
     private TemiController temiController;
     private GlobalViewModel viewModel;
-    private ArrayList<String> locations;
+    private ArrayList<String> route;
 
     private Spinner locationSpinner;
     private ArrayAdapter<String> spinnerAdapter;
@@ -39,11 +44,9 @@ public class CreateRouteFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = new ViewModelProvider(this).get(GlobalViewModel.class);
+        viewModel = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
         temiController = viewModel.getTemiController();
-        routeAdapter =  new RouteAdapter();
-
-        locations = new ArrayList<>();
+        route = new ArrayList<>();
     }
 
     @Override
@@ -57,12 +60,42 @@ public class CreateRouteFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
+        addLocationBtn = view.findViewById(R.id.addLocationBtn);
+        addLocationBtn.setOnClickListener(v -> {
+            addDestination();
+        });
+
         saveRouteBtn = view.findViewById(R.id.saveRouteBtn);
+        saveRouteBtn.setOnClickListener(v -> {
+            saveCurrentRoute();
+        });
+
+        routeRv = view.findViewById(R.id.routeRv);
+        buildRecyclerView();
 
         locationSpinner = view.findViewById(R.id.locationSpinner);
         spinnerAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item,
                 temiController.getLocationsFromTemi());
         locationSpinner.setAdapter(spinnerAdapter);
+    }
 
+    private void buildRecyclerView() {
+        routeAdapter =  new RouteAdapter(route);
+        routeRv.setAdapter(routeAdapter);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+
+        routeRv.setLayoutManager(mLayoutManager);
+        routeRv.setAdapter(routeAdapter);
+    }
+
+    private void addDestination() {
+        route.add(locationSpinner.getSelectedItem().toString());
+        Log.i(TAG, "route: " + route.toString());
+        routeAdapter.notifyItemInserted(route.size());
+    }
+
+    private void saveCurrentRoute() {
+        Log.i(TAG, route.toString());
     }
 }

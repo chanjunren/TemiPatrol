@@ -1,6 +1,7 @@
 package com.robosolutions.temipatrol.viewmodel;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.lifecycle.ViewModel;
 
@@ -16,11 +17,13 @@ import com.robosolutions.temipatrol.temi.TemiController;
 import java.util.Collections;
 
 public class GlobalViewModel extends ViewModel {
+    private final String TAG = "GlobalViewModel";
     private DriveServiceHelper mDriveServiceHelper;
     private TemiController temiController;
 
     public void initializeTemiRobot() {
         temiController = new TemiController();
+        Log.i(TAG, "Temi Controller initialized: " + temiController);
     }
 
     public void initializeGoogleServices(GoogleSignInAccount googleSignInAccount, Context context) {
