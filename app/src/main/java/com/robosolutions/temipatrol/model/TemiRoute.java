@@ -1,5 +1,6 @@
 package com.robosolutions.temipatrol.model;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 @Entity(tableName = "routeTable")
 public class TemiRoute {
     @PrimaryKey(autoGenerate = true)
+    @NonNull
     private int routeIdx;
     @ColumnInfo(name="routeTitle")
     private String routeTitle;

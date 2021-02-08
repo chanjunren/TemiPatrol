@@ -21,5 +21,5 @@ public interface TemiRouteDao {
     // Todo Deleting only one entry
 
     @Query("SELECT * FROM routeTable ORDER BY routeIdx ASC")
-    LiveData<List<TemiRoute>> getRoutes();
+    LiveData<List<TemiRoute>> getRoutesFromDb();
 }

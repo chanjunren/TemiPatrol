@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_homeFragment_to_createRouteFragment"
             app:destination="@id/createRouteFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_patrolFragment"
+            app:destination="@id/patrolFragment" />
     </fragment>
     <fragment
         android:id="@+id/createRouteFragment"
@@ -30,6 +33,15 @@
         tools:layout="@layout/create_route_fragment" >
         <action
             android:id="@+id/action_createRouteFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/patrolFragment"
+        android:name="com.robosolutions.temipatrol.views.PatrolFragment"
+        android:label="fragment_patrol"
+        tools:layout="@layout/fragment_patrol" >
+        <action
+            android:id="@+id/action_patrolFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
 </navigation>

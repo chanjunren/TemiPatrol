@@ -31,7 +31,7 @@ public abstract class TemiRouteRoomDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             // Can append addCallback(sRoomDatabaseCallback) for future development if needed
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                    TemiRouteRoomDatabase.class, "taskDatabase").build();
+                    TemiRouteRoomDatabase.class, "routeDatabase").build();
         }
         return INSTANCE;
     }
