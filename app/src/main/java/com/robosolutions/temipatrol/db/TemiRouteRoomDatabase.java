@@ -1,4 +1,4 @@
-package com.ongbengchia.temipatrol.db;
+package com.robosolutions.temipatrol.db;
 
 
 import android.content.Context;
@@ -9,7 +9,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import com.ongbengchia.temipatrol.model.TemiRoute;
+import com.robosolutions.temipatrol.model.TemiRoute;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

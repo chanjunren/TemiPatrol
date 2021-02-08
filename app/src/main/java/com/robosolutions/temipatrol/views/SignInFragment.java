@@ -1,4 +1,4 @@
-package com.ongbengchia.temipatrol.views;
+package com.robosolutions.temipatrol.views;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -26,8 +26,8 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.Task;
-import com.ongbengchia.temipatrol.R;
-import com.ongbengchia.temipatrol.viewmodel.GlobalViewModel;
+import com.robosolutions.temipatrol.R;
+import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 
 public class SignInFragment extends Fragment {
     private SignInButton signInBtn;

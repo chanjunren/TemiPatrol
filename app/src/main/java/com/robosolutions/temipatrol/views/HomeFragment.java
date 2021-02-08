@@ -1,4 +1,4 @@
-package com.ongbengchia.temipatrol.views;
+package com.robosolutions.temipatrol.views;
 
 import androidx.lifecycle.ViewModelProvider;
 
@@ -15,12 +15,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.ongbengchia.temipatrol.R;
-import com.ongbengchia.temipatrol.viewmodel.GlobalViewModel;
+import com.robosolutions.temipatrol.R;
+import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 
 public class HomeFragment extends Fragment {
 
-    private GlobalViewModel mViewModel;
+    private GlobalViewModel viewModel;
     private NavController navController;
     private Button addRouteBtn;
 
@@ -31,7 +31,7 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        mViewModel = new ViewModelProvider(this).get(GlobalViewModel.class);
+        viewModel = new ViewModelProvider(this).get(GlobalViewModel.class);
         return inflater.inflate(R.layout.home_fragment, container, false);
     }
 
@@ -39,7 +39,7 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
-        addRouteBtn = view.findViewById(R.id.addRouteBtn);
+        addRouteBtn = view.findViewById(R.id.saveRouteBtn);
 
         addRouteBtn.setOnClickListener(v -> {
             navController.navigate(R.id.action_homeFragment_to_createRouteFragment);

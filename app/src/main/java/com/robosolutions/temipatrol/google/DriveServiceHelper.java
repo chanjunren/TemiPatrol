@@ -1,27 +1,9 @@
-package com.ongbengchia.temipatrol.google;
+package com.robosolutions.temipatrol.google;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.ThumbnailUtils;
-import android.net.Uri;
-import android.provider.OpenableColumns;
-import android.util.Log;
-import android.util.Pair;
-import android.util.Size;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.api.services.drive.Drive;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 

@@ -1,11 +1,11 @@
-package com.ongbengchia.temipatrol.model;
+package com.robosolutions.temipatrol.model;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.ongbengchia.temipatrol.db.TypeConverter;
+import com.robosolutions.temipatrol.db.TypeConverter;
 
 import java.util.ArrayList;
 

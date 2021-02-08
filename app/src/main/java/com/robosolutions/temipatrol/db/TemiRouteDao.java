@@ -1,4 +1,4 @@
-package com.ongbengchia.temipatrol.db;
+package com.robosolutions.temipatrol.db;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -6,9 +6,8 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.ongbengchia.temipatrol.model.TemiRoute;
+import com.robosolutions.temipatrol.model.TemiRoute;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Dao

@@ -1,8 +1,6 @@
-package com.ongbengchia.temipatrol.temi;
+package com.robosolutions.temipatrol.temi;
 
-import android.app.Activity;
-
-import com.ongbengchia.temipatrol.viewmodel.GlobalViewModel;
+import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 import com.robotemi.sdk.Robot;
 
 import java.util.ArrayList;

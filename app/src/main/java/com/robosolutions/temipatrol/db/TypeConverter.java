@@ -1,4 +1,4 @@
-package com.ongbengchia.temipatrol.db;
+package com.robosolutions.temipatrol.db;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

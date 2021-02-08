@@ -1,4 +1,4 @@
-package com.ongbengchia.temipatrol;
+package com.robosolutions.temipatrol;
 
 import org.junit.Test;
 

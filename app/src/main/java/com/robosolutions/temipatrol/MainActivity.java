@@ -1,12 +1,11 @@
-package com.ongbengchia.temipatrol;
+package com.robosolutions.temipatrol;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
-import android.provider.Settings;
 
-import com.ongbengchia.temipatrol.viewmodel.GlobalViewModel;
+import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
