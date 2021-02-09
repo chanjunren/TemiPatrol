@@ -1,20 +1,40 @@
 package com.robosolutions.temipatrol.views;
 
+import android.hardware.Camera;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import com.robosolutions.temipatrol.R;
+import com.robosolutions.temipatrol.camera.CameraPreview;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import static com.robosolutions.temipatrol.camera.CameraUtils.MEDIA_TYPE_IMAGE;
+import static com.robosolutions.temipatrol.camera.CameraUtils.getOutputMediaFile;
 
 // Page shown when Temi is patrolling
 public class PatrolFragment extends Fragment {
+    private static final String TAG = "PatrolFragment";
+    private Camera mCamera;
+    private CameraPreview mPreview;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mCamera = getCameraInstance();
+        mPreview = new CameraPreview(getContext(), mCamera);
     }
 
     @Override
@@ -23,4 +43,44 @@ public class PatrolFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_patrol, container, false);
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        FrameLayout previewLayout = view.findViewById(R.id.camera_preview);
+        previewLayout.addView(mPreview);
+    }
+
+    public static Camera getCameraInstance() {
+        Camera camera = null;
+        try {
+            camera = Camera.open();
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
+        return camera;
+    }
+
+    private Camera.PictureCallback mPictureCallback = new Camera.PictureCallback() {
+
+        @Override
+        public void onPictureTaken(byte[] data, Camera camera) {
+
+            File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+            if (pictureFile == null){
+                Log.d(TAG, "Error creating media file, check storage permissions");
+                return;
+            }
+
+            try {
+                FileOutputStream fos = new FileOutputStream(pictureFile);
+                fos.write(data);
+                fos.close();
+            } catch (FileNotFoundException e) {
+                Log.d(TAG, "File not found: " + e.getMessage());
+            } catch (IOException e) {
+                Log.d(TAG, "Error accessing file: " + e.getMessage());
+            }
+        }
+    };
 }
