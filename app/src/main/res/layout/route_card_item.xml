@@ -4,13 +4,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="40px"
+    android:background="@color/black">
 
     <TextView
-        android:id="@+id/locationTv"
+        android:id="@+id/routeTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="LOCATION"
+        android:text="ROUTE"
+        android:textColor="@color/white"
+        android:textSize="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

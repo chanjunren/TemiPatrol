@@ -1,6 +1,5 @@
 package com.robosolutions.temipatrol.views;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.LocationViewHolder> {
-    private final String TAG = "RouteAdapter";
+public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.LocationViewHolder> {
+    private final String TAG = "DestinationAdapter";
     private List<String> route;
 
-    public RouteAdapter(ArrayList<String> route) {
+    public DestinationAdapter(ArrayList<String> route) {
         this.route = route;
     }
 
@@ -45,7 +44,7 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.LocationView
         TextView locationTv;
         public LocationViewHolder(@NonNull View itemView) {
             super(itemView);
-            locationTv = itemView.findViewById(R.id.locationTv);
+            locationTv = itemView.findViewById(R.id.destinationTv);
         }
 
         void setText(int position) {

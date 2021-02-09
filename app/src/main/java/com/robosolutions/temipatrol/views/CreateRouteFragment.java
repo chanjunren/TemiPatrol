@@ -36,10 +36,10 @@ import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 
 public class CreateRouteFragment extends Fragment {
     private final String TAG = "CreateRouteFragment";
-    private RouteAdapter routeAdapter;
+    private DestinationAdapter destinationAdapter;
     private Button addLocationBtn, saveRouteBtn;
     private EditText routeTitle;
-    private RecyclerView routeRv;
+    private RecyclerView destinationRv;
     private TemiController temiController;
     private NavController navController;
     private GlobalViewModel viewModel;
@@ -86,11 +86,11 @@ public class CreateRouteFragment extends Fragment {
             saveCurrentRoute();
         });
 
-        routeRv = view.findViewById(R.id.routeRv);
+        destinationRv = view.findViewById(R.id.destinationRv);
         buildRecyclerView();
 
         ItemTouchHelper myTouchHelper = generateTouchHelper();
-        myTouchHelper.attachToRecyclerView(routeRv);
+        myTouchHelper.attachToRecyclerView(destinationRv);
 
         locationSpinner = view.findViewById(R.id.locationSpinner);
         buildLocationSpinner();
@@ -98,12 +98,12 @@ public class CreateRouteFragment extends Fragment {
     }
 
     private void buildRecyclerView() {
-        routeAdapter =  new RouteAdapter(route);
-        routeRv.setAdapter(routeAdapter);
+        destinationAdapter =  new DestinationAdapter(route);
+        destinationRv.setAdapter(destinationAdapter);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 
-        routeRv.setLayoutManager(mLayoutManager);
-        routeRv.setAdapter(routeAdapter);
+        destinationRv.setLayoutManager(mLayoutManager);
+        destinationRv.setAdapter(destinationAdapter);
     }
 
     private void buildLocationSpinner() {
@@ -115,7 +115,7 @@ public class CreateRouteFragment extends Fragment {
     private void addDestination() {
         route.add(locationSpinner.getSelectedItem().toString());
         Log.i(TAG, "route: " + route.toString());
-        routeAdapter.notifyItemInserted(route.size());
+        destinationAdapter.notifyItemInserted(route.size());
     }
 
     private void saveCurrentRoute() {
@@ -134,7 +134,7 @@ public class CreateRouteFragment extends Fragment {
                         int from = viewHolder.getAdapterPosition();
                         int to = target.getAdapterPosition();
 
-                        routeAdapter.notifyItemMoved(from, to);
+                        destinationAdapter.notifyItemMoved(from, to);
 
                         return true;
                     }
@@ -144,12 +144,12 @@ public class CreateRouteFragment extends Fragment {
                         int position = viewHolder.getAdapterPosition();
                         deletedDestination = route.get(position);
                         route.remove(position);
-                        routeAdapter.notifyItemRemoved(position);
+                        destinationAdapter.notifyItemRemoved(position);
 
-                        Snackbar.make(routeRv, "Deleted " + deletedDestination, Snackbar.LENGTH_LONG)
+                        Snackbar.make(destinationRv, "Deleted " + deletedDestination, Snackbar.LENGTH_LONG)
                                 .setAction("Undo", v -> {
                                     route.add(position, deletedDestination);
-                                    routeAdapter.notifyItemInserted(position);
+                                    destinationAdapter.notifyItemInserted(position);
                                 }).show();
                     }
 

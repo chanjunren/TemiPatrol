@@ -10,13 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/saveRouteBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="312dp"
-            android:layout_marginTop="208dp"
-            android:text="Add Route"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/routeRv"
+            android:layout_width="581dp"
+            android:layout_height="197dp"
+            android:layout_marginStart="348dp"
+            android:layout_marginTop="176dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,8 +23,8 @@
             android:id="@+id/startPatrolBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="312dp"
-            android:layout_marginTop="148dp"
+            android:layout_marginStart="596dp"
+            android:layout_marginTop="372dp"
             android:text="Start Route"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -34,20 +33,22 @@
             android:id="@+id/signOutBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="324dp"
-            android:layout_marginTop="264dp"
+            android:layout_marginStart="608dp"
+            android:layout_marginTop="488dp"
             android:text="Sign Out"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Spinner
-            android:id="@+id/routeSpinner"
+        <Button
+            android:id="@+id/saveRouteBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="352dp"
-            android:layout_marginTop="108dp"
+            android:layout_marginStart="596dp"
+            android:layout_marginTop="432dp"
+            android:text="Add Route"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

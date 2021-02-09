@@ -10,14 +10,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.robosolutions.temipatrol.R;
 import com.robosolutions.temipatrol.model.TemiRoute;
@@ -29,20 +30,22 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickListener {
     private final String TAG = "HomeFragment";
     private GlobalViewModel viewModel;
     private NavController navController;
-    private Button addRouteBtn, startPatrolBtn;
-    private Spinner routeSpinner;
-    private ArrayAdapter spinnerAdapter;
+    private Button addRouteBtn;
+    private RecyclerView routeRv;
+    private RouteAdapter routeAdapter;
     private HashMap<String, TemiRoute> routeMap;
+    private ArrayList<TemiRoute> routes;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         viewModel = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
         routeMap = new HashMap<>();
+        routes = new ArrayList<>();
         return inflater.inflate(R.layout.home_fragment, container, false);
     }
 
@@ -56,42 +59,45 @@ public class HomeFragment extends Fragment {
             navController.navigate(R.id.action_homeFragment_to_createRouteFragment);
         });
 
-        routeSpinner = view.findViewById(R.id.routeSpinner);
-        buildSpinner();
+        routeRv = view.findViewById(R.id.routeRv);
+        initializeRecylerView();
+        attachLiveDataToRecyclerView();
 
-        startPatrolBtn = view.findViewById(R.id.startPatrolBtn);
-        startPatrolBtn.setOnClickListener(v -> {
-            patrol();
-        });
+//        startPatrolBtn = view.findViewById(R.id.startPatrolBtn);
+//        startPatrolBtn.setOnClickListener(v -> {
+//            patrol();
+//        });
     }
 
-    private void buildSpinner() {
+    private void initializeRecylerView() {
+        Log.i(TAG, "buildRecyclerView called");
+        routeAdapter =  new RouteAdapter(routes, this);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity(),
+                LinearLayoutManager.HORIZONTAL, false);
+        routeRv.setAdapter(routeAdapter);
+        routeRv.setLayoutManager(mLayoutManager);
+    }
+
+    private void attachLiveDataToRecyclerView() {
         final Observer<List<TemiRoute>> routeListObserver = new Observer<List<TemiRoute>>() {
             @Override
             public void onChanged(List<TemiRoute> temiRoutes) {
+                Log.i(TAG, "onChanged called");
                 routeMap.clear();
                 for (TemiRoute route: temiRoutes) {
                     routeMap.put(route.getRouteTitle(), route);
                 }
-                updateRouteSpinner((ArrayList<TemiRoute>) temiRoutes);
+                routes.clear();
+                routes.addAll(temiRoutes);
+                routeAdapter.notifyDataSetChanged();
             }
         };
         viewModel.getRouteLiveDataFromRepo().observe(getActivity(), routeListObserver);
     }
 
-    private void updateRouteSpinner(ArrayList<TemiRoute> temiRoutes) {
-        ArrayList<String> routeTitles = new ArrayList<>();
-        for (TemiRoute route: temiRoutes) {
-            routeTitles.add(route.getRouteTitle());
-        }
-        Log.i(TAG, "Route titles set: " + routeTitles);
-        spinnerAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item,
-                routeTitles);
-        routeSpinner.setAdapter(spinnerAdapter);
-    }
-
-    private void patrol() {
-        TemiRoute selectedRoute = routeMap.get(routeSpinner.getSelectedItem());
+    @Override
+    public void onRouteClick(int position) {
+        TemiRoute selectedRoute = routes.get(position);
         ExecutorService executorService = Executors.newFixedThreadPool(2);
         executorService.execute(() -> {
             viewModel.getTemiController().patrolRoute(selectedRoute);
@@ -99,5 +105,8 @@ public class HomeFragment extends Fragment {
         executorService.execute(() -> {
             navController.navigate(R.id.action_homeFragment_to_patrolFragment);
         });
+
+        Toast.makeText(getContext(), "Patrolling: " + selectedRoute.getRouteTitle(),
+                Toast.LENGTH_SHORT).show();
     }
 }
