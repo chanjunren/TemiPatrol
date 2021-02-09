@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -145,6 +144,24 @@ public class CreateRouteFragment extends Fragment {
                         } else {
                             Log.i(TAG, "Else swiped " + direction);
                         }
+                    }
+
+                    // 1. This callback is called when a ViewHolder is selected.
+                    //    We highlight the ViewHolder here.
+                    @Override
+                    public void onSelectedChanged(@Nullable RecyclerView.ViewHolder viewHolder, int actionState) {
+                        super.onSelectedChanged(viewHolder, actionState);
+                        if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
+                            viewHolder.itemView.setAlpha(0.5f);
+                        }
+                    }
+
+                    // 2. This callback is called when the ViewHolder is
+                    //    unselected (dropped). We unhighlight the ViewHolder here.
+                    @Override
+                    public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                        super.clearView(recyclerView, viewHolder);
+                        viewHolder.itemView.setAlpha(1.0f);
                     }
                 });
     }
