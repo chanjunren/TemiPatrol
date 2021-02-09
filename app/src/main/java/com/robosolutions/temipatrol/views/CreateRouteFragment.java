@@ -1,9 +1,11 @@
 package com.robosolutions.temipatrol.views;
 
+import android.graphics.Canvas;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -21,12 +23,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.robosolutions.temipatrol.R;
 import com.robosolutions.temipatrol.model.TemiRoute;
 import com.robosolutions.temipatrol.temi.TemiController;
 import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 
 import java.util.ArrayList;
+
+import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
 
 public class CreateRouteFragment extends Fragment {
@@ -43,6 +48,7 @@ public class CreateRouteFragment extends Fragment {
     private Spinner locationSpinner;
     private ArrayAdapter<String> spinnerAdapter;
 
+    private String deletedDestination;
 
     public CreateRouteFragment() {
         // Required empty public constructor
@@ -54,6 +60,7 @@ public class CreateRouteFragment extends Fragment {
         viewModel = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
         temiController = viewModel.getTemiController();
         route = new ArrayList<>();
+        deletedDestination = null;
     }
 
     @Override
@@ -120,7 +127,7 @@ public class CreateRouteFragment extends Fragment {
     private ItemTouchHelper generateTouchHelper() {
         return new ItemTouchHelper(
                 new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN |
-                        ItemTouchHelper.START | ItemTouchHelper.END, 0) {
+                        ItemTouchHelper.START | ItemTouchHelper.END, ItemTouchHelper.LEFT) {
                     @Override
                     public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder,
                                           @NonNull RecyclerView.ViewHolder target) {
@@ -134,16 +141,16 @@ public class CreateRouteFragment extends Fragment {
 
                     @Override
                     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                        // Code block for horizontal swipe.
-                        // ItemTouchHelper handles horizontal swipe as well, but
-                        // it is not relevant with reordering. Ignoring here
-                        if (direction == ItemTouchHelper.START) {
-                            Log.i(TAG, "Swiped START direction");
-                        } else if (direction == ItemTouchHelper.END) {
-                            Log.i(TAG, "Swiped END direction");
-                        } else {
-                            Log.i(TAG, "Else swiped " + direction);
-                        }
+                        int position = viewHolder.getAdapterPosition();
+                        deletedDestination = route.get(position);
+                        route.remove(position);
+                        routeAdapter.notifyItemRemoved(position);
+
+                        Snackbar.make(routeRv, "Deleted " + deletedDestination, Snackbar.LENGTH_LONG)
+                                .setAction("Undo", v -> {
+                                    route.add(position, deletedDestination);
+                                    routeAdapter.notifyItemInserted(position);
+                                }).show();
                     }
 
                     // 1. This callback is called when a ViewHolder is selected.
@@ -162,6 +169,21 @@ public class CreateRouteFragment extends Fragment {
                     public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
                         super.clearView(recyclerView, viewHolder);
                         viewHolder.itemView.setAlpha(1.0f);
+                    }
+
+                    @Override
+                    public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView,
+                                            @NonNull RecyclerView.ViewHolder viewHolder,
+                                            float dX, float dY, int actionState,
+                                            boolean isCurrentlyActive) {
+                        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                        new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                                .addSwipeLeftBackgroundColor(ContextCompat.getColor(getContext(),
+                                        R.color.black))
+                                .addSwipeLeftActionIcon(R.drawable.ic_baseline_delete_outline_24)
+                                .create()
+                                .decorate();
+
                     }
                 });
     }
