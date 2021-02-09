@@ -1,6 +1,5 @@
 package com.robosolutions.temipatrol.views;
 
-import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,17 +7,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.navigation.NavController;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.robosolutions.temipatrol.R;
-import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.LocationViewHolder>{
+public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.LocationViewHolder> {
     private final String TAG = "RouteAdapter";
     private List<String> route;
 
@@ -37,7 +34,6 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.LocationView
     @Override
     public void onBindViewHolder(@NonNull LocationViewHolder holder, int position) {
         holder.setText(position);
-        Log.i(TAG, "setText called at " + position + " | value: " + route.get(position));
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.robotemi.sdk.Robot;
 import com.robotemi.sdk.listeners.OnGoToLocationStatusChangedListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TemiController {
     private final String TAG = "TemiController";
@@ -25,9 +26,9 @@ public class TemiController {
         temp.add("location3");
         temp.add("location4");
 
-        ArrayList<String> temiLocations = (ArrayList<String>) temiRobot.getLocations();
+        List<String> temiLocations = temiRobot.getLocations();
 
-        return temiLocations != null ? temiLocations: temp;
+        return !temiLocations.isEmpty() ? (ArrayList<String>) temiLocations: temp;
     }
 
     public void patrolRoute(TemiRoute route) {

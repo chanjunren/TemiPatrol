@@ -87,7 +87,7 @@ public class SignInFragment extends Fragment {
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         // There are no request codes
-                        Log.i(TAG, "Sign in ok");
+                        Log.i(TAG, "Sign in success!");
                         Intent data = result.getData();
                         Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
                         handleSignInResult(task);
