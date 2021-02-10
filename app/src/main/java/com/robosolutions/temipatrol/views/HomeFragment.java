@@ -98,17 +98,16 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
     @Override
     public void onRouteClick(int position) {
         TemiRoute selectedRoute = routes.get(position);
-        viewModel.deleteRouteFromRepo(selectedRoute);
-//        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
 //        executorService.execute(() -> {
 //            viewModel.getTemiController().patrolRoute(selectedRoute);
 //        });
-//        executorService.execute(() -> {
-//            navController.navigate(R.id.action_homeFragment_to_patrolFragment);
-//        });
-//
-//        Toast.makeText(getContext(), "Patrolling: " + selectedRoute.getRouteTitle(),
-//                Toast.LENGTH_SHORT).show();
+        executorService.execute(() -> {
+            navController.navigate(R.id.action_homeFragment_to_patrolFragment);
+        });
+
+        Toast.makeText(getContext(), "Patrolling: " + selectedRoute.getRouteTitle(),
+                Toast.LENGTH_SHORT).show();
     }
 
     @Override

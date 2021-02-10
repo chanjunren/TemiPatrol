@@ -1,10 +1,13 @@
 package com.robosolutions.temipatrol.views;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -21,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import static androidx.core.content.PermissionChecker.checkSelfPermission;
 import static com.robosolutions.temipatrol.camera.CameraUtils.MEDIA_TYPE_IMAGE;
 import static com.robosolutions.temipatrol.camera.CameraUtils.getOutputMediaFile;
 
@@ -51,18 +55,32 @@ public class PatrolFragment extends Fragment {
         previewLayout.addView(mPreview);
     }
 
-    public static Camera getCameraInstance() {
-        Camera camera = null;
-        try {
-            camera = Camera.open();
-        } catch (Exception e) {
-            Log.e(TAG, e.toString());
+    public Camera getCameraInstance() {
+        int cameraCount = 0;
+        Camera cam = null;
+        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+        cameraCount = Camera.getNumberOfCameras();
+        Log.i(TAG, "CAmera count: " + cameraCount);
+
+        if (checkSelfPermission(this.getContext() ,Manifest.permission.CAMERA)
+                != PermissionChecker.PERMISSION_GRANTED) {
+            Log.i(TAG, "Permission not granted");
         }
-        return camera;
+        for (int camIdx = 0; camIdx < cameraCount; camIdx++) {
+            Camera.getCameraInfo(camIdx, cameraInfo);
+            if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                try {
+                    cam = Camera.open(camIdx);
+                } catch (RuntimeException e) {
+                    Log.e(TAG, "Camera failed to open: " + e.getLocalizedMessage());
+                }
+            }
+        }
+
+        return cam;
     }
 
     private Camera.PictureCallback mPictureCallback = new Camera.PictureCallback() {
-
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
 
