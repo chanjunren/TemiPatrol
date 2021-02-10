@@ -65,6 +65,10 @@ public class GlobalViewModel extends AndroidViewModel {
         mRouteRepo.insertTemiRouteIntoDb(temiRoute);
     }
 
+    public void deleteRouteFromRepo(TemiRoute temiRoute) {
+        mRouteRepo.deleteTemiRouteFromDb(temiRoute);
+    }
+
     public LiveData<List<TemiRoute>> getRouteLiveDataFromRepo() {
         return mRouteRepo.getAllRoutesFromDb();
     }

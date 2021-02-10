@@ -41,4 +41,12 @@ public class RouteRepository {
             mTemiRouteDao.insertRouteIntoDb(temiRoute);
         });
     }
+
+    public void deleteTemiRouteFromDb(TemiRoute temiRoute) {
+        TemiRouteRoomDatabase.getDbWriterExecutor().execute(() -> {
+            Log.i(TAG, "Deleting route...");
+            mTemiRouteDao.deleteRoute(temiRoute);
+        });
+
+    }
 }

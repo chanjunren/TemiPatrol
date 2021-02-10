@@ -43,7 +43,8 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
         return routes.size();
     }
 
-    public class RouteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class RouteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
+        View.OnLongClickListener {
         TextView routeTv;
         OnRouteClickListener onRouteClickListener;
         public RouteViewHolder(@NonNull View itemView, OnRouteClickListener onRouteClickListener) {
@@ -58,6 +59,13 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
             onRouteClickListener.onRouteClick(getAdapterPosition());
         }
 
+        @Override
+        public boolean onLongClick(View v) {
+            onRouteClickListener.onRouteLongClick(getAdapterPosition());
+            //true if the callback consumed the long click, false otherwise. idgi
+            return false;
+        }
+
         void setText(int position) {
             routeTv.setText(routes.get(position).getRouteTitle());
         }
@@ -65,5 +73,6 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
 
     public interface OnRouteClickListener {
         void onRouteClick(int position);
+        void onRouteLongClick(int position);
     }
 }

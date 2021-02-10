@@ -98,15 +98,21 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
     @Override
     public void onRouteClick(int position) {
         TemiRoute selectedRoute = routes.get(position);
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
-        executorService.execute(() -> {
-            viewModel.getTemiController().patrolRoute(selectedRoute);
-        });
-        executorService.execute(() -> {
-            navController.navigate(R.id.action_homeFragment_to_patrolFragment);
-        });
+        viewModel.deleteRouteFromRepo(selectedRoute);
+//        ExecutorService executorService = Executors.newFixedThreadPool(2);
+//        executorService.execute(() -> {
+//            viewModel.getTemiController().patrolRoute(selectedRoute);
+//        });
+//        executorService.execute(() -> {
+//            navController.navigate(R.id.action_homeFragment_to_patrolFragment);
+//        });
+//
+//        Toast.makeText(getContext(), "Patrolling: " + selectedRoute.getRouteTitle(),
+//                Toast.LENGTH_SHORT).show();
+    }
 
-        Toast.makeText(getContext(), "Patrolling: " + selectedRoute.getRouteTitle(),
-                Toast.LENGTH_SHORT).show();
+    @Override
+    public void onRouteLongClick(int position) {
+        Toast.makeText(getContext(), "Hi im a long click", Toast.LENGTH_SHORT).show();
     }
 }
