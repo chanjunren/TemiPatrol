@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +39,7 @@ public class PatrolFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCamera = getCameraInstance();
+        mCamera.setDisplayOrientation(180);
         mPreview = new CameraPreview(getContext(), mCamera);
     }
 
@@ -53,6 +55,16 @@ public class PatrolFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         FrameLayout previewLayout = view.findViewById(R.id.camera_preview);
         previewLayout.addView(mPreview);
+
+        // Just for testing
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                releaseCamera();
+                Log.i(TAG, "Camera released");
+            }
+        }, 20000);
     }
 
     public Camera getCameraInstance() {
@@ -101,4 +113,12 @@ public class PatrolFragment extends Fragment {
             }
         }
     };
+
+    public void releaseCamera() {
+        mCamera.stopPreview();
+        mCamera.setPreviewCallback(null);
+
+        mCamera.release();
+        mCamera = null;
+    }
 }
