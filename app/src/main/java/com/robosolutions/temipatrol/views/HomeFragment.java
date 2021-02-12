@@ -32,6 +32,7 @@ import java.util.concurrent.Executors;
 
 public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickListener {
     private final String TAG = "HomeFragment";
+    private static int MAX_THREAD_COUNT = 5;
     private GlobalViewModel viewModel;
     private NavController navController;
     private Button addRouteBtn;
@@ -40,12 +41,15 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
     private HashMap<String, TemiRoute> routeMap;
     private ArrayList<TemiRoute> routes;
 
+    private ExecutorService executorService;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         viewModel = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
         routeMap = new HashMap<>();
         routes = new ArrayList<>();
+        executorService = Executors.newFixedThreadPool(MAX_THREAD_COUNT);
         return inflater.inflate(R.layout.home_fragment, container, false);
     }
 
@@ -62,12 +66,13 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
         routeRv = view.findViewById(R.id.routeRv);
         initializeRecylerView();
         attachLiveDataToRecyclerView();
-        try {
-            viewModel.getmDriveServiceHelper().getFolderId("Test");
-        } catch (Exception e) {
-            Log.e(TAG, e.toString());
-        }
-
+        executorService.execute(() -> {
+            try {
+                viewModel.getmDriveServiceHelper().getFolderId("Test");
+            } catch (Exception e) {
+                Log.e(TAG, "getFolderId error: " + e.toString());
+            }
+        });
     }
 
     private void initializeRecylerView() {
@@ -99,7 +104,7 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
     @Override
     public void onRouteClick(int position) {
         TemiRoute selectedRoute = routes.get(position);
-        ExecutorService executorService = Executors.newFixedThreadPool(1);
+
 //        executorService.execute(() -> {
 //            viewModel.getTemiController().patrolRoute(selectedRoute);
 //        });

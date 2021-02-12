@@ -1,6 +1,7 @@
 package com.robosolutions.temipatrol.google;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
@@ -40,14 +41,16 @@ public class DriveServiceHelper {
         String pageToken = null;
         do {
             FileList result = mDriveService.files().list()
-                    .setQ("mimeType='image/jpeg'")
+                    .setQ("mimeType = 'application/vnd.google-apps.folder'" +
+                            " and name='Pictures'")
                     .setSpaces("drive")
                     .setFields("nextPageToken, files(id, name)")
                     .setPageToken(pageToken)
                     .execute();
             for (File file : result.getFiles()) {
-                System.out.printf("Found file: %s (%s)\n",
+                String fileString = String.format("Found file: %s (%s)\n",
                         file.getName(), file.getId());
+                Log.i(TAG, fileString);
             }
             pageToken = result.getNextPageToken();
         } while (pageToken != null);

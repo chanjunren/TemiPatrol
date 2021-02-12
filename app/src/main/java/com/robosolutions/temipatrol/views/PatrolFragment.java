@@ -61,6 +61,13 @@ public class PatrolFragment extends Fragment {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                mCamera.takePicture(null, null, mPictureCallback);
+                Log.i(TAG, "Camera released");
+            }
+        }, 10000);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
                 releaseCamera();
                 Log.i(TAG, "Camera released");
             }
@@ -95,6 +102,7 @@ public class PatrolFragment extends Fragment {
     private Camera.PictureCallback mPictureCallback = new Camera.PictureCallback() {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
+            Log.i(TAG, "OnPictureTaken executed...");
 
             File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
             if (pictureFile == null){
@@ -114,7 +122,7 @@ public class PatrolFragment extends Fragment {
         }
     };
 
-    public void releaseCamera() {
+    private void releaseCamera() {
         mCamera.stopPreview();
         mCamera.setPreviewCallback(null);
 
