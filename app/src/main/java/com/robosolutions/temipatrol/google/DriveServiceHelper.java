@@ -5,6 +5,7 @@ import android.content.Context;
 import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.FileList;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -32,6 +33,25 @@ public class DriveServiceHelper {
                 .setFields("id, parents")
                 .execute();
         System.out.println("File ID: " + googleFile.getId());
+    }
+
+
+    public String getFolderId(String date) throws IOException {
+        String pageToken = null;
+        do {
+            FileList result = mDriveService.files().list()
+                    .setQ("mimeType='image/jpeg'")
+                    .setSpaces("drive")
+                    .setFields("nextPageToken, files(id, name)")
+                    .setPageToken(pageToken)
+                    .execute();
+            for (File file : result.getFiles()) {
+                System.out.printf("Found file: %s (%s)\n",
+                        file.getName(), file.getId());
+            }
+            pageToken = result.getNextPageToken();
+        } while (pageToken != null);
+        return "LOL";
     }
 
     // Google folder mime type: application/vnd.google-apps.folder

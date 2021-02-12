@@ -62,11 +62,12 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
         routeRv = view.findViewById(R.id.routeRv);
         initializeRecylerView();
         attachLiveDataToRecyclerView();
+        try {
+            viewModel.getmDriveServiceHelper().getFolderId("Test");
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
 
-//        startPatrolBtn = view.findViewById(R.id.startPatrolBtn);
-//        startPatrolBtn.setOnClickListener(v -> {
-//            patrol();
-//        });
     }
 
     private void initializeRecylerView() {
