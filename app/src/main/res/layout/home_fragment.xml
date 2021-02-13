@@ -20,12 +20,12 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/startPatrolBtn"
+            android:id="@+id/configureBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="596dp"
             android:layout_marginTop="372dp"
-            android:text="Start Route"
+            android:text="Configure Drive"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

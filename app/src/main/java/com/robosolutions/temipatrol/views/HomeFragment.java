@@ -1,8 +1,13 @@
 package com.robosolutions.temipatrol.views;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,6 +26,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.robosolutions.temipatrol.R;
+import com.robosolutions.temipatrol.google.DriveServiceHelper;
 import com.robosolutions.temipatrol.model.TemiRoute;
 import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 
@@ -35,7 +41,7 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
     private static int MAX_THREAD_COUNT = 5;
     private GlobalViewModel viewModel;
     private NavController navController;
-    private Button addRouteBtn;
+    private Button addRouteBtn, configureDriveBtn;
     private RecyclerView routeRv;
     private RouteAdapter routeAdapter;
     private HashMap<String, TemiRoute> routeMap;
@@ -62,6 +68,8 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
         addRouteBtn.setOnClickListener(v -> {
             navController.navigate(R.id.action_homeFragment_to_createRouteFragment);
         });
+
+        configureDriveBtn = view.findViewById(R.id.configureBtn);
 
         routeRv = view.findViewById(R.id.routeRv);
         initializeRecylerView();
