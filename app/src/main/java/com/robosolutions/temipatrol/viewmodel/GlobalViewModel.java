@@ -15,11 +15,11 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.robosolutions.temipatrol.google.DriveServiceHelper;
 import com.robosolutions.temipatrol.model.TemiRoute;
-import com.robosolutions.temipatrol.repository.RouteRepository;
+import com.robosolutions.temipatrol.model.TemiVoiceCommand;
+import com.robosolutions.temipatrol.repository.TemiPatrolRepository;
 import com.robosolutions.temipatrol.temi.TemiController;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,15 +32,15 @@ public class GlobalViewModel extends AndroidViewModel {
     private static int MAX_THREAD_COUNT = 5;
     private DriveServiceHelper mDriveServiceHelper;
     private TemiController temiController;
-    private RouteRepository mRouteRepo;
+    private TemiPatrolRepository temiPatrolRepo;
     private LiveData<List<TemiRoute>> routeLiveData;
     private ExecutorService executorService;
     private HashMap<String, String> fileIdMap;
 
     public GlobalViewModel(Application application) {
         super(application);
-        mRouteRepo = new RouteRepository(application);
-        routeLiveData = mRouteRepo.getAllRoutesFromDb();
+        temiPatrolRepo = new TemiPatrolRepository(application);
+        routeLiveData = temiPatrolRepo.getAllRoutesFromDb();
     }
 
     public void initialize() {
@@ -101,14 +101,23 @@ public class GlobalViewModel extends AndroidViewModel {
     }
 
     public void insertRouteIntoRepo(TemiRoute temiRoute) {
-        mRouteRepo.insertTemiRouteIntoDb(temiRoute);
+        temiPatrolRepo.insertTemiRouteIntoDb(temiRoute);
     }
 
     public void deleteRouteFromRepo(TemiRoute temiRoute) {
-        mRouteRepo.deleteTemiRouteFromDb(temiRoute);
+        temiPatrolRepo.deleteTemiRouteFromDb(temiRoute);
+    }
+
+    public void insertVoiceCmdIntoRepo(TemiVoiceCommand temiVoiceCmd) {
+        temiPatrolRepo.insertTemiVoiceCmdIntoDb(temiVoiceCmd);
+
+    }
+
+    public void deleteVoiceCmdFromRepo(TemiVoiceCommand temiVoiceCmd) {
+        temiPatrolRepo.deleteTemiVoiceCmdFromDb(temiVoiceCmd);
     }
 
     public LiveData<List<TemiRoute>> getRouteLiveDataFromRepo() {
-        return mRouteRepo.getAllRoutesFromDb();
+        return temiPatrolRepo.getAllRoutesFromDb();
     }
 }

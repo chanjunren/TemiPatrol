@@ -16,22 +16,23 @@ import java.util.concurrent.Executors;
 
 // https://medium.com/google-developers/understanding-migrations-with-room-f01e04b07929
 @Database(entities = {TemiRoute.class}, version = 1, exportSchema = false)
-public abstract class TemiRouteRoomDatabase extends RoomDatabase {
+public abstract class TemiPatrolRoomDatabase extends RoomDatabase {
     public abstract TemiRouteDao routeDao();
+    public abstract TemiVoiceCmdDao voiceCmdDao();
 
     //Volatile keyword is used to modify the value of a variable by different threads.
     // It means that multiple threads can use a method and instance of the classes at the same time
     // without any problem
-    private static volatile TemiRouteRoomDatabase INSTANCE;
+    private static volatile TemiPatrolRoomDatabase INSTANCE;
     private static final int THREAD_COUNT = 4;
     // For running DB operations asynchronously
     static final ExecutorService dbWriterExecutor = Executors.newFixedThreadPool(THREAD_COUNT);
 
-    public static TemiRouteRoomDatabase getDatabase(final Context context) {
+    public static TemiPatrolRoomDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
             // Can append addCallback(sRoomDatabaseCallback) for future development if needed
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                    TemiRouteRoomDatabase.class, "routeDatabase").build();
+                    TemiPatrolRoomDatabase.class, "TemiPatrolDatabase").build();
         }
         return INSTANCE;
     }
