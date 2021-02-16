@@ -1,7 +1,6 @@
 package com.robosolutions.temipatrol.views;
 
 import android.Manifest;
-import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Bundle;
 
@@ -125,11 +124,10 @@ public class PatrolFragment extends Fragment {
 
             viewModel.getExecutorService().execute(() -> {
                 try {
-
                     FileOutputStream fos = new FileOutputStream(pictureFile);
                     fos.write(data);
                     fos.close();
-                    viewModel.getmDriveServiceHelper().uploadFile(pictureFile);
+                    viewModel.uploadFileToViewModel(pictureFile);
                 } catch (FileNotFoundException e) {
                     Log.d(TAG, "File not found: " + e.getMessage());
                 } catch (IOException e) {

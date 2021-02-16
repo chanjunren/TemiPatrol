@@ -2,6 +2,7 @@ package com.robosolutions.temipatrol.viewmodel;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -17,8 +18,11 @@ import com.robosolutions.temipatrol.model.TemiRoute;
 import com.robosolutions.temipatrol.repository.RouteRepository;
 import com.robosolutions.temipatrol.temi.TemiController;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,6 +35,7 @@ public class GlobalViewModel extends AndroidViewModel {
     private RouteRepository mRouteRepo;
     private LiveData<List<TemiRoute>> routeLiveData;
     private ExecutorService executorService;
+    private HashMap<String, String> fileIdMap;
 
     public GlobalViewModel(Application application) {
         super(application);
@@ -41,6 +46,7 @@ public class GlobalViewModel extends AndroidViewModel {
     public void initialize() {
         initializeTemiRobot();
         initializeExecutorService();
+        fileIdMap = new HashMap<>();
     }
 
     private void initializeExecutorService() {
@@ -75,6 +81,23 @@ public class GlobalViewModel extends AndroidViewModel {
 
     public ExecutorService getExecutorService() {
         return executorService;
+    }
+
+    public void uploadFileToViewModel(java.io.File file) {
+        String pattern = "dd-MM-yyyy";
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        String folderName = sdf.format(new Date());
+        try {
+            if (fileIdMap.containsKey(folderName)) {
+                mDriveServiceHelper.uploadFile(file, fileIdMap.get(folderName));
+            } else {
+                String folderId = mDriveServiceHelper.getFolderIdFromDrive(folderName);
+                fileIdMap.put(folderName, folderId);
+                mDriveServiceHelper.uploadFile(file, fileIdMap.get(folderName));
+            }
+        } catch(Exception e) {
+            Log.e(TAG, "Error while uploading file to viewModel: " + e.toString());
+        }
     }
 
     public void insertRouteIntoRepo(TemiRoute temiRoute) {

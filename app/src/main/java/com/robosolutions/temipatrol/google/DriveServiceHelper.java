@@ -1,37 +1,26 @@
 package com.robosolutions.temipatrol.google;
 
-import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
-import com.robosolutions.temipatrol.R;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 public class DriveServiceHelper {
     private final String TAG = "DrievServiceHelper";
-    private final Executor mExecutor = Executors.newSingleThreadExecutor();
     private final Drive mDriveService;
-    private Context context;
 
     public DriveServiceHelper(Drive mDriveService) {
         this.mDriveService = mDriveService;
     }
 
-    public void uploadFile(java.io.File file) throws IOException {
-        String pattern = "dd-MM-yyyy";
-        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-
-        String folderId = getFolderId(sdf.format(new Date()));
+    public void uploadFile(java.io.File file, String folderId) throws IOException {
 
         File fileMetadata = new File();
         fileMetadata.setName(file.getName());
@@ -44,7 +33,7 @@ public class DriveServiceHelper {
     }
 
     // Checks if folder exists, if not it creates the folder and uploads
-    public String getFolderId(String date) throws IOException {
+    public String getFolderIdFromDrive(String date) throws IOException {
         String pageToken = null;
         String folderName = "TemiPatrol"+ " | " + date;
 
