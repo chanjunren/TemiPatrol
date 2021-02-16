@@ -8,6 +8,7 @@ import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
+import com.robosolutions.temipatrol.R;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -39,31 +40,44 @@ public class DriveServiceHelper {
         File googleFile = mDriveService.files().create(fileMetadata, mediaContent)
                 .setFields("id, parents")
                 .execute();
-        System.out.println("File ID: " + googleFile.getId());
+        Log.i(TAG, "in uploadFile() | File ID: " + googleFile.getId());
     }
 
-    public String getFolderId(String date) {
-        return "lol";
-    }
-
-    public String createGoogleFolderAndGetFolderId(String date) throws IOException {
+    // Checks if folder exists, if not it creates the folder and uploads
+    public String getFolderId(String date) throws IOException {
         String pageToken = null;
+        String folderName = "TemiPatrol"+ " | " + date;
+
         do {
             FileList result = mDriveService.files().list()
-                    .setQ("mimeType = 'application/vnd.google-apps.folder'" +
-                            " and name = 'Pictures'")
+                    .setQ("mimeType = 'application/vnd.google-apps.folder'")
                     .setSpaces("drive")
                     .setFields("nextPageToken, files(id, name)")
                     .setPageToken(pageToken)
                     .execute();
             for (File file : result.getFiles()) {
-                String fileString = String.format("Found file: %s (%s)\n",
-                        file.getName(), file.getId());
-                Log.i(TAG, fileString);
+                if (file.getName() == folderName) {
+                    Log.i(TAG, "getFolderId() file found: " + file.getName());
+                    return file.getId();
+                }
             }
             pageToken = result.getNextPageToken();
         } while (pageToken != null);
-        return "lol";
+
+        return createGoogleFolderAndGetFolderId(folderName);
+    }
+
+    public String createGoogleFolderAndGetFolderId(String folderName) throws IOException {
+        File fileMetadata = new File();
+        fileMetadata.setName(folderName);
+        fileMetadata.setMimeType("application/vnd.google-apps.folder");
+
+        File file = mDriveService.files().create(fileMetadata)
+                .setFields("id")
+                .execute();
+        Log.i(TAG, "File created | Folder name: " + folderName + " | Id: " + file.getId());
+        return file.getId();
+
     }
 
     // Google folder mime type: application/vnd.google-apps.folder

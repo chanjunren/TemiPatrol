@@ -56,6 +56,16 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
         routeMap = new HashMap<>();
         routes = new ArrayList<>();
         executorService = Executors.newFixedThreadPool(MAX_THREAD_COUNT);
+
+        // testing
+        executorService.execute(() -> {
+            try {
+                viewModel.getmDriveServiceHelper().getFolderId("test");
+            } catch (Exception e) {
+                Log.e(TAG, e.toString());
+            }
+        });
+
         return inflater.inflate(R.layout.home_fragment, container, false);
     }
 
@@ -74,13 +84,6 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
         routeRv = view.findViewById(R.id.routeRv);
         initializeRecylerView();
         attachLiveDataToRecyclerView();
-        executorService.execute(() -> {
-            try {
-                viewModel.getmDriveServiceHelper().getFolderId("Test");
-            } catch (Exception e) {
-                Log.e(TAG, "getFolderId error: " + e.toString());
-            }
-        });
     }
 
     private void initializeRecylerView() {

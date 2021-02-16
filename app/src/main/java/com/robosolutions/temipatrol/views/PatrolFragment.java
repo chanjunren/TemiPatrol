@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Handler;
 import android.util.Log;
@@ -19,6 +20,7 @@ import android.widget.FrameLayout;
 
 import com.robosolutions.temipatrol.R;
 import com.robosolutions.temipatrol.camera.CameraPreview;
+import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -34,6 +36,7 @@ public class PatrolFragment extends Fragment {
     private static final String TAG = "PatrolFragment";
     private Camera mCamera;
     private CameraPreview mPreview;
+    private GlobalViewModel viewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,7 @@ public class PatrolFragment extends Fragment {
         mCamera = getCameraInstance();
         mCamera.setDisplayOrientation(180);
         mPreview = new CameraPreview(getContext(), mCamera);
+        viewModel = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
     }
 
     @Override
@@ -105,6 +109,8 @@ public class PatrolFragment extends Fragment {
             Log.i(TAG, "OnPictureTaken executed...");
 
             File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+
+
             if (pictureFile == null){
                 Log.d(TAG, "Error creating media file, check storage permissions");
                 return;
@@ -114,6 +120,7 @@ public class PatrolFragment extends Fragment {
                 FileOutputStream fos = new FileOutputStream(pictureFile);
                 fos.write(data);
                 fos.close();
+                viewModel.getmDriveServiceHelper().uploadFile(pictureFile);
             } catch (FileNotFoundException e) {
                 Log.d(TAG, "File not found: " + e.getMessage());
             } catch (IOException e) {
