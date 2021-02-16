@@ -108,6 +108,13 @@ public class PatrolFragment extends Fragment {
         public void onPictureTaken(byte[] data, Camera camera) {
             Log.i(TAG, "OnPictureTaken executed...");
 
+            if (checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                    != PermissionChecker.PERMISSION_GRANTED) {
+                Log.i(TAG, "Permission NOT granted!");
+            } else {
+                Log.i(TAG, "Permission granted!");
+            }
+
             File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
 
 
