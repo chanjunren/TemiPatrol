@@ -109,6 +109,7 @@ public class GlobalViewModel extends AndroidViewModel {
     }
 
     public void insertVoiceCmdIntoRepo(TemiVoiceCommand temiVoiceCmd) {
+        Log.i(TAG, "insertVoiceCmdIntoRepo: " + temiVoiceCmd);
         temiPatrolRepo.insertTemiVoiceCmdIntoDb(temiVoiceCmd);
 
     }
