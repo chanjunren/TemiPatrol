@@ -123,16 +123,19 @@ public class PatrolFragment extends Fragment {
                 return;
             }
 
-            try {
-                FileOutputStream fos = new FileOutputStream(pictureFile);
-                fos.write(data);
-                fos.close();
-                viewModel.getmDriveServiceHelper().uploadFile(pictureFile);
-            } catch (FileNotFoundException e) {
-                Log.d(TAG, "File not found: " + e.getMessage());
-            } catch (IOException e) {
-                Log.d(TAG, "Error accessing file: " + e.getMessage());
-            }
+            viewModel.getExecutorService().execute(() -> {
+                try {
+
+                    FileOutputStream fos = new FileOutputStream(pictureFile);
+                    fos.write(data);
+                    fos.close();
+                    viewModel.getmDriveServiceHelper().uploadFile(pictureFile);
+                } catch (FileNotFoundException e) {
+                    Log.d(TAG, "File not found: " + e.getMessage());
+                } catch (IOException e) {
+                    Log.d(TAG, "Error accessing file: " + e.getMessage());
+                }
+            });
         }
     };
 

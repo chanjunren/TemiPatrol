@@ -38,7 +38,6 @@ import java.util.concurrent.Executors;
 
 public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickListener {
     private final String TAG = "HomeFragment";
-    private static int MAX_THREAD_COUNT = 5;
     private GlobalViewModel viewModel;
     private NavController navController;
     private Button addRouteBtn, configureDriveBtn;
@@ -55,16 +54,7 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
         viewModel = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
         routeMap = new HashMap<>();
         routes = new ArrayList<>();
-        executorService = Executors.newFixedThreadPool(MAX_THREAD_COUNT);
-
-        // testing
-        executorService.execute(() -> {
-            try {
-                viewModel.getmDriveServiceHelper().getFolderId("test");
-            } catch (Exception e) {
-                Log.e(TAG, e.toString());
-            }
-        });
+        executorService = viewModel.getExecutorService();
 
         return inflater.inflate(R.layout.home_fragment, container, false);
     }

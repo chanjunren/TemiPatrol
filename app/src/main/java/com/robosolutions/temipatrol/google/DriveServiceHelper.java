@@ -56,7 +56,7 @@ public class DriveServiceHelper {
                     .setPageToken(pageToken)
                     .execute();
             for (File file : result.getFiles()) {
-                if (file.getName() == folderName) {
+                if (file.getName().equals(folderName)) {
                     Log.i(TAG, "getFolderId() file found: " + file.getName());
                     return file.getId();
                 }
@@ -79,29 +79,4 @@ public class DriveServiceHelper {
         return file.getId();
 
     }
-
-    // Google folder mime type: application/vnd.google-apps.folder
-    // Creates folder and returns the folder ID
-    public String createDateFolder(String date) throws IOException {
-        File fileMetadata = new File();
-//        fileMetadata.setName(date);
-        fileMetadata.setMimeType("application/vnd.google-apps.folder");
-
-        File file = mDriveService.files().create(fileMetadata)
-                .setFields("id")
-                .execute();
-        return file.getId();
-    }
-
-    public String createGlobalFolder(String folderName) throws IOException {
-        File fileMetadata = new File();
-        fileMetadata.setName(folderName);
-        fileMetadata.setMimeType("application/vnd.google-apps.folder");
-
-        File file = mDriveService.files().create(fileMetadata)
-                .setFields("id")
-                .execute();
-        return file.getId();
-    }
-
 }

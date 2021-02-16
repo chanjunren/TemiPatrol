@@ -20,13 +20,17 @@ import com.robosolutions.temipatrol.temi.TemiController;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class GlobalViewModel extends AndroidViewModel {
     private final String TAG = "GlobalViewModel";
+    private static int MAX_THREAD_COUNT = 5;
     private DriveServiceHelper mDriveServiceHelper;
     private TemiController temiController;
     private RouteRepository mRouteRepo;
     private LiveData<List<TemiRoute>> routeLiveData;
+    private ExecutorService executorService;
 
     public GlobalViewModel(Application application) {
         super(application);
@@ -34,6 +38,14 @@ public class GlobalViewModel extends AndroidViewModel {
         routeLiveData = mRouteRepo.getAllRoutesFromDb();
     }
 
+    public void initialize() {
+        initializeTemiRobot();
+        initializeExecutorService();
+    }
+
+    private void initializeExecutorService() {
+        executorService = Executors.newFixedThreadPool(MAX_THREAD_COUNT);
+    }
 
     public void initializeTemiRobot() {
         temiController = new TemiController();
@@ -59,6 +71,10 @@ public class GlobalViewModel extends AndroidViewModel {
 
     public TemiController getTemiController() {
         return temiController;
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
     }
 
     public void insertRouteIntoRepo(TemiRoute temiRoute) {

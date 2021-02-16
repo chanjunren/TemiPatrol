@@ -23,7 +23,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         GlobalViewModel viewModel = new ViewModelProvider(this).get(GlobalViewModel.class);
-        viewModel.initializeTemiRobot();
+
+        viewModel.initialize();
+
         setContentView(R.layout.activity_main);
         if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},
