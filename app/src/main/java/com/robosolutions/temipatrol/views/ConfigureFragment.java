@@ -25,6 +25,7 @@ import com.robosolutions.temipatrol.temi.TemiController;
 import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -50,7 +51,8 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
         temiController = viewModel.getTemiController();
-        temiVoiceCommands = new ArrayList<>();
+        TemiVoiceCommand[] tempArr = {null, null, null, null};
+        temiVoiceCommands = new ArrayList<>(Arrays.asList(tempArr));
         tvMap = new HashMap<>();
 
     }
@@ -70,19 +72,15 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
 
         navController = Navigation.findNavController(view);
         attachSpeechCmdsLiveData();
-        for (TemiVoiceCommand cmd: temiVoiceCommands) {
-            viewModel.deleteVoiceCmdFromRepo(cmd);
-        }
     }
 
     private void attachSpeechCmdsLiveData() {
         final Observer<List<TemiVoiceCommand>> voiceCmdListObserver = liveDataCmds -> {
             Log.i(TAG, "onChanged called");
-            temiVoiceCommands.clear();
-            temiVoiceCommands.addAll(liveDataCmds);
-            for (TemiVoiceCommand voiceCommand: temiVoiceCommands) {
-                Log.i(TAG, "Key: " + voiceCommand.getKey() +
-                        "command:  " + voiceCommand.getCommand());
+
+            for (TemiVoiceCommand voiceCommand: liveDataCmds) {
+                temiVoiceCommands.remove(voiceCommand.getKey());
+                temiVoiceCommands.add(voiceCommand.getKey(), voiceCommand);
                 tvMap.get(voiceCommand.getKey()).setText(voiceCommand.getCommand());
             }
         };
@@ -114,10 +112,12 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
         commandTv2 = view.findViewById(R.id.voiceCmdTv2);
         commandTv3 = view.findViewById(R.id.voiceCmdTv3);
         commandTv4 = view.findViewById(R.id.voiceCmdTv4);
-        tvMap.put(1, commandTv1);
-        tvMap.put(2, commandTv2);
-        tvMap.put(3, commandTv3);
-        tvMap.put(4, commandTv4);
+        tvMap.put(0, commandTv1);
+        tvMap.put(1, commandTv2);
+        tvMap.put(2, commandTv3);
+        tvMap.put(3, commandTv4);
+
+        Log.i(TAG, "Map updated: " + tvMap.toString());
 
         commandEt1 = view.findViewById(R.id.voiceCmdEt1);
         commandEt2 = view.findViewById(R.id.voiceCmdEt2);
@@ -133,31 +133,31 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
         else if (v.getId() == R.id.playBtn1) {
             temiController.temiSpeak(temiVoiceCommands.get(0).getCommand());
         } else if (v.getId() == R.id.playBtn2) {
-
+            temiController.temiSpeak(temiVoiceCommands.get(1).getCommand());
         } else if (v.getId() == R.id.playBtn3) {
-
+            temiController.temiSpeak(temiVoiceCommands.get(2).getCommand());
         } else if (v.getId() == R.id.playBtn4) {
-
+            temiController.temiSpeak(temiVoiceCommands.get(3).getCommand());
         } else if (v.getId() == R.id.updateBtn1) {
             String command = commandEt1.getText().toString();
-            TemiVoiceCommand voiceCmd = new TemiVoiceCommand(command, 1);
-            viewModel.deleteVoiceCmdFromRepo(temiVoiceCommands.get(0));
-            viewModel.insertVoiceCmdIntoRepo(voiceCmd);
+            updateVoiceCmd(command, 0);
         } else if (v.getId() == R.id.updateBtn2) {
             String command = commandEt2.getText().toString();
-            TemiVoiceCommand voiceCmd = new TemiVoiceCommand(command, 2);
-            viewModel.deleteVoiceCmdFromRepo(temiVoiceCommands.get(1));
-            viewModel.insertVoiceCmdIntoRepo(voiceCmd);
+            updateVoiceCmd(command, 1);
         } else if (v.getId() == R.id.updateBtn3) {
             String command = commandEt3.getText().toString();
-            TemiVoiceCommand voiceCmd = new TemiVoiceCommand(command, 3);
-            viewModel.deleteVoiceCmdFromRepo(temiVoiceCommands.get(2));
-            viewModel.insertVoiceCmdIntoRepo(voiceCmd);
+            updateVoiceCmd(command, 2);
         } else if (v.getId() == R.id.updateBtn4) {
             String command = commandEt4.getText().toString();
-            viewModel.deleteVoiceCmdFromRepo(temiVoiceCommands.get(3));
-            TemiVoiceCommand voiceCmd = new TemiVoiceCommand(command, 4);
-            viewModel.insertVoiceCmdIntoRepo(voiceCmd);
+            updateVoiceCmd(command, 3);
         }
+    }
+
+    private void updateVoiceCmd(String command, int index) {
+        if (temiVoiceCommands.get(index) != null) {
+            viewModel.deleteVoiceCmdFromRepo(temiVoiceCommands.get(index));
+        }
+        TemiVoiceCommand voiceCmd = new TemiVoiceCommand(command, index);
+        viewModel.insertVoiceCmdIntoRepo(voiceCmd);
     }
 }
