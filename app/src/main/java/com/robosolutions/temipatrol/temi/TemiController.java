@@ -5,6 +5,7 @@ import android.util.Log;
 import com.robosolutions.temipatrol.model.TemiRoute;
 import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 import com.robotemi.sdk.Robot;
+import com.robotemi.sdk.TtsRequest;
 import com.robotemi.sdk.listeners.OnGoToLocationStatusChangedListener;
 
 import java.util.ArrayList;
@@ -36,4 +37,8 @@ public class TemiController {
         temiNavigator.patrolRoute(route);
     }
 
+    public void temiSpeak(String speechText) {
+        TtsRequest ttsReqObj = TtsRequest.create(speechText, false);
+        temiRobot.speak(ttsReqObj);
+    }
 }

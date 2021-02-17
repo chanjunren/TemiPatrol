@@ -18,6 +18,7 @@ public class TemiPatrolRepository {
     private TemiRouteDao mTemiRouteDao;
     private TemiVoiceCmdDao mTemiVoiceCmdDao;
     private LiveData<List<TemiRoute>> routes;
+    private LiveData<List<TemiVoiceCommand>> commands;
 
     // Note that in order to unit test the Repository, you have to remove the Application
     // dependency. This adds complexity and much more code, and this sample is not about testing.
@@ -29,6 +30,7 @@ public class TemiPatrolRepository {
         mTemiRouteDao = db.routeDao();
         mTemiVoiceCmdDao = db.voiceCmdDao();
         routes = mTemiRouteDao.getRoutesFromDb();
+        commands = mTemiVoiceCmdDao.getVoiceCmdsFromDb();
     }
 
     public LiveData<List<TemiRoute>> getAllRoutesFromDb() {
@@ -51,6 +53,14 @@ public class TemiPatrolRepository {
             Log.i(TAG, "Deleting route...");
             mTemiRouteDao.deleteRoute(temiRoute);
         });
+    }
+
+    public LiveData<List<TemiVoiceCommand>> getAllCmdsFromDb() {
+        if (commands.getValue() == null) {
+            commands = mTemiVoiceCmdDao.getVoiceCmdsFromDb();
+        }
+        Log.i(TAG, "returning " + commands.getValue());
+        return commands;
     }
 
     public void insertTemiVoiceCmdIntoDb(TemiVoiceCommand temiVoiceCommand) {

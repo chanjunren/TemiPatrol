@@ -118,6 +118,10 @@ public class GlobalViewModel extends AndroidViewModel {
         temiPatrolRepo.deleteTemiVoiceCmdFromDb(temiVoiceCmd);
     }
 
+    public LiveData<List<TemiVoiceCommand>> getCommandLiveDataFromRepo() {
+        return temiPatrolRepo.getAllCmdsFromDb();
+    }
+
     public LiveData<List<TemiRoute>> getRouteLiveDataFromRepo() {
         return temiPatrolRepo.getAllRoutesFromDb();
     }
