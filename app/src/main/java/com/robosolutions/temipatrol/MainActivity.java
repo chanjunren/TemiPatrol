@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.robosolutions.temipatrol.client.RequestUtils;
 import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 
 
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        RequestUtils.test();
         GlobalViewModel viewModel = new ViewModelProvider(this).get(GlobalViewModel.class);
 
         viewModel.initialize();
