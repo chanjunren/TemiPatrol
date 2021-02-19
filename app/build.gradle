@@ -77,9 +77,12 @@ dependencies {
 
     // CameraX core library using the camera2 implementation
     def camerax_version = "1.0.0-rc02"
+    implementation "androidx.camera:camera-core:${camerax_version}"
     implementation "androidx.camera:camera-camera2:${camerax_version}"
     // If you want to additionally use the CameraX View class
     implementation "androidx.camera:camera-view:1.0.0-alpha21"
     implementation "androidx.camera:camera-lifecycle:${camerax_version}"
     implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
+    implementation "androidx.camera:camera-extensions:1.0.0-alpha21"
+
 }
