@@ -19,7 +19,11 @@ import android.widget.FrameLayout;
 
 import com.robosolutions.temipatrol.R;
 import com.robosolutions.temipatrol.camera.CameraPreview;
+import com.robosolutions.temipatrol.client.JsonPostman;
+import com.robosolutions.temipatrol.client.JsonRequestUtils;
 import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -82,8 +86,6 @@ public class PatrolFragment extends Fragment {
         Camera cam = null;
         Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
         cameraCount = Camera.getNumberOfCameras();
-        Log.i(TAG, "CAmera count: " + cameraCount);
-
         if (checkSelfPermission(this.getContext() ,Manifest.permission.CAMERA)
                 != PermissionChecker.PERMISSION_GRANTED) {
             Log.i(TAG, "Permission not granted");
@@ -106,17 +108,7 @@ public class PatrolFragment extends Fragment {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
             Log.i(TAG, "OnPictureTaken executed...");
-
-            if (checkSelfPermission(getContext(), Manifest.permission.CAMERA)
-                    != PermissionChecker.PERMISSION_GRANTED) {
-                Log.i(TAG, "Permission NOT granted!");
-            } else {
-                Log.i(TAG, "Permission granted!");
-            }
-
             File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
-
-
             if (pictureFile == null){
                 Log.d(TAG, "Error creating media file, check storage permissions");
                 return;
@@ -127,7 +119,8 @@ public class PatrolFragment extends Fragment {
                     FileOutputStream fos = new FileOutputStream(pictureFile);
                     fos.write(data);
                     fos.close();
-                    viewModel.uploadFileToViewModel(pictureFile);
+                    JSONObject requestMessage = JsonRequestUtils.generateJsonMessage(pictureFile);
+                    sendImageToServer(requestMessage);
                 } catch (FileNotFoundException e) {
                     Log.d(TAG, "File not found: " + e.getMessage());
                 } catch (IOException e) {
@@ -143,5 +136,14 @@ public class PatrolFragment extends Fragment {
 
         mCamera.release();
         mCamera = null;
+    }
+
+    private void sendImageToServer(JSONObject requestJson) {
+        // for testing
+        viewModel.getExecutorService().execute(() -> {
+            JsonPostman postman = new JsonPostman(getActivity());
+            postman.postRequest(requestJson);
+        });
+
     }
 }

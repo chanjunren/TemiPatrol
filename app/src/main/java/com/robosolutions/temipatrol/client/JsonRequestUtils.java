@@ -14,12 +14,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class RequestUtils {
-    private static final String TAG = "RequestUtils";
+public class JsonRequestUtils {
+    private static final String TAG = "JsonRequestUtils";
 
-    public static void main(String[] args) {
-        test();
-    }
     private static String encodeFileToBase64Binary(File file) {
         String encodedFile = null;
         try {
@@ -37,30 +34,39 @@ public class RequestUtils {
         return encodedFile;
     }
 
-    public JSONObject generateJsonMessage(File file) {
+    public static JSONObject generateJsonMessage(File file) {
+        JSONObject reqBody = new JSONObject();
         try {
-//            JSONObject
-            
             JSONArray reqBodyArr = new JSONArray();
 
-            JSONArray featuresArr = new JSONArray();
+            JSONArray featuresArr = getFeaturesArr();
+            JSONObject imageObj = getJSONImageObj(file);
 
-            JSONObject featuresBody = new JSONObject();
-            featuresBody.put("maxResults", 20);
-            featuresBody.put("type", "FACEMASK_DETECTION");
+            JSONObject singleRequestObj = new JSONObject();
+            singleRequestObj.put("features", featuresArr);
+            singleRequestObj.put("image", imageObj);
 
-            featuresArr.put(featuresBody);
+            reqBodyArr.put(singleRequestObj);
 
-
-            JSONObject reqBody = new JSONObject();
-            reqBody.put("features", featuresArr);
-            reqBody.put("image", "image_test");
-
-            reqBodyArr.put(reqBody);
-
-
+            reqBody.put("requests", reqBodyArr);
         } catch (JSONException e) {
             Log.e(TAG, e.toString());
         }
+        return reqBody;
+    }
+
+    public static JSONObject getJSONImageObj(File file) throws JSONException{
+        JSONObject imageObj = new JSONObject();
+        imageObj.put("content", encodeFileToBase64Binary(file));
+        return imageObj;
+    }
+
+    public static JSONArray getFeaturesArr() throws JSONException{
+        JSONArray featuresArr = new JSONArray();
+        JSONObject featuresBody = new JSONObject();
+        featuresBody.put("maxResults", 20);
+        featuresBody.put("type", "FACEMASK_DETECTION");
+        featuresArr.put(featuresBody);
+        return featuresArr;
     }
 }
