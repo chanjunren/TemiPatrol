@@ -29,6 +29,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static androidx.core.content.PermissionChecker.checkSelfPermission;
 import static com.robosolutions.temipatrol.camera.CameraUtils.MEDIA_TYPE_IMAGE;
@@ -36,6 +38,13 @@ import static com.robosolutions.temipatrol.camera.CameraUtils.getOutputMediaFile
 
 // Page shown when Temi is patrolling
 public class PatrolFragment extends Fragment {
+    private class TakePictureTask extends TimerTask {
+        @Override
+        public void run() {
+            mCamera.takePicture(null, null, mPictureCallback);
+
+        }
+    }
     private static final String TAG = "PatrolFragment";
     private Camera mCamera;
     private CameraPreview mPreview;
@@ -63,22 +72,18 @@ public class PatrolFragment extends Fragment {
         FrameLayout previewLayout = view.findViewById(R.id.camera_preview);
         previewLayout.addView(mPreview);
 
+        Timer timer = new Timer();
+        timer.schedule(new TakePictureTask(),0, 1000);
+
         // Just for testing
         Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mCamera.takePicture(null, null, mPictureCallback);
-                Log.i(TAG, "Camera released");
-            }
-        }, 10000);
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 releaseCamera();
                 Log.i(TAG, "Camera released");
             }
-        }, 20000);
+        }, 100000);
     }
 
     public Camera getCameraInstance() {
@@ -113,6 +118,8 @@ public class PatrolFragment extends Fragment {
                 Log.d(TAG, "Error creating media file, check storage permissions");
                 return;
             }
+
+            camera.startPreview();
 
             viewModel.getExecutorService().execute(() -> {
                 try {
