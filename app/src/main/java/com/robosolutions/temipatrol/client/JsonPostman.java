@@ -1,38 +1,26 @@
 package com.robosolutions.temipatrol.client;
 
 import android.app.Activity;
-import android.content.res.AssetManager;
-import android.os.Build;
 import android.util.Log;
 
-import androidx.annotation.RequiresApi;
-
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
-
+import org.apache.http.HttpConnection;
 import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.nio.file.Path;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class JsonPostman {
     private static final String TAG = "JsonPostman";
-
-    private static final String AWS_USER = "ec2-user";
-    private static final String AWS_HOST = "54.255.249.46";
-    private static final int AWS_PORT =  22;
+    private static final String AWS_HOST = "http://54.255.249.46";
     private static final int MASK_DETECTION_PORT = 5000;
-
-    private static final String filePath = "/client/mykeypair.ppk";
-
     private Activity mainActivity;
+
+    private static final String POST_ENDPOINT = AWS_HOST + ":" + MASK_DETECTION_PORT + "/api";
 
     public JsonPostman(Activity activity) {
         this.mainActivity = activity;
@@ -40,55 +28,30 @@ public class JsonPostman {
 
     public void postRequest(JSONObject requestJson) {
         try {
-            // Central configuration point, factory for Session object configured with these settings
-            JSch jsch = new JSch();
-            String privateKey = getPrivateKeyPath();
-            Log.i(TAG, "Path returned: " + privateKey);
+            URL url = new URL(POST_ENDPOINT);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json; utf-8");
+            conn.setRequestProperty("Accept", "application/json");
+            // To be able to write content to the connection output stream
+            conn.setDoOutput(true);
 
-            jsch.addIdentity(privateKey);
-//
-            Session session = jsch.getSession(AWS_USER, AWS_HOST, AWS_PORT);
-            Log.i(TAG, "Session Created");
+            OutputStream os = conn.getOutputStream();
+            byte[] input = requestJson.toString().getBytes("utf-8");
+            os.write(input, 0, input.length);
 
-//            // disabling StrictHostKeyChecking may help to make connection but makes it insecure
-//            // see http://stackoverflow.com/questions/30178936/jsch-sftp-security-with-session-setconfigstricthostkeychecking-no
-
-            java.util.Properties config = new java.util.Properties();
-            config.put("StrictHostKeyChecking", "no");
-            session.setConfig(config);
-            session.connect();
-            Log.i(TAG, "session connected.....");
-//
-            Channel channel = session.openChannel("direct-tcpip");
-            InputStream is = new ByteArrayInputStream(requestJson.toString().getBytes("UTF-8"));
-            channel.setInputStream(is);
-            channel.setOutputStream(System.out);
-            channel.connect();
-            System.out.println("shell channel connected....");
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream(), "utf-8"));
+            StringBuilder response = new StringBuilder();
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine);
+            }
+            Log.i(TAG, " === RESPONSE ===\n" + response.toString());
 
 
         } catch (Exception e) {
-            Log.e(TAG, "Post Request Exception: " + e.toString());
+            Log.e(TAG, "postRequest exception: " + e.toString());
         }
-    }
-
-    // Stores private key in cache and returns it
-    private String getPrivateKeyPath() throws IOException{
-        InputStream inputStream = mainActivity.getAssets().open("mykeypair.pem");
-        File file = new File(mainActivity.getCacheDir(), "cacheFileAppeal.srl");
-
-        try (OutputStream output = new FileOutputStream(file)) {
-            byte[] buffer = new byte[4 * 1024]; // or other buffer size
-            int read;
-
-            while ((read = inputStream.read(buffer)) != -1) {
-                output.write(buffer, 0, read);
-            }
-
-            output.flush();
-        } finally {
-            inputStream.close();
-        }
-        return file.getPath();
     }
 }
