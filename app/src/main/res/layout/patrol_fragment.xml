@@ -8,10 +8,13 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <FrameLayout
-            android:id="@+id/camera_preview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+        <com.otaliastudios.cameraview.CameraView
+            android:id="@+id/camera"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cameraAudio="off"
+            app:cameraEngine="camera2"
+            app:cameraPreview="glSurface"
+            app:cameraExperimental="true"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

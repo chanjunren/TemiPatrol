@@ -72,4 +72,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
 
     implementation 'it.xabaras.android:recyclerview-swipedecorator:1.2.3'
+
+    api 'com.otaliastudios:cameraview:2.7.0'
+
 }

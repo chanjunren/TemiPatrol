@@ -28,6 +28,7 @@ public class JsonPostman {
 
     public void postRequest(JSONObject requestJson) {
         try {
+            Log.i(TAG, "=== SENT ===\n" + requestJson.toString());
             URL url = new URL(POST_ENDPOINT);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
