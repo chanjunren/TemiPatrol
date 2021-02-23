@@ -1,10 +1,8 @@
 package com.robosolutions.temipatrol.client;
 
-import android.os.Build;
 import android.util.Base64;
 import android.util.Log;
 
-import androidx.annotation.RequiresApi;
 
 import org.json.JSONArray;
 import org.json.JSONException;

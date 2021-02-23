@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickListener {
     private final String TAG = "HomeFragment";
@@ -101,16 +102,8 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
     @Override
     public void onRouteClick(int position) {
         TemiRoute selectedRoute = routes.get(position);
-
-//        executorService.execute(() -> {
-//            viewModel.getTemiController().patrolRoute(selectedRoute);
-//        });
-        executorService.execute(() -> {
-            navController.navigate(R.id.action_homeFragment_to_patrolFragment);
-        });
-
-        Toast.makeText(getContext(), "Patrolling: " + selectedRoute.getRouteTitle(),
-                Toast.LENGTH_SHORT).show();
+        viewModel.setSelectedRoute(selectedRoute);
+        navController.navigate(R.id.action_homeFragment_to_patrolFragment);
     }
 
     @Override

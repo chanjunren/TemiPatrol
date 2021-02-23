@@ -34,6 +34,8 @@ public class TemiNavigator implements OnGoToLocationStatusChangedListener {
             }
         } catch (InterruptedException e) {
             Log.e(TAG, "Interrupted exception while patrolling: " + e.toString());
+        } finally {
+            Log.i(TAG, "Patrol completed");
         }
     }
 

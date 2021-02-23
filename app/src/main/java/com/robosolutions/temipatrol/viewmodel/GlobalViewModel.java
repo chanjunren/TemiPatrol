@@ -6,6 +6,7 @@ import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.navigation.NavController;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -36,6 +37,8 @@ public class GlobalViewModel extends AndroidViewModel {
     private LiveData<List<TemiRoute>> routeLiveData;
     private ExecutorService executorService;
     private HashMap<String, String> fileIdMap;
+
+    private TemiRoute selectedRoute;
 
     public GlobalViewModel(Application application) {
         super(application);
@@ -124,5 +127,13 @@ public class GlobalViewModel extends AndroidViewModel {
 
     public LiveData<List<TemiRoute>> getRouteLiveDataFromRepo() {
         return temiPatrolRepo.getAllRoutesFromDb();
+    }
+
+    public TemiRoute getSelectedRoute() {
+        return selectedRoute;
+    }
+
+    public void setSelectedRoute(TemiRoute selectedRoute) {
+        this.selectedRoute = selectedRoute;
     }
 }

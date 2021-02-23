@@ -21,6 +21,7 @@ public class TemiController {
     }
 
     public ArrayList<String> getLocationsFromTemi() {
+        // Place holder for testing
         ArrayList<String> temp = new ArrayList<>();
         temp.add("location1");
         temp.add("location2");
