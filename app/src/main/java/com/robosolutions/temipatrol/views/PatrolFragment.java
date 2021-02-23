@@ -1,17 +1,14 @@
 package com.robosolutions.temipatrol.views;
 
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +27,6 @@ import org.json.JSONObject;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 
 // Page shown when Temi is patrolling
@@ -50,7 +46,6 @@ public class PatrolFragment extends Fragment {
             patrolTask.run();
             navigateToHomePage();
         }
-
     }
 
 
@@ -88,15 +83,8 @@ public class PatrolFragment extends Fragment {
         camera.setLifecycleOwner(getViewLifecycleOwner());
 
         configureCamera(camera);
-
         startCamera();
-        PatrolCallbackTask patrolTask = new PatrolCallbackTask(() -> {
-            TemiRoute selectedRoute = viewModel.getSelectedRoute();
-            viewModel.getTemiController().patrolRoute(selectedRoute);
-        });
-
-        executorService.execute(patrolTask);
-
+        startPatrol();
     }
 
     private void startCamera() {
@@ -111,16 +99,24 @@ public class PatrolFragment extends Fragment {
                 super.onPictureTaken(result);
                 byte[] image = result.getData();
                 JSONObject requestMessage = JsonRequestUtils.generateJsonMessage(image);
-                sendImageToServer(requestMessage);
+                sendImageToServerAndGetMaskDetectionResult(requestMessage);
             }
         });
     }
 
-    private void sendImageToServer(JSONObject requestJson) {
+    private void startPatrol() {
+        PatrolCallbackTask patrolTask = new PatrolCallbackTask(() -> {
+            TemiRoute selectedRoute = viewModel.getSelectedRoute();
+            viewModel.getTemiController().patrolRoute(selectedRoute);
+        });
+        executorService.execute(patrolTask);
+    }
+
+    private void sendImageToServerAndGetMaskDetectionResult(JSONObject requestJson) {
         // for testing
         executorService.execute(() -> {
             JsonPostman postman = new JsonPostman(getActivity());
-            postman.postRequest(requestJson);
+            postman.postMaskDetectionRequestAndGetResult(requestJson);
         });
 
     }

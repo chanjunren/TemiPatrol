@@ -13,6 +13,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.robosolutions.temipatrol.client.JsonPostman;
+import com.robosolutions.temipatrol.client.JsonResponseTests;
 import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 
 
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        test();
         GlobalViewModel viewModel = new ViewModelProvider(this).get(GlobalViewModel.class);
 
         viewModel.initialize();
@@ -66,5 +68,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void showErrorMsg(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void test() {
+        JsonPostman postman = new JsonPostman(this);
+        try {
+            boolean result = postman.isWearingMask(JsonResponseTests.MASK_RESPONSE_TEST);
+
+            Log.i(TAG, "IS WEARING MASK RESULT: " + result);
+        } catch (Exception e) {
+            Log.e(TAG, "test exception: " + e.toString());
+        }
     }
 }
