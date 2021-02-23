@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        test();
+//        test();
         GlobalViewModel viewModel = new ViewModelProvider(this).get(GlobalViewModel.class);
 
         viewModel.initialize();

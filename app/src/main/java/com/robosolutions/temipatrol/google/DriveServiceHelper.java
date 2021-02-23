@@ -21,7 +21,6 @@ public class DriveServiceHelper {
     }
 
     public void uploadFile(java.io.File file, String folderId) throws IOException {
-
         File fileMetadata = new File();
         fileMetadata.setName(file.getName());
         FileContent mediaContent = new FileContent("image/jpeg", file);

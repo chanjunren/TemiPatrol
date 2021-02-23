@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.robosolutions.temipatrol.R;
 import com.robosolutions.temipatrol.model.TemiRoute;
+import com.robosolutions.temipatrol.model.TemiVoiceCommand;
 import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 
 import java.util.ArrayList;
@@ -49,6 +50,12 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
         routeMap = new HashMap<>();
         routes = new ArrayList<>();
         executorService = viewModel.getExecutorService();
+
+        //test
+        List<TemiVoiceCommand> commands = viewModel.getCommandLiveDataFromRepo().getValue();
+        for (TemiVoiceCommand command: commands) {
+            Log.i(TAG, "Command: " + command.getCommand());
+        }
 
         return inflater.inflate(R.layout.home_fragment, container, false);
     }
