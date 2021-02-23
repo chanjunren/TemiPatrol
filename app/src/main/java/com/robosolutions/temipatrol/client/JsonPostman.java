@@ -26,6 +26,10 @@ public class JsonPostman {
     private static final String NOT_WEARING_MASK = "No Face Mask";
     private static final String MASK_RESPONSE_ARRAY_NAME = "FACE_MASK_DETECTION";
 
+    private static final String DISTANCE_RESPONSE_ARRAY_NAME = "HUMAN_DISTANCE";
+    private static final String HUMAN_NUM = "human_num";
+    private static final int HUMAN_LIMIT = 8;
+
     private Activity mainActivity;
 
     private static final String POST_ENDPOINT = AWS_HOST + ":" + MASK_DETECTION_PORT + "/api";
@@ -75,5 +79,48 @@ public class JsonPostman {
             }
         }
         return true;
+    }
+
+    // True if wearing mask, false otherwise
+    public boolean postHumanDistanceRequestAndGetResult(JSONObject requestJson) {
+        try {
+            Log.i(TAG, "=== SENT ===\n" + requestJson.toString());
+            URL url = new URL(POST_ENDPOINT);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json; utf-8");
+            conn.setRequestProperty("Accept", "application/json");
+            // To be able to write content to the connection output stream
+            conn.setDoOutput(true);
+
+            OutputStream os = conn.getOutputStream();
+            byte[] input = requestJson.toString().getBytes("utf-8");
+            os.write(input, 0, input.length);
+
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream(), "utf-8"));
+            StringBuilder response = new StringBuilder();
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine);
+            }
+            Log.i(TAG, " === RESPONSE ===\n" + response.toString());
+            return isClusterDetected(response.toString());
+        } catch (Exception e) {
+            Log.e(TAG, "postRequest exception: " + e.toString());
+            return true;
+        }
+    }
+
+    public boolean isClusterDetected(String jsonResponse) throws JSONException {
+        JSONObject response = new JSONObject(jsonResponse);
+        JSONArray arr = response.getJSONArray(DISTANCE_RESPONSE_ARRAY_NAME);
+        for (int i = 0; i < arr.length(); i++) {
+            JSONObject cluster = (JSONObject) arr.get(i);
+            if ((int) cluster.get(HUMAN_NUM) > HUMAN_LIMIT) {
+                return true;
+            }
+        }
+        return false;
     }
 }

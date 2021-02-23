@@ -15,7 +15,7 @@ public class JsonRequestUtils {
     // Feature values for humandistance JSON Request message
     private static final int MD_FX_VALUE = 823;
     private static final int MD_FY_VALUE = 825;
-    private static final int MD_CENTER_X_VALUE = 825;
+    private static final int MD_CENTER_X_VALUE = 323;
     private static final String MD_HUMAN_DIST_TYPE = "HUMAN_DISTANCE";
 
     private static String encodeByteArrayToBase64String(byte[] image) {
