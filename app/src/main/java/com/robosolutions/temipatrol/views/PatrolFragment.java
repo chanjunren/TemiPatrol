@@ -89,7 +89,7 @@ public class PatrolFragment extends Fragment {
 
     private void startCamera() {
         Timer timer = new Timer();
-        timer.schedule(new CameraTask(), 0, 3000);
+        timer.schedule(new CameraTask(), 0, 5000);
     }
 
     private void configureCamera(CameraView camera) {
@@ -98,7 +98,7 @@ public class PatrolFragment extends Fragment {
             public void onPictureTaken(@NonNull PictureResult result) {
                 super.onPictureTaken(result);
                 byte[] image = result.getData();
-                JSONObject requestMessage = JsonRequestUtils.generateJsonMessage(image);
+                JSONObject requestMessage = JsonRequestUtils.generateJsonMessageForMaskDetection(image);
                 sendImageToServerAndGetMaskDetectionResult(requestMessage);
             }
         });

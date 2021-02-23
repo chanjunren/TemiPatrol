@@ -13,6 +13,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.robosolutions.temipatrol.client.JsonPostman;
+import com.robosolutions.temipatrol.client.JsonRequestUtils;
 import com.robosolutions.temipatrol.client.JsonResponseTests;
 import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 
@@ -73,9 +74,9 @@ public class MainActivity extends AppCompatActivity {
     private void test() {
         JsonPostman postman = new JsonPostman(this);
         try {
-            boolean result = postman.isWearingMask(JsonResponseTests.MASK_RESPONSE_TEST);
-
-            Log.i(TAG, "IS WEARING MASK RESULT: " + result);
+//            boolean result = postman.isWearingMask(JsonResponseTests.MASK_RESPONSE_TEST);
+            String result = JsonRequestUtils.generateJsonMessageForHumanDistance(new byte[]{}).toString();
+            Log.i(TAG, "GENERATED JSON: " + result);
         } catch (Exception e) {
             Log.e(TAG, "test exception: " + e.toString());
         }
