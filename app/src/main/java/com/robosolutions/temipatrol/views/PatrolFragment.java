@@ -165,7 +165,7 @@ public class PatrolFragment extends Fragment {
         viewModel = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
         globalExecutorService = viewModel.getExecutorService();
         postmanExecutorService = Executors.newFixedThreadPool(20);
-        jsonPostman = new JsonPostman(getActivity());
+        jsonPostman = new JsonPostman();
         commands = (ArrayList<TemiVoiceCommand>) viewModel.getCommandLiveDataFromRepo().getValue();
 
         temiController = viewModel.getTemiController();
