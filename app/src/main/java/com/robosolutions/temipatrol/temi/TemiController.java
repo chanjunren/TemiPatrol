@@ -3,21 +3,20 @@ package com.robosolutions.temipatrol.temi;
 import android.util.Log;
 
 import com.robosolutions.temipatrol.model.TemiRoute;
-import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 import com.robotemi.sdk.Robot;
 import com.robotemi.sdk.TtsRequest;
-import com.robotemi.sdk.listeners.OnGoToLocationStatusChangedListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TemiController {
     private final String TAG = "TemiController";
-    private GlobalViewModel viewModel;
+    private TemiNavigator temiNavigator;
     private Robot temiRobot;
 
     public TemiController() {
         temiRobot = Robot.getInstance();
+        temiNavigator = new TemiNavigator(temiRobot);
     }
 
     public ArrayList<String> getLocationsFromTemi() {
@@ -41,5 +40,9 @@ public class TemiController {
     public void temiSpeak(String speechText) {
         TtsRequest ttsReqObj = TtsRequest.create(speechText, false);
         temiRobot.speak(ttsReqObj);
+    }
+
+    public void pausePatrol() {
+        temiNavigator.pausePatrol();
     }
 }
