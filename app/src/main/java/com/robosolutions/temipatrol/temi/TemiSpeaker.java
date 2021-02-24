@@ -9,14 +9,13 @@ import com.robotemi.sdk.TtsRequest;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TemiController {
-    private final String TAG = "TemiController";
-    private TemiNavigator temiNavigator;
+public class TemiSpeaker {
+    private final String TAG = "TemiSpeaker";
     private Robot temiRobot;
+    private TtsRequest currentRequest;
 
-    public TemiController() {
-        temiRobot = Robot.getInstance();
-        temiNavigator = new TemiNavigator(temiRobot);
+    public TemiSpeaker(Robot temiRobot) {
+        this.temiRobot = temiRobot;
     }
 
     public ArrayList<String> getLocationsFromTemi() {
@@ -32,17 +31,10 @@ public class TemiController {
         return !temiLocations.isEmpty() ? (ArrayList<String>) temiLocations: temp;
     }
 
-    public void patrolRoute(TemiRoute route) {
-        TemiNavigator temiNavigator = new TemiNavigator(temiRobot);
-        temiNavigator.patrolRoute(route);
-    }
-
     public void temiSpeak(String speechText) {
         TtsRequest ttsReqObj = TtsRequest.create(speechText, false);
         temiRobot.speak(ttsReqObj);
     }
 
-    public void pausePatrol() {
-        temiNavigator.pausePatrol();
-    }
+
 }

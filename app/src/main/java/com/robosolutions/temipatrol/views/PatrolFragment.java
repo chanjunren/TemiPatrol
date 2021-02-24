@@ -20,10 +20,15 @@ import com.otaliastudios.cameraview.PictureResult;
 import com.robosolutions.temipatrol.R;
 import com.robosolutions.temipatrol.client.JsonPostman;
 import com.robosolutions.temipatrol.client.JsonRequestUtils;
+import com.robosolutions.temipatrol.google.MediaHelper;
 import com.robosolutions.temipatrol.model.TemiRoute;
-import com.robosolutions.temipatrol.model.TemiVoiceCommand;
+import com.robosolutions.temipatrol.temi.TemiNavigator;
+import com.robosolutions.temipatrol.temi.TemiSpeaker;
 import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
+import com.robotemi.sdk.Robot;
+import com.robotemi.sdk.TtsRequest;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -31,23 +36,22 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import static com.robosolutions.temipatrol.google.MediaHelper.CLUSTER_DETECTED;
+import static com.robosolutions.temipatrol.google.MediaHelper.NOT_WEARING_MASK_DETECTED;
+
 
 // Page shown when Temi is patrolling
-public class PatrolFragment extends Fragment {
+public class PatrolFragment extends Fragment implements Robot.TtsListener {
     private static final String TAG = "PatrolFragment";
-    private static final int NOT_WEARING_MASK_DETECTED = 0;
-    private static final int CLUSTER_DETECTED = 1;
+
 
     private class PatrolCallbackTask implements Runnable {
         private final Runnable patrolTask;
@@ -80,6 +84,9 @@ public class PatrolFragment extends Fragment {
     private ExecutorService postmanExecutorService;
     private NavController navController;
     private JsonPostman jsonPostman;
+    private TemiNavigator temiNavigator;
+    private TemiSpeaker temiSpeaker;
+    private MediaHelper mediaHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -88,6 +95,9 @@ public class PatrolFragment extends Fragment {
         globalExecutorService = viewModel.getExecutorService();
         postmanExecutorService = Executors.newFixedThreadPool(20);
         jsonPostman = new JsonPostman(getActivity());
+        temiNavigator = viewModel.getTemiNavigator();
+        temiSpeaker = viewModel.getTemiSpeaker();
+        mediaHelper = new MediaHelper(getContext(), viewModel);
     }
 
     @Override
@@ -127,11 +137,11 @@ public class PatrolFragment extends Fragment {
                 boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(clusterReqMsg);
 
                 if (personNotWearingMask) {
-                    uploadImage(image, NOT_WEARING_MASK_DETECTED);
+                    mediaHelper.uploadImage(image, NOT_WEARING_MASK_DETECTED);
                     pauseAndMakeMaskAnnouncement();
                 }
                 if (clusterDetected) {
-                    uploadImage(image, CLUSTER_DETECTED);
+                    mediaHelper.uploadImage(image, CLUSTER_DETECTED);
                     pauseAndMakeClusterAnnouncement();
                 }
             }
@@ -139,41 +149,26 @@ public class PatrolFragment extends Fragment {
     }
 
     private void pauseAndMakeMaskAnnouncement() {
-//        ArrayList<viewModel.getCommandLiveDataFromRepo().getValue();
+        temiNavigator.pausePatrol();
+        String test = "Hi im the mask announcement";
+        temiSpeaker.temiSpeak(test);
     }
 
     private void pauseAndMakeClusterAnnouncement() {
-
+        temiNavigator.pausePatrol();
+        String test = "Hi im the cluster announcement";
+        temiSpeaker.temiSpeak(test);
     }
 
     private void startPatrol() {
         PatrolCallbackTask patrolTask = new PatrolCallbackTask(() -> {
             TemiRoute selectedRoute = viewModel.getSelectedRoute();
-            viewModel.getTemiController().patrolRoute(selectedRoute);
+            temiNavigator.patrolRoute(selectedRoute);
         });
         globalExecutorService.execute(patrolTask);
     }
 
-    private void uploadImage(byte[] image, int type) {
-        globalExecutorService.execute(() -> {
-            try {
-                Log.i(TAG, "UPLOADING FILE...");
-                File pictureFile = getOutputMediaFile(type);
-                if (pictureFile == null){
-                    Log.d(TAG, "Error creating media file, check storage permissions");
-                    return;
-                }
-                FileOutputStream fos = new FileOutputStream(pictureFile);
-                fos.write(image);
-                fos.close();
-                viewModel.uploadFileToViewModel(pictureFile);
-            } catch (FileNotFoundException e) {
-                Log.d(TAG, "File not found: " + e.getMessage());
-            } catch (IOException e) {
-                Log.d(TAG, "Error accessing file: " + e.getMessage());
-            }
-        });
-    }
+
 
     private Boolean sendImageToServerAndGetMaskDetectionResult(JSONObject requestJson) {
         // for testing
@@ -199,19 +194,11 @@ public class PatrolFragment extends Fragment {
         }
     }
 
-    /** Create a File for saving an image or video */
-    private File getOutputMediaFile(int type) throws IOException{
-        File outputDir = getContext().getCacheDir(); // context being the Activity pointer
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        if (type == NOT_WEARING_MASK_DETECTED) {
-            return new File(outputDir.getPath() + File.separator +
-                    "IMG_NO_MASK_"+ timeStamp + ".jpg");
-        } else if (type == CLUSTER_DETECTED) {
-            return new File(outputDir.getPath() + File.separator +
-                    "IMG_CLUSTER_"+ timeStamp + ".jpg");
-        } else {
-            return null;
+    @Override
+    public void onTtsStatusChanged(@NotNull TtsRequest ttsRequest) {
+        if (ttsRequest.getStatus() == TtsRequest.Status.COMPLETED) {
+            Log.i(TAG, "SPEECH COMPLETED");
+            temiNavigator.resumePatrol();
         }
     }
 }
