@@ -52,10 +52,10 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
         executorService = viewModel.getExecutorService();
 
         //test
-        List<TemiVoiceCommand> commands = viewModel.getCommandLiveDataFromRepo().getValue();
-        for (TemiVoiceCommand command: commands) {
-            Log.i(TAG, "Command: " + command.getCommand());
-        }
+//        List<TemiVoiceCommand> commands = viewModel.getCommandLiveDataFromRepo().getValue();
+//        for (TemiVoiceCommand command: commands) {
+//            Log.i(TAG, "Command: " + command.getCommand());
+//        }
 
         return inflater.inflate(R.layout.home_fragment, container, false);
     }

@@ -11,6 +11,7 @@ import com.robosolutions.temipatrol.db.TemiVoiceCmdDao;
 import com.robosolutions.temipatrol.model.TemiRoute;
 import com.robosolutions.temipatrol.model.TemiVoiceCommand;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TemiPatrolRepository {
@@ -58,6 +59,9 @@ public class TemiPatrolRepository {
     public LiveData<List<TemiVoiceCommand>> getAllCmdsFromDb() {
         if (commands.getValue() == null) {
             commands = mTemiVoiceCmdDao.getVoiceCmdsFromDb();
+            if (commands.getValue() == null) {
+                commands = getDefaultCmds(generateDefaultCmds());
+            }
         }
         Log.i(TAG, "returning " + commands.getValue());
         return commands;
@@ -75,5 +79,26 @@ public class TemiPatrolRepository {
             Log.i(TAG, "Deleting command...");
             mTemiVoiceCmdDao.deleteVoiceCmd(temiVoiceCommand);
         });
+    }
+
+    private List<TemiVoiceCommand> generateDefaultCmds() {
+        TemiVoiceCommand voiceCommand1 = new TemiVoiceCommand("I'm message 1", 0);
+        TemiVoiceCommand voiceCommand2 = new TemiVoiceCommand("I'm message 2", 1);
+        TemiVoiceCommand voiceCommand3 = new TemiVoiceCommand("I'm message 3", 2);
+        TemiVoiceCommand voiceCommand4 = new TemiVoiceCommand("I'm message 4", 3);
+        List<TemiVoiceCommand> cmds = new ArrayList<>();
+        cmds.add(voiceCommand1);
+        cmds.add(voiceCommand2);
+        cmds.add(voiceCommand3);
+        cmds.add(voiceCommand4);
+        return cmds;
+    }
+
+    private LiveData<List<TemiVoiceCommand>> getDefaultCmds(List<TemiVoiceCommand> cmds) {
+        for (TemiVoiceCommand cmd: cmds) {
+            insertTemiVoiceCmdIntoDb(cmd);
+        }
+        return mTemiVoiceCmdDao.getVoiceCmdsFromDb();
+
     }
 }

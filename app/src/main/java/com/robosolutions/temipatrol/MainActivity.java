@@ -26,11 +26,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        test();
         GlobalViewModel viewModel = new ViewModelProvider(this).get(GlobalViewModel.class);
 
         viewModel.initialize();
-        Log.i(TAG, "PATH: " + getFilesDir().getPath());
 
         setContentView(R.layout.activity_main);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -69,22 +67,5 @@ public class MainActivity extends AppCompatActivity {
 
     private void showErrorMsg(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    private void test() {
-        JsonPostman postman = new JsonPostman(this);
-        try {
-//            boolean result = postman.isWearingMask(JsonResponseTests.MASK_RESPONSE_TEST);
-//            String result = JsonRequestUtils.generateJsonMessageForHumanDistance(new byte[]{}).toString();
-            boolean test_1_result = postman.isClusterDetected(JsonResponseTests.HD_RESPONSE_TEST_1);
-            boolean test_2_result = postman.isClusterDetected(JsonResponseTests.HD_RESPONSE_TEST_2);
-            boolean test_3_result = postman.isClusterDetected(JsonResponseTests.HD_RESPONSE_TEST_3);
-            Log.i(TAG, "TEST 1 RESULT: " + test_1_result);
-            Log.i(TAG, "TEST 2 RESULT: " + test_2_result);
-            Log.i(TAG, "TEST 3 RESULT: " + test_3_result);
-
-        } catch (Exception e) {
-            Log.e(TAG, "test exception: " + e.toString());
-        }
     }
 }

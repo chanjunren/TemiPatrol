@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import com.robosolutions.temipatrol.client.JsonPostman;
 import com.robosolutions.temipatrol.client.JsonRequestUtils;
 import com.robosolutions.temipatrol.model.TemiRoute;
 import com.robosolutions.temipatrol.model.TemiVoiceCommand;
+import com.robosolutions.temipatrol.temi.TemiController;
 import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 
 import org.json.JSONObject;
@@ -33,10 +35,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -49,20 +49,94 @@ public class PatrolFragment extends Fragment {
     private static final int NOT_WEARING_MASK_DETECTED = 0;
     private static final int CLUSTER_DETECTED = 1;
 
-    private class PatrolCallbackTask implements Runnable {
-        private final Runnable patrolTask;
+    private class AnnouncementCallbackRunnable implements Runnable {
+        private Runnable announcementTask;
 
-        void navigateToHomePage() {
-            navController.navigate(R.id.action_patrolFragment_to_homeFragment);
+        void resumeNavigation() {
+            patrolCallbackRunnable.resume();
         }
-        PatrolCallbackTask(Runnable patrolTask) {
-            this.patrolTask = patrolTask;
+
+        public AnnouncementCallbackRunnable(Runnable announcementTask) {
+            this.announcementTask = announcementTask;
         }
 
         @Override
         public void run() {
-            patrolTask.run();
-            navigateToHomePage();
+            // Your code here
+            announcementTask.run();
+            resumeNavigation();
+
+        }
+    }
+
+    private class PatrolCallbackRunnable implements Runnable  {
+        private final Runnable patrolTask;
+        private final Object pauseLock;
+        private boolean running, paused;
+
+        void navigateToHomePage() {
+            navController.navigate(R.id.action_patrolFragment_to_homeFragment);
+        }
+        PatrolCallbackRunnable(Runnable patrolTask) {
+            this.patrolTask = patrolTask;
+            pauseLock = new Object();
+            running = true;
+            paused = false;
+        }
+
+        @Override
+        public void run() {
+            while (running) {
+                synchronized (pauseLock) {
+                    if (!running) { // may have changed while waiting to
+                        // synchronize on pauseLock
+                        break;
+                    }
+                    if (paused) {
+                        try {
+                            synchronized (pauseLock) {
+                                pauseLock.wait(); // will cause this Thread to block until
+                                // another thread calls pauseLock.notifyAll()
+                                // Note that calling wait() will
+                                // relinquish the synchronized lock that this
+                                // thread holds on pauseLock so another thread
+                                // can acquire the lock to call notifyAll()
+                                // (link with explanation below this code)
+                            }
+                        } catch (InterruptedException ex) {
+                            break;
+                        }
+                        if (!running) { // running might have changed since we paused
+                            break;
+                        }
+                    }
+                }
+                // Your code here
+                patrolTask.run();
+                navigateToHomePage();
+            }
+        }
+
+        public void stop() {
+            running = false;
+            // you might also want to interrupt() the Thread that is
+            // running this Runnable, too, or perhaps call:
+            resume();
+            // to unblock
+        }
+
+        public void pause() {
+            // you may want to throw an IllegalStateException if !running
+            Log.i(TAG, "Thread Pause called");
+            paused = true;
+        }
+
+        public void resume() {
+            Log.i(TAG, "Thread Resume called");
+            synchronized (pauseLock) {
+                paused = false;
+                pauseLock.notifyAll(); // Unblocks thread
+            }
         }
     }
 
@@ -78,8 +152,12 @@ public class PatrolFragment extends Fragment {
     private CameraView camera;
     private ExecutorService globalExecutorService;
     private ExecutorService postmanExecutorService;
+    private ArrayList<TemiVoiceCommand> commands;
     private NavController navController;
     private JsonPostman jsonPostman;
+    private TemiController temiController;
+
+    private PatrolCallbackRunnable patrolCallbackRunnable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -88,6 +166,9 @@ public class PatrolFragment extends Fragment {
         globalExecutorService = viewModel.getExecutorService();
         postmanExecutorService = Executors.newFixedThreadPool(20);
         jsonPostman = new JsonPostman(getActivity());
+        commands = (ArrayList<TemiVoiceCommand>) viewModel.getCommandLiveDataFromRepo().getValue();
+
+        temiController = viewModel.getTemiController();
     }
 
     @Override
@@ -106,11 +187,17 @@ public class PatrolFragment extends Fragment {
         camera.setLifecycleOwner(getViewLifecycleOwner());
 
         configureCamera(camera);
-        startCamera();
+
+//        takePicturesContinuously();
         startPatrol();
+
+        Handler handler = new Handler();
+        handler.postDelayed(() -> pauseAndMakeMaskAnnouncement(), 10000);
+        handler.postDelayed(() -> pauseAndMakeClusterAnnouncement(), 15000);
+        handler.postDelayed(() -> pauseAndMakeMaskAnnouncement(), 20000);
     }
 
-    private void startCamera() {
+    private void takePicturesContinuously() {
         Timer timer = new Timer();
         timer.schedule(new CameraTask(), 0, 1000);
     }
@@ -122,9 +209,9 @@ public class PatrolFragment extends Fragment {
                 super.onPictureTaken(result);
                 byte[] image = result.getData();
                 JSONObject maskReqMsg = JsonRequestUtils.generateJsonMessageForMaskDetection(image);
-                boolean personNotWearingMask = sendImageToServerAndGetMaskDetectionResult(maskReqMsg);
+                boolean personNotWearingMask = postMaskDetectionReq(maskReqMsg);
                 JSONObject clusterReqMsg = JsonRequestUtils.generateJsonMessageForHumanDistance(image);
-                boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(clusterReqMsg);
+                boolean clusterDetected = postHumanDistanceReq(clusterReqMsg);
 
                 if (personNotWearingMask) {
                     uploadImage(image, NOT_WEARING_MASK_DETECTED);
@@ -139,19 +226,34 @@ public class PatrolFragment extends Fragment {
     }
 
     private void pauseAndMakeMaskAnnouncement() {
-//        ArrayList<viewModel.getCommandLiveDataFromRepo().getValue();
+        Log.i(TAG, "pauseAndMakeMaskAnnouncement called!");
+        patrolCallbackRunnable.pause();
+        AnnouncementCallbackRunnable announcementCallbackRunnable = new AnnouncementCallbackRunnable(() -> {
+            TemiVoiceCommand voiceCommand = new TemiVoiceCommand("Hi Im the mask announcement",
+                    0);
+            temiController.temiSpeak(voiceCommand.getCommand());
+        });
+        globalExecutorService.execute(announcementCallbackRunnable);
+
     }
 
     private void pauseAndMakeClusterAnnouncement() {
+        Log.i(TAG, "pauseAndMakeClusterAnnouncement called!");
+        patrolCallbackRunnable.pause();
+        AnnouncementCallbackRunnable announcementCallbackRunnable = new AnnouncementCallbackRunnable(() -> {
+            TemiVoiceCommand voiceCommand = new TemiVoiceCommand("Hi Im the cluster announcement", 0);
+            temiController.temiSpeak(voiceCommand.getCommand());
+        });
+        globalExecutorService.execute(announcementCallbackRunnable);
 
     }
 
     private void startPatrol() {
-        PatrolCallbackTask patrolTask = new PatrolCallbackTask(() -> {
+        patrolCallbackRunnable = new PatrolCallbackRunnable(() -> {
             TemiRoute selectedRoute = viewModel.getSelectedRoute();
             viewModel.getTemiController().patrolRoute(selectedRoute);
         });
-        globalExecutorService.execute(patrolTask);
+        globalExecutorService.execute(patrolCallbackRunnable);
     }
 
     private void uploadImage(byte[] image, int type) {
@@ -175,7 +277,7 @@ public class PatrolFragment extends Fragment {
         });
     }
 
-    private Boolean sendImageToServerAndGetMaskDetectionResult(JSONObject requestJson) {
+    private Boolean postMaskDetectionReq(JSONObject requestJson) {
         // for testing
         Future<Boolean> result = postmanExecutorService.submit(() ->
                 jsonPostman.postMaskDetectionRequestAndGetResult(requestJson));
@@ -187,7 +289,7 @@ public class PatrolFragment extends Fragment {
         }
     }
 
-    private Boolean sendImageToServerAndGetClusterDetectionResult(JSONObject requestJson) {
+    private Boolean postHumanDistanceReq(JSONObject requestJson) {
         // for testing
         Future<Boolean> result = postmanExecutorService.submit(() ->
                 jsonPostman.postHumanDistanceRequestAndGetResult(requestJson));
