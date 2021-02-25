@@ -30,7 +30,8 @@ public class JsonPostman {
     private static final String MASK_VALUE = "name";
     private static final String WEARING_MASK = "Face Mask";
     private static final String NOT_WEARING_MASK = "No Face Mask";
-    private static final String MASK_RESPONSE_ARRAY_NAME = "FACE_MASK_DETECTION";
+    private static final String MASK_RESPONSE_ARRAY_NAME = "FACEMASK_DETECTION";
+    private static final String MASK_BOUNDING_POLY = "boundingPoly";
 
     private static final String DISTANCE_RESPONSE_ARRAY_NAME = "HUMAN_DISTANCE";
     private static final String HUMAN_NUM = "human_num";
@@ -43,7 +44,6 @@ public class JsonPostman {
 
     public JsonPostman() {
         try {
-            setupMaskDetectionConnection();
             setupHumanDistanceConnection();
         } catch (Exception e) {
             Log.e(TAG, "JsonPostman init exception: " + e.toString());
@@ -76,6 +76,7 @@ public class JsonPostman {
     // True if wearing mask, false otherwise
     public boolean postMaskDetectionRequestAndGetResult(JSONObject requestJson) {
         try {
+            setupMaskDetectionConnection();
             Log.i(TAG, "=== SENT ===\n" + requestJson.toString());
             OutputStream os = maskDetectionConnection.getOutputStream();
             byte[] input = requestJson.toString().getBytes("utf-8");
@@ -98,11 +99,22 @@ public class JsonPostman {
 
     public boolean isWearingMask(String jsonResponse) throws JSONException {
         JSONObject response = new JSONObject(jsonResponse);
-        JSONArray arr = response.getJSONArray(MASK_RESPONSE_ARRAY_NAME);
-        for (int i = 0; i < arr.length(); i++) {
-            JSONObject person = (JSONObject) arr.get(i);
-            if (person.get(MASK_VALUE).equals(NOT_WEARING_MASK)) {
-                return false;
+        if (response.has(MASK_RESPONSE_ARRAY_NAME)) {
+            JSONArray arr = response.getJSONArray(MASK_RESPONSE_ARRAY_NAME);
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject arrObject = (JSONObject) arr.get(i);
+                Log.i(TAG, "Person: " + arrObject.toString());
+                if (arrObject.has(MASK_BOUNDING_POLY)) {
+                    JSONObject result = new JSONObject(arrObject.get(MASK_BOUNDING_POLY).toString());
+
+                    if(result.has(MASK_VALUE)) {
+                        Log.i(TAG, "RESULT VALUE: " + result.get(MASK_VALUE));
+                        if (result.get(MASK_VALUE).equals(NOT_WEARING_MASK)) {
+                            return false;
+                        }
+                    }
+
+                }
             }
         }
         return true;

@@ -106,7 +106,7 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
 
     private void startCamera() {
         Timer timer = new Timer();
-        timer.schedule(new CameraTask(), 0, 1000);
+        timer.schedule(new CameraTask(), 0, 5000);
     }
 
     private void configureCamera(CameraView camera) {
@@ -116,18 +116,19 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
                 super.onPictureTaken(result);
                 byte[] image = result.getData();
                 JSONObject maskReqMsg = JsonRequestUtils.generateJsonMessageForMaskDetection(image);
-                boolean personNotWearingMask = sendImageToServerAndGetMaskDetectionResult(maskReqMsg);
-                JSONObject clusterReqMsg = JsonRequestUtils.generateJsonMessageForHumanDistance(image);
-                boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(clusterReqMsg);
+                boolean isWearingMask = sendImageToServerAndGetMaskDetectionResult(maskReqMsg);
+                Log.i(TAG, "Value received: " + isWearingMask);
+//                JSONObject clusterReqMsg = JsonRequestUtils.generateJsonMessageForHumanDistance(image);
+//                boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(clusterReqMsg);
 
-                if (personNotWearingMask) {
+                if (!isWearingMask) {
                     mediaHelper.uploadImage(image, NOT_WEARING_MASK_DETECTED);
                     pauseAndMakeMaskAnnouncement();
                 }
-                if (clusterDetected) {
-                    mediaHelper.uploadImage(image, CLUSTER_DETECTED);
-                    pauseAndMakeClusterAnnouncement();
-                }
+//                if (clusterDetected) {
+//                    mediaHelper.uploadImage(image, CLUSTER_DETECTED);
+//                    pauseAndMakeClusterAnnouncement();
+//                }
             }
         });
     }
