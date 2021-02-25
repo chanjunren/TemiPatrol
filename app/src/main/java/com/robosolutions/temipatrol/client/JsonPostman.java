@@ -1,6 +1,5 @@
 package com.robosolutions.temipatrol.client;
 
-import android.net.wifi.WifiConfiguration;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -18,7 +17,7 @@ import java.net.URL;
 
 public class JsonPostman {
     private static final String TAG = "JsonPostman";
-    private static final String AWS_HOST = "http://54.255.249.46";
+    private static final String AWS_HOST = "http://54.151.241.216";
     private static final int MASK_DETECTION_PORT = 5000;
     private static final int HUMAN_DISTANCE_PORT = 5002;
 

@@ -99,14 +99,8 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
         camera.setLifecycleOwner(getViewLifecycleOwner());
         initializeVoiceCmds();
         configureCamera(camera);
-//        startCamera();
+        startCamera();
         startPatrol();
-
-        Handler handler = new Handler();
-        handler.postDelayed(() -> pauseAndMakeClusterAnnouncement(), 10000);
-        handler.postDelayed(() -> pauseAndMakeMaskAnnouncement(), 20000);
-        handler.postDelayed(() -> pauseAndMakeClusterAnnouncement(), 30000);
-
     }
 
 
@@ -121,19 +115,19 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
             public void onPictureTaken(@NonNull PictureResult result) {
                 super.onPictureTaken(result);
                 byte[] image = result.getData();
-//                JSONObject maskReqMsg = JsonRequestUtils.generateJsonMessageForMaskDetection(image);
-//                boolean personNotWearingMask = sendImageToServerAndGetMaskDetectionResult(maskReqMsg);
-//                JSONObject clusterReqMsg = JsonRequestUtils.generateJsonMessageForHumanDistance(image);
-//                boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(clusterReqMsg);
-//
-//                if (personNotWearingMask) {
-//                    mediaHelper.uploadImage(image, NOT_WEARING_MASK_DETECTED);
-//                    pauseAndMakeMaskAnnouncement();
-//                }
-//                if (clusterDetected) {
-//                    mediaHelper.uploadImage(image, CLUSTER_DETECTED);
-//                    pauseAndMakeClusterAnnouncement();
-//                }
+                JSONObject maskReqMsg = JsonRequestUtils.generateJsonMessageForMaskDetection(image);
+                boolean personNotWearingMask = sendImageToServerAndGetMaskDetectionResult(maskReqMsg);
+                JSONObject clusterReqMsg = JsonRequestUtils.generateJsonMessageForHumanDistance(image);
+                boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(clusterReqMsg);
+
+                if (personNotWearingMask) {
+                    mediaHelper.uploadImage(image, NOT_WEARING_MASK_DETECTED);
+                    pauseAndMakeMaskAnnouncement();
+                }
+                if (clusterDetected) {
+                    mediaHelper.uploadImage(image, CLUSTER_DETECTED);
+                    pauseAndMakeClusterAnnouncement();
+                }
             }
         });
     }
