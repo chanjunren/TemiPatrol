@@ -41,8 +41,6 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
     private HashMap<String, TemiRoute> routeMap;
     private ArrayList<TemiRoute> routes;
 
-    private ArrayList<TemiVoiceCommand> temiVoiceCommands;
-
     private ExecutorService executorService;
 
     @Override
@@ -52,9 +50,6 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
         routeMap = new HashMap<>();
         routes = new ArrayList<>();
         executorService = viewModel.getExecutorService();
-
-        temiVoiceCommands = new ArrayList<>();
-
         return inflater.inflate(R.layout.home_fragment, container, false);
     }
 
@@ -76,23 +71,9 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
         routeRv = view.findViewById(R.id.routeRv);
         initializeRecylerView();
         attachLiveDataToRecyclerView();
-
-        initializeVoiceCmds();
-
-
     }
 
-    private void initializeVoiceCmds() {
-        final Observer<List<TemiVoiceCommand>> voiceCmdListener = voiceCmds -> {
-            temiVoiceCommands.clear();
-            for (TemiVoiceCommand voiceCmd: voiceCmds) {
-                this.temiVoiceCommands.add(voiceCmd);
-            }
-            Log.i(TAG, "Voice Cmds: " + temiVoiceCommands.toString());
-        };
 
-        viewModel.getCommandLiveDataFromRepo().observe(getViewLifecycleOwner(), voiceCmdListener);
-    }
 
     private void initializeRecylerView() {
         Log.i(TAG, "buildRecyclerView called");

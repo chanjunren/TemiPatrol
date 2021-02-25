@@ -145,23 +145,23 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
         } else if (v.getId() == R.id.updateBtn1) {
             String command = commandEt1.getText().toString();
             updateVoiceCmd(command, 0);
-            hideKeyboard(v);
+            hideKeyboard();
         } else if (v.getId() == R.id.updateBtn2) {
             String command = commandEt2.getText().toString();
             updateVoiceCmd(command, 1);
-            hideKeyboard(v);
+            hideKeyboard();
         } else if (v.getId() == R.id.updateBtn3) {
             String command = commandEt3.getText().toString();
             updateVoiceCmd(command, 2);
-            hideKeyboard(v);
+            hideKeyboard();
         } else if (v.getId() == R.id.updateBtn4) {
             String command = commandEt4.getText().toString();
             updateVoiceCmd(command, 3);
-            hideKeyboard(v);
+            hideKeyboard();
         }
     }
 
-    private void hideKeyboard(View view) {
+    private void hideKeyboard() {
         // Check if no view has focus:
         InputMethodManager imm =
                 (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);

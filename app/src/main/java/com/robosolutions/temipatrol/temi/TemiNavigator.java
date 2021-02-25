@@ -9,8 +9,6 @@ import com.robotemi.sdk.listeners.OnGoToLocationStatusChangedListener;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-
 public class TemiNavigator implements OnGoToLocationStatusChangedListener {
     private final String TAG = "TemiNavigator";
     private Robot robot;
@@ -51,9 +49,6 @@ public class TemiNavigator implements OnGoToLocationStatusChangedListener {
     @Override
     public void onGoToLocationStatusChanged(@NotNull String destination, @NotNull String status,
                                             int descriptionId, @NotNull String navStatus) {
-        String threadName = Thread.currentThread().getName();
-        Log.i(TAG, "OnGoToLocationStatusChanged thread: " + threadName);
-//        Log.i(TAG, "status updated! ");
         if (status.equals(OnGoToLocationStatusChangedListener.COMPLETE)) {
             Log.i(TAG, "Destination reached!");
             currentIndex++;
