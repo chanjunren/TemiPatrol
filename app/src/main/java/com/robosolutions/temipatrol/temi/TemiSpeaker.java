@@ -35,6 +35,4 @@ public class TemiSpeaker {
         TtsRequest ttsReqObj = TtsRequest.create(speechText, false);
         temiRobot.speak(ttsReqObj);
     }
-
-
 }
