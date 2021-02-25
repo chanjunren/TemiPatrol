@@ -3,6 +3,7 @@ package com.robosolutions.temipatrol.temi;
 import android.util.Log;
 
 import com.robosolutions.temipatrol.model.TemiRoute;
+import com.robosolutions.temipatrol.views.PatrolFragment;
 import com.robotemi.sdk.Robot;
 import com.robotemi.sdk.listeners.OnGoToLocationStatusChangedListener;
 
@@ -13,69 +14,50 @@ import java.util.ArrayList;
 public class TemiNavigator implements OnGoToLocationStatusChangedListener {
     private final String TAG = "TemiNavigator";
     private Robot robot;
-    private boolean hasArrived;
     private TemiRoute currentPatrollingRoute;
-    private int nextDestinationIndex;
+    private int currentIndex;
+    private PatrolFragment patrolFragment;
 
-    public TemiNavigator(Robot robot) {
+    public TemiNavigator(Robot robot, PatrolFragment patrolFragment) {
         this.robot = robot;
-        hasArrived = false;
         robot.addOnGoToLocationStatusChangedListener(this);
+        this.currentIndex = -1;
+        this.patrolFragment = patrolFragment;
     }
 
-    public synchronized void patrolRoute(TemiRoute route) {
+    public void patrolRoute(TemiRoute route) {
         this.currentPatrollingRoute = route;
-        try {
-            ArrayList<String> destinations = route.getDestinations();
-            for (int i = 0; i < destinations.size(); i++) {
-                Log.i(TAG, "Going to " + destinations.get(i) + " ...");
-                nextDestinationIndex = i;
-                Log.i(TAG, "Updated nextDestinationIndex to " + i);
-                robot.goTo(destinations.get(i));
-                hasArrived = false;
-                while(!hasArrived) {
-                    Log.i(TAG, "Waiting...");
-                    this.wait();
-                }
-                Log.i(TAG, "Continuing...");
-            }
-        } catch (InterruptedException e) {
-            Log.e(TAG, "Interrupted exception while patrolling: " + e.toString());
-        } finally {
-            Log.i(TAG, "Patrol completed");
+        this.currentIndex = 0;
+        goToNextDestination();
+    }
+
+    private void goToNextDestination() {
+        if (currentIndex >= currentPatrollingRoute.getDestinations().size()) {
+            // Reached final destination
+            patrolFragment.navigateToHomePage();
+            return;
         }
+        robot.goTo(currentPatrollingRoute.getDestinations().get(currentIndex));
     }
 
     public void pausePatrol() {
         robot.stopMovement();
-        currentPatrollingRoute = getRemainingRoute();
     }
 
     public void resumePatrol() {
-        patrolRoute(currentPatrollingRoute);
-    }
-
-    public TemiRoute getRemainingRoute() {
-        ArrayList<String> remainingRoute = currentPatrollingRoute.getDestinations();
-        for (int i = 0; i < nextDestinationIndex; i++) {
-            remainingRoute.remove(i);
-        }
-        Log.i(TAG, "Remaining locations: " + remainingRoute.toString());
-        return new TemiRoute(currentPatrollingRoute.getRouteTitle(),
-                remainingRoute);
-    }
-
-    private synchronized void continueToNextDestination() {
-        this.hasArrived = true;
-        this.notify();
+        goToNextDestination();
     }
 
     @Override
     public void onGoToLocationStatusChanged(@NotNull String destination, @NotNull String status,
                                             int descriptionId, @NotNull String navStatus) {
+        String threadName = Thread.currentThread().getName();
+        Log.i(TAG, "OnGoToLocationStatusChanged thread: " + threadName);
+//        Log.i(TAG, "status updated! ");
         if (status.equals(OnGoToLocationStatusChangedListener.COMPLETE)) {
             Log.i(TAG, "Destination reached!");
-            continueToNextDestination();
+            currentIndex++;
+            goToNextDestination();
         }
     }
 }

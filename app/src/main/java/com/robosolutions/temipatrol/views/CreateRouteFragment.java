@@ -58,7 +58,7 @@ public class CreateRouteFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
-        temiSpeaker = viewModel.getTemiSpeaker();
+        temiSpeaker = new TemiSpeaker(viewModel.getTemiRobot());
         route = new ArrayList<>();
         deletedDestination = null;
     }

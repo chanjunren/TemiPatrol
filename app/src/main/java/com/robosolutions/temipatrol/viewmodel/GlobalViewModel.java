@@ -33,12 +33,11 @@ public class GlobalViewModel extends AndroidViewModel {
     private final String TAG = "GlobalViewModel";
     private static int MAX_THREAD_COUNT = 5;
     private DriveServiceHelper mDriveServiceHelper;
-    private TemiSpeaker temiSpeaker;
-    private TemiNavigator temiNavigator;
     private TemiPatrolRepository temiPatrolRepo;
     private LiveData<List<TemiRoute>> routeLiveData;
     private ExecutorService executorService;
     private HashMap<String, String> fileIdMap;
+    private Robot temiRobot;
 
     private TemiRoute selectedRoute;
 
@@ -59,9 +58,7 @@ public class GlobalViewModel extends AndroidViewModel {
     }
 
     public void initializeTemiRobot() {
-        Robot robot = Robot.getInstance();
-        temiSpeaker = new TemiSpeaker(robot);
-        temiNavigator = new TemiNavigator(robot);
+        temiRobot = Robot.getInstance();
     }
 
     public void initializeGoogleServices(GoogleSignInAccount googleSignInAccount, Context context) {
@@ -80,10 +77,6 @@ public class GlobalViewModel extends AndroidViewModel {
 
     public DriveServiceHelper getmDriveServiceHelper() {
         return mDriveServiceHelper;
-    }
-
-    public TemiSpeaker getTemiSpeaker() {
-        return temiSpeaker;
     }
 
     public ExecutorService getExecutorService() {
@@ -141,7 +134,7 @@ public class GlobalViewModel extends AndroidViewModel {
         this.selectedRoute = selectedRoute;
     }
 
-    public TemiNavigator getTemiNavigator() {
-        return temiNavigator;
+    public Robot getTemiRobot() {
+        return temiRobot;
     }
 }

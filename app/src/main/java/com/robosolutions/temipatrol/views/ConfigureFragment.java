@@ -49,7 +49,7 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
-        temiSpeaker = viewModel.getTemiSpeaker();
+        temiSpeaker = new TemiSpeaker(viewModel.getTemiRobot());
         TemiVoiceCommand[] tempArr = {null, null, null, null};
         temiVoiceCommands = new ArrayList<>(Arrays.asList(tempArr));
         tvMap = new HashMap<>();

@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,13 +31,6 @@ import com.robotemi.sdk.TtsRequest;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
@@ -51,25 +45,6 @@ import static com.robosolutions.temipatrol.google.MediaHelper.NOT_WEARING_MASK_D
 // Page shown when Temi is patrolling
 public class PatrolFragment extends Fragment implements Robot.TtsListener {
     private static final String TAG = "PatrolFragment";
-
-
-    private class PatrolCallbackTask implements Runnable {
-        private final Runnable patrolTask;
-
-        void navigateToHomePage() {
-            navController.navigate(R.id.action_patrolFragment_to_homeFragment);
-        }
-        PatrolCallbackTask(Runnable patrolTask) {
-            this.patrolTask = patrolTask;
-        }
-
-        @Override
-        public void run() {
-            patrolTask.run();
-            navigateToHomePage();
-        }
-    }
-
 
     private class CameraTask extends TimerTask {
         @Override
@@ -95,9 +70,11 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
         globalExecutorService = viewModel.getExecutorService();
         postmanExecutorService = Executors.newFixedThreadPool(20);
         jsonPostman = new JsonPostman();
-        temiNavigator = viewModel.getTemiNavigator();
-        temiSpeaker = viewModel.getTemiSpeaker();
+        temiNavigator = new TemiNavigator(viewModel.getTemiRobot(), this);
+        temiSpeaker = new TemiSpeaker(viewModel.getTemiRobot());
         mediaHelper = new MediaHelper(getContext(), viewModel);
+
+        Robot.getInstance().addTtsListener(this);
     }
 
     @Override
@@ -116,9 +93,16 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
         camera.setLifecycleOwner(getViewLifecycleOwner());
 
         configureCamera(camera);
-        startCamera();
+//        startCamera();
         startPatrol();
+
+        Handler handler = new Handler();
+        handler.postDelayed(() -> pauseAndMakeClusterAnnouncement(), 10000);
+        handler.postDelayed(() -> pauseAndMakeMaskAnnouncement(), 20000);
+        handler.postDelayed(() -> pauseAndMakeClusterAnnouncement(), 30000);
+
     }
+
 
     private void startCamera() {
         Timer timer = new Timer();
@@ -131,19 +115,19 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
             public void onPictureTaken(@NonNull PictureResult result) {
                 super.onPictureTaken(result);
                 byte[] image = result.getData();
-                JSONObject maskReqMsg = JsonRequestUtils.generateJsonMessageForMaskDetection(image);
-                boolean personNotWearingMask = sendImageToServerAndGetMaskDetectionResult(maskReqMsg);
-                JSONObject clusterReqMsg = JsonRequestUtils.generateJsonMessageForHumanDistance(image);
-                boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(clusterReqMsg);
-
-                if (personNotWearingMask) {
-                    mediaHelper.uploadImage(image, NOT_WEARING_MASK_DETECTED);
-                    pauseAndMakeMaskAnnouncement();
-                }
-                if (clusterDetected) {
-                    mediaHelper.uploadImage(image, CLUSTER_DETECTED);
-                    pauseAndMakeClusterAnnouncement();
-                }
+//                JSONObject maskReqMsg = JsonRequestUtils.generateJsonMessageForMaskDetection(image);
+//                boolean personNotWearingMask = sendImageToServerAndGetMaskDetectionResult(maskReqMsg);
+//                JSONObject clusterReqMsg = JsonRequestUtils.generateJsonMessageForHumanDistance(image);
+//                boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(clusterReqMsg);
+//
+//                if (personNotWearingMask) {
+//                    mediaHelper.uploadImage(image, NOT_WEARING_MASK_DETECTED);
+//                    pauseAndMakeMaskAnnouncement();
+//                }
+//                if (clusterDetected) {
+//                    mediaHelper.uploadImage(image, CLUSTER_DETECTED);
+//                    pauseAndMakeClusterAnnouncement();
+//                }
             }
         });
     }
@@ -161,11 +145,10 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
     }
 
     private void startPatrol() {
-        PatrolCallbackTask patrolTask = new PatrolCallbackTask(() -> {
+        globalExecutorService.execute(() -> {
             TemiRoute selectedRoute = viewModel.getSelectedRoute();
             temiNavigator.patrolRoute(selectedRoute);
         });
-        globalExecutorService.execute(patrolTask);
     }
 
 
@@ -200,5 +183,9 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
             Log.i(TAG, "SPEECH COMPLETED");
             temiNavigator.resumePatrol();
         }
+    }
+
+    public void navigateToHomePage() {
+        navController.navigate(R.id.action_patrolFragment_to_homeFragment);
     }
 }
