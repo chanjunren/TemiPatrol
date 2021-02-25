@@ -14,10 +14,31 @@
             android:id="@+id/routeRv"
             android:layout_width="581dp"
             android:layout_height="197dp"
-            android:layout_marginStart="348dp"
-            android:layout_marginTop="176dp"
+            android:layout_marginStart="92dp"
+            android:layout_marginTop="288dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <com.fangxu.allangleexpandablebutton.AllAngleExpandableButton
+            android:id="@+id/homeMenuButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:aebAnimDurationMillis="175"
+            app:aebButtonElevation="4dp"
+            app:aebButtonGapDp="40dp"
+            app:aebEndAngleDegree="340"
+            app:aebIsSelectionMode="false"
+            app:aebMainButtonSizeDp="100dp"
+            app:aebRippleEffect="true"
+            app:aebStartAngleDegree="200"
+            app:aebSubButtonSizeDp="100dp"
+            app:aebBlurBackground="true"
+            app:aebMainButtonTextColor="@color/black"
+            app:aebSubButtonTextColor="@color/black"
+            android:layout_marginStart="540dp"
+            android:layout_marginTop="64dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <Button
             android:id="@+id/configureBtn"
