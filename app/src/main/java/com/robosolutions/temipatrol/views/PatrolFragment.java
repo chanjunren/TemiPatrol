@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +20,15 @@ import com.otaliastudios.cameraview.PictureResult;
 import com.robosolutions.temipatrol.R;
 import com.robosolutions.temipatrol.client.JsonPostman;
 import com.robosolutions.temipatrol.client.JsonRequestUtils;
+import com.robosolutions.temipatrol.google.MediaHelper;
 import com.robosolutions.temipatrol.model.TemiRoute;
-import com.robosolutions.temipatrol.model.TemiVoiceCommand;
-import com.robosolutions.temipatrol.temi.TemiController;
+import com.robosolutions.temipatrol.temi.TemiNavigator;
+import com.robosolutions.temipatrol.temi.TemiSpeaker;
 import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
+import com.robotemi.sdk.Robot;
+import com.robotemi.sdk.TtsRequest;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -33,7 +36,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -42,101 +44,29 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import static com.robosolutions.temipatrol.google.MediaHelper.CLUSTER_DETECTED;
+import static com.robosolutions.temipatrol.google.MediaHelper.NOT_WEARING_MASK_DETECTED;
+
 
 // Page shown when Temi is patrolling
-public class PatrolFragment extends Fragment {
+public class PatrolFragment extends Fragment implements Robot.TtsListener {
     private static final String TAG = "PatrolFragment";
-    private static final int NOT_WEARING_MASK_DETECTED = 0;
-    private static final int CLUSTER_DETECTED = 1;
 
-    private class AnnouncementCallbackRunnable implements Runnable {
-        private Runnable announcementTask;
 
-        void resumeNavigation() {
-            patrolCallbackRunnable.resume();
-        }
-
-        public AnnouncementCallbackRunnable(Runnable announcementTask) {
-            this.announcementTask = announcementTask;
-        }
-
-        @Override
-        public void run() {
-            // Your code here
-            announcementTask.run();
-            resumeNavigation();
-
-        }
-    }
-
-    private class PatrolCallbackRunnable implements Runnable  {
+    private class PatrolCallbackTask implements Runnable {
         private final Runnable patrolTask;
-        private final Object pauseLock;
-        private boolean running, paused;
 
         void navigateToHomePage() {
             navController.navigate(R.id.action_patrolFragment_to_homeFragment);
         }
-        PatrolCallbackRunnable(Runnable patrolTask) {
+        PatrolCallbackTask(Runnable patrolTask) {
             this.patrolTask = patrolTask;
-            pauseLock = new Object();
-            running = true;
-            paused = false;
         }
 
         @Override
         public void run() {
-            while (running) {
-                synchronized (pauseLock) {
-                    if (!running) { // may have changed while waiting to
-                        // synchronize on pauseLock
-                        break;
-                    }
-                    if (paused) {
-                        try {
-                            synchronized (pauseLock) {
-                                pauseLock.wait(); // will cause this Thread to block until
-                                // another thread calls pauseLock.notifyAll()
-                                // Note that calling wait() will
-                                // relinquish the synchronized lock that this
-                                // thread holds on pauseLock so another thread
-                                // can acquire the lock to call notifyAll()
-                                // (link with explanation below this code)
-                            }
-                        } catch (InterruptedException ex) {
-                            break;
-                        }
-                        if (!running) { // running might have changed since we paused
-                            break;
-                        }
-                    }
-                }
-                // Your code here
-                patrolTask.run();
-                navigateToHomePage();
-            }
-        }
-
-        public void stop() {
-            running = false;
-            // you might also want to interrupt() the Thread that is
-            // running this Runnable, too, or perhaps call:
-            resume();
-            // to unblock
-        }
-
-        public void pause() {
-            // you may want to throw an IllegalStateException if !running
-            Log.i(TAG, "Thread Pause called");
-            paused = true;
-        }
-
-        public void resume() {
-            Log.i(TAG, "Thread Resume called");
-            synchronized (pauseLock) {
-                paused = false;
-                pauseLock.notifyAll(); // Unblocks thread
-            }
+            patrolTask.run();
+            navigateToHomePage();
         }
     }
 
@@ -152,12 +82,11 @@ public class PatrolFragment extends Fragment {
     private CameraView camera;
     private ExecutorService globalExecutorService;
     private ExecutorService postmanExecutorService;
-    private ArrayList<TemiVoiceCommand> commands;
     private NavController navController;
     private JsonPostman jsonPostman;
-    private TemiController temiController;
-
-    private PatrolCallbackRunnable patrolCallbackRunnable;
+    private TemiNavigator temiNavigator;
+    private TemiSpeaker temiSpeaker;
+    private MediaHelper mediaHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -166,9 +95,9 @@ public class PatrolFragment extends Fragment {
         globalExecutorService = viewModel.getExecutorService();
         postmanExecutorService = Executors.newFixedThreadPool(20);
         jsonPostman = new JsonPostman();
-        commands = (ArrayList<TemiVoiceCommand>) viewModel.getCommandLiveDataFromRepo().getValue();
-
-        temiController = viewModel.getTemiController();
+        temiNavigator = viewModel.getTemiNavigator();
+        temiSpeaker = viewModel.getTemiSpeaker();
+        mediaHelper = new MediaHelper(getContext(), viewModel);
     }
 
     @Override
@@ -187,17 +116,11 @@ public class PatrolFragment extends Fragment {
         camera.setLifecycleOwner(getViewLifecycleOwner());
 
         configureCamera(camera);
-
-//        takePicturesContinuously();
+        startCamera();
         startPatrol();
-
-        Handler handler = new Handler();
-        handler.postDelayed(() -> pauseAndMakeMaskAnnouncement(), 10000);
-        handler.postDelayed(() -> pauseAndMakeClusterAnnouncement(), 15000);
-        handler.postDelayed(() -> pauseAndMakeMaskAnnouncement(), 20000);
     }
 
-    private void takePicturesContinuously() {
+    private void startCamera() {
         Timer timer = new Timer();
         timer.schedule(new CameraTask(), 0, 1000);
     }
@@ -209,16 +132,16 @@ public class PatrolFragment extends Fragment {
                 super.onPictureTaken(result);
                 byte[] image = result.getData();
                 JSONObject maskReqMsg = JsonRequestUtils.generateJsonMessageForMaskDetection(image);
-                boolean personNotWearingMask = postMaskDetectionReq(maskReqMsg);
+                boolean personNotWearingMask = sendImageToServerAndGetMaskDetectionResult(maskReqMsg);
                 JSONObject clusterReqMsg = JsonRequestUtils.generateJsonMessageForHumanDistance(image);
-                boolean clusterDetected = postHumanDistanceReq(clusterReqMsg);
+                boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(clusterReqMsg);
 
                 if (personNotWearingMask) {
-                    uploadImage(image, NOT_WEARING_MASK_DETECTED);
+                    mediaHelper.uploadImage(image, NOT_WEARING_MASK_DETECTED);
                     pauseAndMakeMaskAnnouncement();
                 }
                 if (clusterDetected) {
-                    uploadImage(image, CLUSTER_DETECTED);
+                    mediaHelper.uploadImage(image, CLUSTER_DETECTED);
                     pauseAndMakeClusterAnnouncement();
                 }
             }
@@ -226,58 +149,28 @@ public class PatrolFragment extends Fragment {
     }
 
     private void pauseAndMakeMaskAnnouncement() {
-        Log.i(TAG, "pauseAndMakeMaskAnnouncement called!");
-        patrolCallbackRunnable.pause();
-        AnnouncementCallbackRunnable announcementCallbackRunnable = new AnnouncementCallbackRunnable(() -> {
-            TemiVoiceCommand voiceCommand = new TemiVoiceCommand("Hi Im the mask announcement",
-                    0);
-            temiController.temiSpeak(voiceCommand.getCommand());
-        });
-        globalExecutorService.execute(announcementCallbackRunnable);
-
+        temiNavigator.pausePatrol();
+        String test = "Hi im the mask announcement";
+        temiSpeaker.temiSpeak(test);
     }
 
     private void pauseAndMakeClusterAnnouncement() {
-        Log.i(TAG, "pauseAndMakeClusterAnnouncement called!");
-        patrolCallbackRunnable.pause();
-        AnnouncementCallbackRunnable announcementCallbackRunnable = new AnnouncementCallbackRunnable(() -> {
-            TemiVoiceCommand voiceCommand = new TemiVoiceCommand("Hi Im the cluster announcement", 0);
-            temiController.temiSpeak(voiceCommand.getCommand());
-        });
-        globalExecutorService.execute(announcementCallbackRunnable);
-
+        temiNavigator.pausePatrol();
+        String test = "Hi im the cluster announcement";
+        temiSpeaker.temiSpeak(test);
     }
 
     private void startPatrol() {
-        patrolCallbackRunnable = new PatrolCallbackRunnable(() -> {
+        PatrolCallbackTask patrolTask = new PatrolCallbackTask(() -> {
             TemiRoute selectedRoute = viewModel.getSelectedRoute();
-            viewModel.getTemiController().patrolRoute(selectedRoute);
+            temiNavigator.patrolRoute(selectedRoute);
         });
-        globalExecutorService.execute(patrolCallbackRunnable);
+        globalExecutorService.execute(patrolTask);
     }
 
-    private void uploadImage(byte[] image, int type) {
-        globalExecutorService.execute(() -> {
-            try {
-                Log.i(TAG, "UPLOADING FILE...");
-                File pictureFile = getOutputMediaFile(type);
-                if (pictureFile == null){
-                    Log.d(TAG, "Error creating media file, check storage permissions");
-                    return;
-                }
-                FileOutputStream fos = new FileOutputStream(pictureFile);
-                fos.write(image);
-                fos.close();
-                viewModel.uploadFileToViewModel(pictureFile);
-            } catch (FileNotFoundException e) {
-                Log.d(TAG, "File not found: " + e.getMessage());
-            } catch (IOException e) {
-                Log.d(TAG, "Error accessing file: " + e.getMessage());
-            }
-        });
-    }
 
-    private Boolean postMaskDetectionReq(JSONObject requestJson) {
+
+    private Boolean sendImageToServerAndGetMaskDetectionResult(JSONObject requestJson) {
         // for testing
         Future<Boolean> result = postmanExecutorService.submit(() ->
                 jsonPostman.postMaskDetectionRequestAndGetResult(requestJson));
@@ -289,7 +182,7 @@ public class PatrolFragment extends Fragment {
         }
     }
 
-    private Boolean postHumanDistanceReq(JSONObject requestJson) {
+    private Boolean sendImageToServerAndGetClusterDetectionResult(JSONObject requestJson) {
         // for testing
         Future<Boolean> result = postmanExecutorService.submit(() ->
                 jsonPostman.postHumanDistanceRequestAndGetResult(requestJson));
@@ -301,19 +194,11 @@ public class PatrolFragment extends Fragment {
         }
     }
 
-    /** Create a File for saving an image or video */
-    private File getOutputMediaFile(int type) throws IOException{
-        File outputDir = getContext().getCacheDir(); // context being the Activity pointer
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        if (type == NOT_WEARING_MASK_DETECTED) {
-            return new File(outputDir.getPath() + File.separator +
-                    "IMG_NO_MASK_"+ timeStamp + ".jpg");
-        } else if (type == CLUSTER_DETECTED) {
-            return new File(outputDir.getPath() + File.separator +
-                    "IMG_CLUSTER_"+ timeStamp + ".jpg");
-        } else {
-            return null;
+    @Override
+    public void onTtsStatusChanged(@NotNull TtsRequest ttsRequest) {
+        if (ttsRequest.getStatus() == TtsRequest.Status.COMPLETED) {
+            Log.i(TAG, "SPEECH COMPLETED");
+            temiNavigator.resumePatrol();
         }
     }
 }

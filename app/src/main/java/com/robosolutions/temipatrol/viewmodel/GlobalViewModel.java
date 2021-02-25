@@ -6,7 +6,6 @@ import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.navigation.NavController;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -18,7 +17,9 @@ import com.robosolutions.temipatrol.google.DriveServiceHelper;
 import com.robosolutions.temipatrol.model.TemiRoute;
 import com.robosolutions.temipatrol.model.TemiVoiceCommand;
 import com.robosolutions.temipatrol.repository.TemiPatrolRepository;
-import com.robosolutions.temipatrol.temi.TemiController;
+import com.robosolutions.temipatrol.temi.TemiSpeaker;
+import com.robosolutions.temipatrol.temi.TemiNavigator;
+import com.robotemi.sdk.Robot;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -32,7 +33,8 @@ public class GlobalViewModel extends AndroidViewModel {
     private final String TAG = "GlobalViewModel";
     private static int MAX_THREAD_COUNT = 5;
     private DriveServiceHelper mDriveServiceHelper;
-    private TemiController temiController;
+    private TemiSpeaker temiSpeaker;
+    private TemiNavigator temiNavigator;
     private TemiPatrolRepository temiPatrolRepo;
     private LiveData<List<TemiRoute>> routeLiveData;
     private ExecutorService executorService;
@@ -57,7 +59,9 @@ public class GlobalViewModel extends AndroidViewModel {
     }
 
     public void initializeTemiRobot() {
-        temiController = new TemiController();
+        Robot robot = Robot.getInstance();
+        temiSpeaker = new TemiSpeaker(robot);
+        temiNavigator = new TemiNavigator(robot);
     }
 
     public void initializeGoogleServices(GoogleSignInAccount googleSignInAccount, Context context) {
@@ -78,8 +82,8 @@ public class GlobalViewModel extends AndroidViewModel {
         return mDriveServiceHelper;
     }
 
-    public TemiController getTemiController() {
-        return temiController;
+    public TemiSpeaker getTemiSpeaker() {
+        return temiSpeaker;
     }
 
     public ExecutorService getExecutorService() {
@@ -135,5 +139,9 @@ public class GlobalViewModel extends AndroidViewModel {
 
     public void setSelectedRoute(TemiRoute selectedRoute) {
         this.selectedRoute = selectedRoute;
+    }
+
+    public TemiNavigator getTemiNavigator() {
+        return temiNavigator;
     }
 }

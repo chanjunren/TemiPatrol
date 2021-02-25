@@ -26,7 +26,7 @@ import android.widget.Spinner;
 import com.google.android.material.snackbar.Snackbar;
 import com.robosolutions.temipatrol.R;
 import com.robosolutions.temipatrol.model.TemiRoute;
-import com.robosolutions.temipatrol.temi.TemiController;
+import com.robosolutions.temipatrol.temi.TemiSpeaker;
 import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class CreateRouteFragment extends Fragment {
     private Button addLocationBtn, saveRouteBtn;
     private EditText routeTitle;
     private RecyclerView destinationRv;
-    private TemiController temiController;
+    private TemiSpeaker temiSpeaker;
     private NavController navController;
     private GlobalViewModel viewModel;
     private ArrayList<String> route;
@@ -58,7 +58,7 @@ public class CreateRouteFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
-        temiController = viewModel.getTemiController();
+        temiSpeaker = viewModel.getTemiSpeaker();
         route = new ArrayList<>();
         deletedDestination = null;
     }
@@ -108,7 +108,7 @@ public class CreateRouteFragment extends Fragment {
 
     private void buildLocationSpinner() {
         spinnerAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item,
-                temiController.getLocationsFromTemi());
+                temiSpeaker.getLocationsFromTemi());
         locationSpinner.setAdapter(spinnerAdapter);
     }
 

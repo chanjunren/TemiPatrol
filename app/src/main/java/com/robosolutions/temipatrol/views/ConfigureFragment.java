@@ -19,9 +19,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.robosolutions.temipatrol.R;
-import com.robosolutions.temipatrol.model.TemiRoute;
 import com.robosolutions.temipatrol.model.TemiVoiceCommand;
-import com.robosolutions.temipatrol.temi.TemiController;
+import com.robosolutions.temipatrol.temi.TemiSpeaker;
 import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
     private HashMap<Integer, TextView> tvMap;
     private NavController navController;
     private GlobalViewModel viewModel;
-    private TemiController temiController;
+    private TemiSpeaker temiSpeaker;
     private ArrayList<TemiVoiceCommand> temiVoiceCommands;
 
 
@@ -50,7 +49,7 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
-        temiController = viewModel.getTemiController();
+        temiSpeaker = viewModel.getTemiSpeaker();
         TemiVoiceCommand[] tempArr = {null, null, null, null};
         temiVoiceCommands = new ArrayList<>(Arrays.asList(tempArr));
         tvMap = new HashMap<>();
@@ -131,13 +130,13 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
             navController.navigate(R.id.action_configureFragment_to_homeFragment);
         }
         else if (v.getId() == R.id.playBtn1) {
-            temiController.temiSpeak(temiVoiceCommands.get(0).getCommand());
+            temiSpeaker.temiSpeak(temiVoiceCommands.get(0).getCommand());
         } else if (v.getId() == R.id.playBtn2) {
-            temiController.temiSpeak(temiVoiceCommands.get(1).getCommand());
+            temiSpeaker.temiSpeak(temiVoiceCommands.get(1).getCommand());
         } else if (v.getId() == R.id.playBtn3) {
-            temiController.temiSpeak(temiVoiceCommands.get(2).getCommand());
+            temiSpeaker.temiSpeak(temiVoiceCommands.get(2).getCommand());
         } else if (v.getId() == R.id.playBtn4) {
-            temiController.temiSpeak(temiVoiceCommands.get(3).getCommand());
+            temiSpeaker.temiSpeak(temiVoiceCommands.get(3).getCommand());
         } else if (v.getId() == R.id.updateBtn1) {
             String command = commandEt1.getText().toString();
             updateVoiceCmd(command, 0);
