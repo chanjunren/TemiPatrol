@@ -1,5 +1,6 @@
 package com.robosolutions.temipatrol.views;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -28,6 +30,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
 public class ConfigureFragment extends Fragment implements View.OnClickListener{
     private final String TAG = "ConfigureFragment";
     private Button previewBtn1, previewBtn2, previewBtn3, previewBtn4,
@@ -39,6 +43,8 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
     private GlobalViewModel viewModel;
     private TemiSpeaker temiSpeaker;
     private ArrayList<TemiVoiceCommand> temiVoiceCommands;
+
+    private View createdView;
 
 
     public ConfigureFragment() {
@@ -66,9 +72,8 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        this.createdView = view;
         findAndSetViews(view);
-
-
         navController = Navigation.findNavController(view);
         attachSpeechCmdsLiveData();
     }
@@ -140,16 +145,28 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
         } else if (v.getId() == R.id.updateBtn1) {
             String command = commandEt1.getText().toString();
             updateVoiceCmd(command, 0);
+            hideKeyboard(v);
         } else if (v.getId() == R.id.updateBtn2) {
             String command = commandEt2.getText().toString();
             updateVoiceCmd(command, 1);
+            hideKeyboard(v);
         } else if (v.getId() == R.id.updateBtn3) {
             String command = commandEt3.getText().toString();
             updateVoiceCmd(command, 2);
+            hideKeyboard(v);
         } else if (v.getId() == R.id.updateBtn4) {
             String command = commandEt4.getText().toString();
             updateVoiceCmd(command, 3);
+            hideKeyboard(v);
         }
+    }
+
+    private void hideKeyboard(View view) {
+        // Check if no view has focus:
+        InputMethodManager imm =
+                (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(createdView.getWindowToken(), 0);
+
     }
 
     private void updateVoiceCmd(String command, int index) {

@@ -41,6 +41,8 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
     private HashMap<String, TemiRoute> routeMap;
     private ArrayList<TemiRoute> routes;
 
+    private ArrayList<TemiVoiceCommand> temiVoiceCommands;
+
     private ExecutorService executorService;
 
     @Override
@@ -51,11 +53,7 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
         routes = new ArrayList<>();
         executorService = viewModel.getExecutorService();
 
-        //test
-//        List<TemiVoiceCommand> commands = viewModel.getCommandLiveDataFromRepo().getValue();
-//        for (TemiVoiceCommand command: commands) {
-//            Log.i(TAG, "Command: " + command.getCommand());
-//        }
+        temiVoiceCommands = new ArrayList<>();
 
         return inflater.inflate(R.layout.home_fragment, container, false);
     }
@@ -78,6 +76,22 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
         routeRv = view.findViewById(R.id.routeRv);
         initializeRecylerView();
         attachLiveDataToRecyclerView();
+
+        initializeVoiceCmds();
+
+
+    }
+
+    private void initializeVoiceCmds() {
+        final Observer<List<TemiVoiceCommand>> voiceCmdListener = voiceCmds -> {
+            temiVoiceCommands.clear();
+            for (TemiVoiceCommand voiceCmd: voiceCmds) {
+                this.temiVoiceCommands.add(voiceCmd);
+            }
+            Log.i(TAG, "Voice Cmds: " + temiVoiceCommands.toString());
+        };
+
+        viewModel.getCommandLiveDataFromRepo().observe(getViewLifecycleOwner(), voiceCmdListener);
     }
 
     private void initializeRecylerView() {
@@ -90,18 +104,15 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
     }
 
     private void attachLiveDataToRecyclerView() {
-        final Observer<List<TemiRoute>> routeListObserver = new Observer<List<TemiRoute>>() {
-            @Override
-            public void onChanged(List<TemiRoute> temiRoutes) {
-                Log.i(TAG, "onChanged called");
-                routeMap.clear();
-                for (TemiRoute route: temiRoutes) {
-                    routeMap.put(route.getRouteTitle(), route);
-                }
-                routes.clear();
-                routes.addAll(temiRoutes);
-                routeAdapter.notifyDataSetChanged();
+        final Observer<List<TemiRoute>> routeListObserver = temiRoutes -> {
+            Log.i(TAG, "onChanged called");
+            routeMap.clear();
+            for (TemiRoute route: temiRoutes) {
+                routeMap.put(route.getRouteTitle(), route);
             }
+            routes.clear();
+            routes.addAll(temiRoutes);
+            routeAdapter.notifyDataSetChanged();
         };
         viewModel.getRouteLiveDataFromRepo().observe(getActivity(), routeListObserver);
     }
