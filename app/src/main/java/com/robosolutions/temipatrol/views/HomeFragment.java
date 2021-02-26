@@ -97,7 +97,7 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
     }
 
     private ButtonData buildDropdownButton() {
-        int drawable = R.drawable.ic_drop_menu;
+        int drawable = R.drawable.ic_test_icon;
         ButtonData buttonData = ButtonData.buildIconButton(getContext(), drawable, ICON_PADDING);
         buttonData.setText("MENU");
         return buttonData;
