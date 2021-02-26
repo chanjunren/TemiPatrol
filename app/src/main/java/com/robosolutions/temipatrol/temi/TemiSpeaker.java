@@ -1,8 +1,5 @@
 package com.robosolutions.temipatrol.temi;
 
-import android.util.Log;
-
-import com.robosolutions.temipatrol.model.TemiRoute;
 import com.robotemi.sdk.Robot;
 import com.robotemi.sdk.TtsRequest;
 

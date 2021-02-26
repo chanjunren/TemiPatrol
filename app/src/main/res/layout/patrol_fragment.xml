@@ -11,6 +11,7 @@
         <com.otaliastudios.cameraview.CameraView
             android:id="@+id/camera"
             android:layout_width="match_parent"
+            app:cameraFacing="front"
             android:layout_height="match_parent"
             app:cameraAudio="off"
             app:cameraMode="picture"

@@ -196,6 +196,7 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
             Log.i(TAG, "SPEECH COMPLETED");
             temiNavigator.resumePatrol();
         }
+//        temiNavigator.getTemiRobot().tiltAngle(20);
     }
 
     public void navigateToHomePage() {
