@@ -77,16 +77,16 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
     }
 
     private void attachSpeechCmdsLiveData() {
-        final Observer<List<TemiConfiguration>> voiceCmdListObserver = liveDataCmds -> {
-            Log.i(TAG, "onChanged called");
-
-            for (TemiConfiguration voiceCommand: liveDataCmds) {
-                temiConfigurations.remove(voiceCommand.getKey());
-                temiConfigurations.add(voiceCommand.getKey(), voiceCommand);
-                tvMap.get(voiceCommand.getKey()).setText(voiceCommand.getValue());
-            }
-        };
-        viewModel.getConfigurationLiveDataFromRepo().observe(getActivity(), voiceCmdListObserver);
+//        final Observer<List<TemiConfiguration>> voiceCmdListObserver = liveDataCmds -> {
+//            Log.i(TAG, "onChanged called");
+//
+//            for (TemiConfiguration voiceCommand: liveDataCmds) {
+//                temiConfigurations.remove(voiceCommand.getKey());
+//                temiConfigurations.add(voiceCommand.getKey(), voiceCommand);
+//                tvMap.get(voiceCommand.getKey()).setText(voiceCommand.getValue());
+//            }
+//        };
+//        viewModel.getConfigurationLiveDataFromRepo().observe(getActivity(), voiceCmdListObserver);
     }
 
     private void findAndSetViews(View view) {
@@ -168,10 +168,10 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
     }
 
     private void updateVoiceCmd(String command, int index) {
-        if (temiConfigurations.get(index) != null) {
-            viewModel.deleteConfigurationFromRepo(temiConfigurations.get(index));
-        }
-        TemiConfiguration voiceCmd = new TemiConfiguration(command, index);
-        viewModel.insertConfigurationIntoRepo(voiceCmd);
+//        if (temiConfigurations.get(index) != null) {
+//            viewModel.deleteConfigurationFromRepo(temiConfigurations.get(index));
+//        }
+//        TemiConfiguration temiConfiguration = new TemiConfiguration(command, index);
+//        viewModel.insertConfigurationIntoRepo(voiceCmd);
     }
 }

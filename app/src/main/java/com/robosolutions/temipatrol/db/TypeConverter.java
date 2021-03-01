@@ -27,12 +27,12 @@ public class TypeConverter {
     }
 
     @androidx.room.TypeConverter
-    public static String configurationEnumToString(ConfigurationEnum confEnum) {
-        return confEnum.toString();
+    public static int configurationEnumToInt(ConfigurationEnum confEnum) {
+        return confEnum.getValue();
     }
 
     @androidx.room.TypeConverter
-    public static ConfigurationEnum stringToConfigurationEnum(String confEnum) {
-        return null;
+    public static ConfigurationEnum stringToConfigurationEnum(int enumValue) {
+        return ConfigurationEnum.valueOf(enumValue);
     }
 }

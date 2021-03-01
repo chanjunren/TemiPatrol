@@ -87,23 +87,22 @@ public class TemiPatrolRepository {
     }
 
     private List<TemiConfiguration> generateDefaultConfiguration() {
-        TemiConfiguration voiceCommand1 = new TemiConfiguration("MASK_DETECTION_MSG", MASK_DETECTION_MSG);
-        TemiConfiguration voiceCommand2 = new TemiConfiguration("HUMAN_DIST_MSG", HUMAN_DIST_MSG);
-        TemiConfiguration voiceCommand3 = new TemiConfiguration("SERVER_IP_ADD", SERVER_IP_ADD);
-        TemiConfiguration voiceCommand4 = new TemiConfiguration("ADMIN_PW", ADMIN_PW);
-        List<TemiConfiguration> cmds = new ArrayList<>();
-        cmds.add(voiceCommand1);
-        cmds.add(voiceCommand2);
-        cmds.add(voiceCommand3);
-        cmds.add(voiceCommand4);
-        return cmds;
+        TemiConfiguration configuration1 = new TemiConfiguration("MASK_DETECTION_MSG", MASK_DETECTION_MSG);
+        TemiConfiguration configuration2 = new TemiConfiguration("HUMAN_DIST_MSG", HUMAN_DIST_MSG);
+        TemiConfiguration configuration3 = new TemiConfiguration("SERVER_IP_ADD", SERVER_IP_ADD);
+        TemiConfiguration configuration4 = new TemiConfiguration("ADMIN_PW", ADMIN_PW);
+        List<TemiConfiguration> configurations = new ArrayList<>();
+        configurations.add(configuration1);
+        configurations.add(configuration2);
+        configurations.add(configuration3);
+        configurations.add(configuration4);
+        return configurations;
     }
 
-    private LiveData<List<TemiConfiguration>> getDefaultCmds(List<TemiConfiguration> cmds) {
-        for (TemiConfiguration cmd: cmds) {
-            insertConfigurationIntoDb(cmd);
+    private LiveData<List<TemiConfiguration>> getDefaultCmds(List<TemiConfiguration> configurations) {
+        for (TemiConfiguration configuration: configurations) {
+            insertConfigurationIntoDb(configuration);
         }
         return mTemiConfigurationDao.getTemiConfigurationsFromDb();
-
     }
 }
