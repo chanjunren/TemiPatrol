@@ -1,5 +1,6 @@
 package com.robosolutions.temipatrol.views;
 
+import android.app.Activity;
 import android.graphics.Canvas;
 import android.os.Bundle;
 
@@ -18,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -72,6 +74,11 @@ public class CreateRouteFragment extends Fragment {
         navController = Navigation.findNavController(view);
 
         routeTitle = view.findViewById(R.id.routeTitle);
+        routeTitle.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                hideKeyboard(v);
+            }
+        });
 
         saveRouteBtn = view.findViewById(R.id.saveRouteBtn);
         saveRouteBtn.setOnClickListener(v -> {
@@ -176,5 +183,10 @@ public class CreateRouteFragment extends Fragment {
 
                     }
                 });
+    }
+
+    public void hideKeyboard(View view) {
+        InputMethodManager inputMethodManager =(InputMethodManager)getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }
