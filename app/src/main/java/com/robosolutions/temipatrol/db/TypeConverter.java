@@ -2,11 +2,13 @@ package com.robosolutions.temipatrol.db;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.robosolutions.temipatrol.model.ConfigurationEnum;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class TypeConverter {
+
     @androidx.room.TypeConverter
     public static ArrayList<String> stringToInputList(String data) {
         Gson gson = new Gson();
@@ -22,5 +24,15 @@ public class TypeConverter {
     public static String inputListToString(ArrayList<String> inputs) {
         Gson gson = new Gson();
         return gson.toJson(inputs);
+    }
+
+    @androidx.room.TypeConverter
+    public static String configurationEnumToString(ConfigurationEnum confEnum) {
+        return confEnum.toString();
+    }
+
+    @androidx.room.TypeConverter
+    public static ConfigurationEnum stringToConfigurationEnum(String confEnum) {
+        return null;
     }
 }

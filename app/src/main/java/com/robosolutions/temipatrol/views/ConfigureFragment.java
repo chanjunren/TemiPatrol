@@ -21,7 +21,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.robosolutions.temipatrol.R;
-import com.robosolutions.temipatrol.model.TemiVoiceCommand;
+import com.robosolutions.temipatrol.model.TemiConfiguration;
 import com.robosolutions.temipatrol.temi.TemiSpeaker;
 import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 
@@ -29,8 +29,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
-import static androidx.core.content.ContextCompat.getSystemService;
 
 public class ConfigureFragment extends Fragment implements View.OnClickListener{
     private final String TAG = "ConfigureFragment";
@@ -42,7 +40,7 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
     private NavController navController;
     private GlobalViewModel viewModel;
     private TemiSpeaker temiSpeaker;
-    private ArrayList<TemiVoiceCommand> temiVoiceCommands;
+    private ArrayList<TemiConfiguration> temiConfigurations;
 
     private View createdView;
 
@@ -56,8 +54,8 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
         temiSpeaker = new TemiSpeaker(viewModel.getTemiRobot());
-        TemiVoiceCommand[] tempArr = {null, null, null, null};
-        temiVoiceCommands = new ArrayList<>(Arrays.asList(tempArr));
+        TemiConfiguration[] tempArr = {null, null, null, null};
+        temiConfigurations = new ArrayList<>(Arrays.asList(tempArr));
         tvMap = new HashMap<>();
 
     }
@@ -79,16 +77,16 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
     }
 
     private void attachSpeechCmdsLiveData() {
-        final Observer<List<TemiVoiceCommand>> voiceCmdListObserver = liveDataCmds -> {
+        final Observer<List<TemiConfiguration>> voiceCmdListObserver = liveDataCmds -> {
             Log.i(TAG, "onChanged called");
 
-            for (TemiVoiceCommand voiceCommand: liveDataCmds) {
-                temiVoiceCommands.remove(voiceCommand.getKey());
-                temiVoiceCommands.add(voiceCommand.getKey(), voiceCommand);
-                tvMap.get(voiceCommand.getKey()).setText(voiceCommand.getCommand());
+            for (TemiConfiguration voiceCommand: liveDataCmds) {
+                temiConfigurations.remove(voiceCommand.getKey());
+                temiConfigurations.add(voiceCommand.getKey(), voiceCommand);
+                tvMap.get(voiceCommand.getKey()).setText(voiceCommand.getValue());
             }
         };
-        viewModel.getCommandLiveDataFromRepo().observe(getActivity(), voiceCmdListObserver);
+        viewModel.getConfigurationLiveDataFromRepo().observe(getActivity(), voiceCmdListObserver);
     }
 
     private void findAndSetViews(View view) {
@@ -135,13 +133,13 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
             navController.navigate(R.id.action_configureFragment_to_homeFragment);
         }
         else if (v.getId() == R.id.playBtn1) {
-            temiSpeaker.temiSpeak(temiVoiceCommands.get(0).getCommand());
+            temiSpeaker.temiSpeak(temiConfigurations.get(0).getValue());
         } else if (v.getId() == R.id.playBtn2) {
-            temiSpeaker.temiSpeak(temiVoiceCommands.get(1).getCommand());
+            temiSpeaker.temiSpeak(temiConfigurations.get(1).getValue());
         } else if (v.getId() == R.id.playBtn3) {
-            temiSpeaker.temiSpeak(temiVoiceCommands.get(2).getCommand());
+            temiSpeaker.temiSpeak(temiConfigurations.get(2).getValue());
         } else if (v.getId() == R.id.playBtn4) {
-            temiSpeaker.temiSpeak(temiVoiceCommands.get(3).getCommand());
+            temiSpeaker.temiSpeak(temiConfigurations.get(3).getValue());
         } else if (v.getId() == R.id.updateBtn1) {
             String command = commandEt1.getText().toString();
             updateVoiceCmd(command, 0);
@@ -170,10 +168,10 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
     }
 
     private void updateVoiceCmd(String command, int index) {
-        if (temiVoiceCommands.get(index) != null) {
-            viewModel.deleteVoiceCmdFromRepo(temiVoiceCommands.get(index));
+        if (temiConfigurations.get(index) != null) {
+            viewModel.deleteConfigurationFromRepo(temiConfigurations.get(index));
         }
-        TemiVoiceCommand voiceCmd = new TemiVoiceCommand(command, index);
-        viewModel.insertVoiceCmdIntoRepo(voiceCmd);
+        TemiConfiguration voiceCmd = new TemiConfiguration(command, index);
+        viewModel.insertConfigurationIntoRepo(voiceCmd);
     }
 }

@@ -7,19 +7,24 @@ import androidx.lifecycle.LiveData;
 
 import com.robosolutions.temipatrol.db.TemiRouteDao;
 import com.robosolutions.temipatrol.db.TemiPatrolRoomDatabase;
-import com.robosolutions.temipatrol.db.TemiVoiceCmdDao;
+import com.robosolutions.temipatrol.db.TemiConfigurationDao;
+import com.robosolutions.temipatrol.model.TemiConfiguration;
 import com.robosolutions.temipatrol.model.TemiRoute;
-import com.robosolutions.temipatrol.model.TemiVoiceCommand;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.robosolutions.temipatrol.model.ConfigurationEnum.ADMIN_PW;
+import static com.robosolutions.temipatrol.model.ConfigurationEnum.HUMAN_DIST_MSG;
+import static com.robosolutions.temipatrol.model.ConfigurationEnum.MASK_DETECTION_MSG;
+import static com.robosolutions.temipatrol.model.ConfigurationEnum.SERVER_IP_ADD;
+
 public class TemiPatrolRepository {
     private final String TAG = "TemiPatrolRepository";
     private TemiRouteDao mTemiRouteDao;
-    private TemiVoiceCmdDao mTemiVoiceCmdDao;
+    private TemiConfigurationDao mTemiConfigurationDao;
     private LiveData<List<TemiRoute>> routes;
-    private LiveData<List<TemiVoiceCommand>> commands;
+    private LiveData<List<TemiConfiguration>> commands;
 
     // Note that in order to unit test the Repository, you have to remove the Application
     // dependency. This adds complexity and much more code, and this sample is not about testing.
@@ -29,9 +34,9 @@ public class TemiPatrolRepository {
         TemiPatrolRoomDatabase db = TemiPatrolRoomDatabase.getDatabase(application);
         // Only need Dao to access DB, no need exposure to DB
         mTemiRouteDao = db.routeDao();
-        mTemiVoiceCmdDao = db.voiceCmdDao();
+        mTemiConfigurationDao = db.voiceCmdDao();
         routes = mTemiRouteDao.getRoutesFromDb();
-        commands = mTemiVoiceCmdDao.getVoiceCmdsFromDb();
+        commands = mTemiConfigurationDao.getTemiConfigurationsFromDb();
     }
 
     public LiveData<List<TemiRoute>> getAllRoutesFromDb() {
@@ -56,37 +61,37 @@ public class TemiPatrolRepository {
         });
     }
 
-    public LiveData<List<TemiVoiceCommand>> getAllCmdsFromDb() {
+    public LiveData<List<TemiConfiguration>> getAllCmdsFromDb() {
         if (commands.getValue() == null) {
-            commands = mTemiVoiceCmdDao.getVoiceCmdsFromDb();
+            commands = mTemiConfigurationDao.getTemiConfigurationsFromDb();
             if (commands.getValue() == null) {
-                commands = getDefaultCmds(generateDefaultCmds());
+                commands = getDefaultCmds(generateDefaultConfiguration());
             }
         }
         Log.i(TAG, "returning " + commands.getValue());
         return commands;
     }
 
-    public void insertTemiVoiceCmdIntoDb(TemiVoiceCommand temiVoiceCommand) {
+    public void insertConfigurationIntoDb(TemiConfiguration temiConfiguration) {
         TemiPatrolRoomDatabase.getDbWriterExecutor().execute(() -> {
             Log.i(TAG, "Inserting command...");
-            mTemiVoiceCmdDao.insertVoiceCmdIntoDb(temiVoiceCommand);
+            mTemiConfigurationDao.insertVoiceCmdIntoDb(temiConfiguration);
         });
     }
 
-    public void deleteTemiVoiceCmdFromDb(TemiVoiceCommand temiVoiceCommand) {
+    public void deleteConfigurationFromDb(TemiConfiguration temiConfiguration) {
         TemiPatrolRoomDatabase.getDbWriterExecutor().execute(() -> {
             Log.i(TAG, "Deleting command...");
-            mTemiVoiceCmdDao.deleteVoiceCmd(temiVoiceCommand);
+            mTemiConfigurationDao.deleteConfiguration(temiConfiguration);
         });
     }
 
-    private List<TemiVoiceCommand> generateDefaultCmds() {
-        TemiVoiceCommand voiceCommand1 = new TemiVoiceCommand("I'm message 1", 0);
-        TemiVoiceCommand voiceCommand2 = new TemiVoiceCommand("I'm message 2", 1);
-        TemiVoiceCommand voiceCommand3 = new TemiVoiceCommand("I'm message 3", 2);
-        TemiVoiceCommand voiceCommand4 = new TemiVoiceCommand("I'm message 4", 3);
-        List<TemiVoiceCommand> cmds = new ArrayList<>();
+    private List<TemiConfiguration> generateDefaultConfiguration() {
+        TemiConfiguration voiceCommand1 = new TemiConfiguration("MASK_DETECTION_MSG", MASK_DETECTION_MSG);
+        TemiConfiguration voiceCommand2 = new TemiConfiguration("HUMAN_DIST_MSG", HUMAN_DIST_MSG);
+        TemiConfiguration voiceCommand3 = new TemiConfiguration("SERVER_IP_ADD", SERVER_IP_ADD);
+        TemiConfiguration voiceCommand4 = new TemiConfiguration("ADMIN_PW", ADMIN_PW);
+        List<TemiConfiguration> cmds = new ArrayList<>();
         cmds.add(voiceCommand1);
         cmds.add(voiceCommand2);
         cmds.add(voiceCommand3);
@@ -94,11 +99,11 @@ public class TemiPatrolRepository {
         return cmds;
     }
 
-    private LiveData<List<TemiVoiceCommand>> getDefaultCmds(List<TemiVoiceCommand> cmds) {
-        for (TemiVoiceCommand cmd: cmds) {
-            insertTemiVoiceCmdIntoDb(cmd);
+    private LiveData<List<TemiConfiguration>> getDefaultCmds(List<TemiConfiguration> cmds) {
+        for (TemiConfiguration cmd: cmds) {
+            insertConfigurationIntoDb(cmd);
         }
-        return mTemiVoiceCmdDao.getVoiceCmdsFromDb();
+        return mTemiConfigurationDao.getTemiConfigurationsFromDb();
 
     }
 }

@@ -14,11 +14,9 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.robosolutions.temipatrol.google.DriveServiceHelper;
+import com.robosolutions.temipatrol.model.TemiConfiguration;
 import com.robosolutions.temipatrol.model.TemiRoute;
-import com.robosolutions.temipatrol.model.TemiVoiceCommand;
 import com.robosolutions.temipatrol.repository.TemiPatrolRepository;
-import com.robosolutions.temipatrol.temi.TemiSpeaker;
-import com.robosolutions.temipatrol.temi.TemiNavigator;
 import com.robotemi.sdk.Robot;
 
 import java.text.SimpleDateFormat;
@@ -108,17 +106,17 @@ public class GlobalViewModel extends AndroidViewModel {
         temiPatrolRepo.deleteTemiRouteFromDb(temiRoute);
     }
 
-    public void insertVoiceCmdIntoRepo(TemiVoiceCommand temiVoiceCmd) {
-        Log.i(TAG, "insertVoiceCmdIntoRepo: " + temiVoiceCmd);
-        temiPatrolRepo.insertTemiVoiceCmdIntoDb(temiVoiceCmd);
+    public void insertConfigurationIntoRepo(TemiConfiguration temiConfiguration) {
+        Log.i(TAG, "insertVoiceCmdIntoRepo: " + temiConfiguration);
+        temiPatrolRepo.insertConfigurationIntoDb(temiConfiguration);
 
     }
 
-    public void deleteVoiceCmdFromRepo(TemiVoiceCommand temiVoiceCmd) {
-        temiPatrolRepo.deleteTemiVoiceCmdFromDb(temiVoiceCmd);
+    public void deleteConfigurationFromRepo(TemiConfiguration temiConfiguration) {
+        temiPatrolRepo.deleteConfigurationFromDb(temiConfiguration);
     }
 
-    public LiveData<List<TemiVoiceCommand>> getCommandLiveDataFromRepo() {
+    public LiveData<List<TemiConfiguration>> getConfigurationLiveDataFromRepo() {
         return temiPatrolRepo.getAllCmdsFromDb();
     }
 

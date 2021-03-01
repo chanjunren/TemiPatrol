@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,8 +22,8 @@ import com.robosolutions.temipatrol.R;
 import com.robosolutions.temipatrol.client.JsonPostman;
 import com.robosolutions.temipatrol.client.JsonRequestUtils;
 import com.robosolutions.temipatrol.google.MediaHelper;
+import com.robosolutions.temipatrol.model.TemiConfiguration;
 import com.robosolutions.temipatrol.model.TemiRoute;
-import com.robosolutions.temipatrol.model.TemiVoiceCommand;
 import com.robosolutions.temipatrol.temi.TemiNavigator;
 import com.robosolutions.temipatrol.temi.TemiSpeaker;
 import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
@@ -43,7 +42,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import static com.robosolutions.temipatrol.google.MediaHelper.CLUSTER_DETECTED;
 import static com.robosolutions.temipatrol.google.MediaHelper.NOT_WEARING_MASK_DETECTED;
 
 
@@ -67,7 +65,7 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
     private TemiNavigator temiNavigator;
     private TemiSpeaker temiSpeaker;
     private MediaHelper mediaHelper;
-    private ArrayList<TemiVoiceCommand> temiVoiceCommands;
+    private ArrayList<TemiConfiguration> temiConfigurations;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,7 +77,7 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
         temiNavigator = new TemiNavigator(viewModel.getTemiRobot(), this);
         temiSpeaker = new TemiSpeaker(viewModel.getTemiRobot());
         mediaHelper = new MediaHelper(getContext(), viewModel);
-        temiVoiceCommands = new ArrayList<>();
+        temiConfigurations = new ArrayList<>();
         viewModel.getTemiRobot().addTtsListener(this);
     }
 
@@ -135,14 +133,14 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
 
     private void pauseAndMakeMaskAnnouncement() {
         temiNavigator.pausePatrol();
-        TemiVoiceCommand voiceCmd = temiVoiceCommands.get(0);
-        temiSpeaker.temiSpeak(voiceCmd.getCommand());
+        TemiConfiguration voiceCmd = temiConfigurations.get(0);
+        temiSpeaker.temiSpeak(voiceCmd.getValue());
     }
 
     private void pauseAndMakeClusterAnnouncement() {
         temiNavigator.pausePatrol();
-        TemiVoiceCommand voiceCmd = temiVoiceCommands.get(1);
-        temiSpeaker.temiSpeak(voiceCmd.getCommand());
+        TemiConfiguration voiceCmd = temiConfigurations.get(1);
+        temiSpeaker.temiSpeak(voiceCmd.getValue());
     }
 
     private void startPatrol() {
@@ -153,15 +151,15 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
     }
 
     private void initializeVoiceCmds() {
-        final Observer<List<TemiVoiceCommand>> voiceCmdListener = voiceCmds -> {
-            temiVoiceCommands.clear();
-            for (TemiVoiceCommand voiceCmd: voiceCmds) {
-                this.temiVoiceCommands.add(voiceCmd);
+        final Observer<List<TemiConfiguration>> voiceCmdListener = voiceCmds -> {
+            temiConfigurations.clear();
+            for (TemiConfiguration voiceCmd: voiceCmds) {
+                this.temiConfigurations.add(voiceCmd);
             }
-            Log.i(TAG, "Voice Cmds: " + temiVoiceCommands.toString());
+            Log.i(TAG, "Voice Cmds: " + temiConfigurations.toString());
         };
 
-        viewModel.getCommandLiveDataFromRepo().observe(getViewLifecycleOwner(), voiceCmdListener);
+        viewModel.getConfigurationLiveDataFromRepo().observe(getViewLifecycleOwner(), voiceCmdListener);
     }
 
 

@@ -8,6 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="transparent_gray">#808000</color>
-    <color name="red">#FF0000</color>
-    <color name="temi_teal">#04ca9b</color>
+    <color name="red">#FF5858</color>
+    <color name="blue">#58A5FF</color>
+    <color name="yellow">#CBDF52</color>
 </resources>

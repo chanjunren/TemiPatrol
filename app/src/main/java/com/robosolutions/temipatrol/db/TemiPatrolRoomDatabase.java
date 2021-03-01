@@ -10,16 +10,16 @@ import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.robosolutions.temipatrol.model.TemiRoute;
-import com.robosolutions.temipatrol.model.TemiVoiceCommand;
+import com.robosolutions.temipatrol.model.TemiConfiguration;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 // https://medium.com/google-developers/understanding-migrations-with-room-f01e04b07929
-@Database(entities = {TemiRoute.class, TemiVoiceCommand.class}, version = 1, exportSchema = false)
+@Database(entities = {TemiRoute.class, TemiConfiguration.class}, version = 1, exportSchema = false)
 public abstract class TemiPatrolRoomDatabase extends RoomDatabase {
     public abstract TemiRouteDao routeDao();
-    public abstract TemiVoiceCmdDao voiceCmdDao();
+    public abstract TemiConfigurationDao voiceCmdDao();
 
     //Volatile keyword is used to modify the value of a variable by different threads.
     // It means that multiple threads can use a method and instance of the classes at the same time

@@ -88,39 +88,35 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
         buttonDatas.add(buildAddRouteButton());
         buttonDatas.add(buildConfigureButton());
         buttonDatas.add(buildSignOutButton());
-        for (ButtonData buttonData: buttonDatas) {
-            int color = R.color.temi_teal;
-            buttonData.setBackgroundColorId(getContext(), color);
-        }
         button.setButtonDatas(buttonDatas);
         setListener(button);
     }
 
     private ButtonData buildDropdownButton() {
-        int drawable = R.drawable.ic_test_icon;
+        int drawable = R.drawable.ic_drop_down_menu;
         ButtonData buttonData = ButtonData.buildIconButton(getContext(), drawable, ICON_PADDING);
-        buttonData.setText("MENU");
+        buttonData.setBackgroundColorId(getContext(), R.color.black);
         return buttonData;
     }
 
     private ButtonData buildAddRouteButton() {
         int drawable = R.drawable.ic_add_route_icon;
         ButtonData buttonData = ButtonData.buildIconButton(getContext(), drawable, ICON_PADDING);
-        buttonData.setText("MENU");
+        buttonData.setBackgroundColorId(getContext(), R.color.red);
         return buttonData;
     }
 
     private ButtonData buildConfigureButton() {
         int drawable = R.drawable.ic_configure_icon;
         ButtonData buttonData = ButtonData.buildIconButton(getContext(), drawable, ICON_PADDING);
-        buttonData.setText("MENU");
+        buttonData.setBackgroundColorId(getContext(), R.color.blue);
         return buttonData;
     }
 
     private ButtonData buildSignOutButton() {
-        int drawable = R.drawable.ic_sign_out_icon;
+        int drawable = R.drawable.ic_log_out_icon;
         ButtonData buttonData = ButtonData.buildIconButton(getContext(), drawable, ICON_PADDING);
-        buttonData.setText("MENU");
+        buttonData.setBackgroundColorId(getContext(), R.color.yellow);
         return buttonData;
     }
 

@@ -74,8 +74,13 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
 
     implementation 'it.xabaras.android:recyclerview-swipedecorator:1.2.3'
-
+    // Camera library for home page
     api 'com.otaliastudios:cameraview:2.7.0'
-
+    // For home button
     implementation 'com.github.uin3566:AllAngleExpandableButton:v1.2.0'
+
+    // EditText library
+    def awesome_et_latest_version = "1.0.3"
+    implementation "ss.anoop:awesome-textinput-layout:${awesome_et_latest_version}"
+
 }
