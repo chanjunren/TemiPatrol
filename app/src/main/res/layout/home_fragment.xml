@@ -14,8 +14,9 @@
             android:id="@+id/routeRv"
             android:layout_width="581dp"
             android:layout_height="197dp"
-            android:layout_marginStart="92dp"
-            android:layout_marginTop="288dp"
+            android:layout_marginTop="424dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.517"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -23,49 +24,19 @@
             android:id="@+id/homeMenuButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
             app:aebAnimDurationMillis="175"
             app:aebButtonElevation="4dp"
             app:aebButtonGapDp="40dp"
             app:aebEndAngleDegree="340"
             app:aebIsSelectionMode="false"
+            app:aebMainButtonRotateAnimDurationMillis="300"
+            app:aebMainButtonRotateDegree="-180"
             app:aebMainButtonSizeDp="130dp"
             app:aebRippleEffect="true"
             app:aebStartAngleDegree="200"
             app:aebSubButtonSizeDp="130dp"
-            app:aebMainButtonRotateAnimDurationMillis="300"
-            app:aebMainButtonRotateDegree="-180"
-            android:layout_marginStart="540dp"
-            android:layout_marginTop="64dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-        <Button
-            android:id="@+id/configureBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="596dp"
-            android:layout_marginTop="372dp"
-            android:text="Configure Drive"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/signOutBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="608dp"
-            android:layout_marginTop="488dp"
-            android:text="Sign Out"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/saveRouteBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="596dp"
-            android:layout_marginTop="432dp"
-            android:text="Add Route"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

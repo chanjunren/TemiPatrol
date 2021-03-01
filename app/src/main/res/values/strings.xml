@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">TemiPatrol</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="configuration_mask_msg_label">Message broadcasted when person not wearing mask is detected</string>
+    <string name="configuration_human_distance_msg_label">Message broadcasted when clustering is detected</string>
+    <string name="ip_server_label">IP Address of the server </string>
+    <string name="admin_pw_label">Password for adminstrative actions</string>
 </resources>

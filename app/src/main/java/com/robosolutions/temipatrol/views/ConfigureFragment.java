@@ -32,15 +32,12 @@ import java.util.List;
 
 public class ConfigureFragment extends Fragment implements View.OnClickListener{
     private final String TAG = "ConfigureFragment";
-    private Button previewBtn1, previewBtn2, previewBtn3, previewBtn4,
-        updateBtn1, updateBtn2, updateBtn3, updateBtn4, exitBtn;
-    private TextView commandTv1, commandTv2, commandTv3, commandTv4;
-    private EditText commandEt1, commandEt2, commandEt3, commandEt4;
-    private HashMap<Integer, TextView> tvMap;
     private NavController navController;
     private GlobalViewModel viewModel;
     private TemiSpeaker temiSpeaker;
     private ArrayList<TemiConfiguration> temiConfigurations;
+    private TextView maskMsgTv, humanDistTv, serverIpTv, adminPwTv;
+    private HashMap<Integer, TextView> tvMap;
 
     private View createdView;
 
@@ -57,7 +54,6 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
         TemiConfiguration[] tempArr = {null, null, null, null};
         temiConfigurations = new ArrayList<>(Arrays.asList(tempArr));
         tvMap = new HashMap<>();
-
     }
 
     @Override
@@ -73,90 +69,39 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
         this.createdView = view;
         findAndSetViews(view);
         navController = Navigation.findNavController(view);
-        attachSpeechCmdsLiveData();
+        attachConfigurationLiveData();
     }
 
-    private void attachSpeechCmdsLiveData() {
-//        final Observer<List<TemiConfiguration>> voiceCmdListObserver = liveDataCmds -> {
-//            Log.i(TAG, "onChanged called");
-//
-//            for (TemiConfiguration voiceCommand: liveDataCmds) {
-//                temiConfigurations.remove(voiceCommand.getKey());
-//                temiConfigurations.add(voiceCommand.getKey(), voiceCommand);
-//                tvMap.get(voiceCommand.getKey()).setText(voiceCommand.getValue());
-//            }
-//        };
-//        viewModel.getConfigurationLiveDataFromRepo().observe(getActivity(), voiceCmdListObserver);
+    private void attachConfigurationLiveData() {
+        final Observer<List<TemiConfiguration>> voiceCmdListObserver = liveDataConfigurations -> {
+            Log.i(TAG, "onChanged called");
+
+            for (TemiConfiguration configuration: liveDataConfigurations) {
+                temiConfigurations.remove(configuration.getKey().getValue() - 1);
+                temiConfigurations.add(configuration.getKey().getValue() - 1, configuration);
+                tvMap.get(configuration.getKey().getValue()).setText(configuration.getValue());
+            }
+        };
+        viewModel.getConfigurationLiveDataFromRepo().observe(getActivity(), voiceCmdListObserver);
     }
 
     private void findAndSetViews(View view) {
-        exitBtn = view.findViewById(R.id.exitBtn);
-        exitBtn.setOnClickListener(this);
-        previewBtn1 = view.findViewById(R.id.playBtn1);
-        previewBtn1.setOnClickListener(this);
-        previewBtn2 = view.findViewById(R.id.playBtn2);
-        previewBtn2.setOnClickListener(this);
-        previewBtn3 = view.findViewById(R.id.playBtn3);
-        previewBtn3.setOnClickListener(this);
-        previewBtn4 = view.findViewById(R.id.playBtn4);
-        previewBtn4.setOnClickListener(this);
+        maskMsgTv = view.findViewById(R.id.maskDetectionMsgTv);
+        humanDistTv = view.findViewById(R.id.humanDistanceMsgTv);
+        serverIpTv = view.findViewById(R.id.serverIpTv);
+        adminPwTv = view.findViewById(R.id.adminPwTv);
 
-        updateBtn1 = view.findViewById(R.id.updateBtn1);
-        updateBtn1.setOnClickListener(this);
-        updateBtn2 = view.findViewById(R.id.updateBtn2);
-        updateBtn2.setOnClickListener(this);
-        updateBtn3 = view.findViewById(R.id.updateBtn3);
-        updateBtn3.setOnClickListener(this);
-        updateBtn4 = view.findViewById(R.id.updateBtn4);
-        updateBtn4.setOnClickListener(this);
-
-        commandTv1 = view.findViewById(R.id.voiceCmdTv1);
-        commandTv2 = view.findViewById(R.id.voiceCmdTv2);
-        commandTv3 = view.findViewById(R.id.voiceCmdTv3);
-        commandTv4 = view.findViewById(R.id.voiceCmdTv4);
-        tvMap.put(0, commandTv1);
-        tvMap.put(1, commandTv2);
-        tvMap.put(2, commandTv3);
-        tvMap.put(3, commandTv4);
-
-        Log.i(TAG, "Map updated: " + tvMap.toString());
-
-        commandEt1 = view.findViewById(R.id.voiceCmdEt1);
-        commandEt2 = view.findViewById(R.id.voiceCmdEt2);
-        commandEt3 = view.findViewById(R.id.voiceCmdEt3);
-        commandEt4 = view.findViewById(R.id.voiceCmdEt4);
+        tvMap.put(1, maskMsgTv);
+        tvMap.put(2, humanDistTv);
+        tvMap.put(3, serverIpTv);
+        tvMap.put(4, adminPwTv);
     }
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.exitBtn) {
-            navController.navigate(R.id.action_configureFragment_to_homeFragment);
-        }
-        else if (v.getId() == R.id.playBtn1) {
-            temiSpeaker.temiSpeak(temiConfigurations.get(0).getValue());
-        } else if (v.getId() == R.id.playBtn2) {
-            temiSpeaker.temiSpeak(temiConfigurations.get(1).getValue());
-        } else if (v.getId() == R.id.playBtn3) {
-            temiSpeaker.temiSpeak(temiConfigurations.get(2).getValue());
-        } else if (v.getId() == R.id.playBtn4) {
-            temiSpeaker.temiSpeak(temiConfigurations.get(3).getValue());
-        } else if (v.getId() == R.id.updateBtn1) {
-            String command = commandEt1.getText().toString();
-            updateVoiceCmd(command, 0);
-            hideKeyboard();
-        } else if (v.getId() == R.id.updateBtn2) {
-            String command = commandEt2.getText().toString();
-            updateVoiceCmd(command, 1);
-            hideKeyboard();
-        } else if (v.getId() == R.id.updateBtn3) {
-            String command = commandEt3.getText().toString();
-            updateVoiceCmd(command, 2);
-            hideKeyboard();
-        } else if (v.getId() == R.id.updateBtn4) {
-            String command = commandEt4.getText().toString();
-            updateVoiceCmd(command, 3);
-            hideKeyboard();
-        }
+//        if (v.getId() == R.id.exitBtn) {
+//            navController.navigate(R.id.action_configureFragment_to_homeFragment);
+//        }
     }
 
     private void hideKeyboard() {
@@ -164,7 +109,6 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
         InputMethodManager imm =
                 (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(createdView.getWindowToken(), 0);
-
     }
 
     private void updateVoiceCmd(String command, int index) {

@@ -83,4 +83,6 @@ dependencies {
     def awesome_et_latest_version = "1.0.3"
     implementation "ss.anoop:awesome-textinput-layout:${awesome_et_latest_version}"
 
+    // Hiding / Showing views Library
+    implementation 'com.devlomi.hidely:hidely:1.0.0'
 }

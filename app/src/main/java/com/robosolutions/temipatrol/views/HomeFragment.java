@@ -36,16 +36,16 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
     private final String TAG = "HomeFragment";
 
     private final int ICON_PADDING = 30;
+    private final int ADD_ROUTE_INDEX = 1;
+    private final int CONF_PAGE_INDEX = 2;
+    private final int SIGN_OUT_INDEX = 3;
 
     private GlobalViewModel viewModel;
     private NavController navController;
-    private Button addRouteBtn, configureBtn;
     private RecyclerView routeRv;
     private RouteAdapter routeAdapter;
     private HashMap<String, TemiRoute> routeMap;
     private ArrayList<TemiRoute> routes;
-
-    private ExecutorService executorService;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -53,7 +53,6 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
         viewModel = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
         routeMap = new HashMap<>();
         routes = new ArrayList<>();
-        executorService = viewModel.getExecutorService();
         return inflater.inflate(R.layout.home_fragment, container, false);
     }
 
@@ -61,16 +60,6 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
-
-        addRouteBtn = view.findViewById(R.id.saveRouteBtn);
-        addRouteBtn.setOnClickListener(v -> {
-            navController.navigate(R.id.action_homeFragment_to_createRouteFragment);
-        });
-
-        configureBtn = view.findViewById(R.id.configureBtn);
-        configureBtn.setOnClickListener(v -> {
-            navController.navigate(R.id.action_homeFragment_to_configureFragment);
-        });
 
         routeRv = view.findViewById(R.id.routeRv);
         installMenuButton(view);
@@ -160,21 +149,24 @@ public class HomeFragment extends Fragment implements RouteAdapter.OnRouteClickL
         button.setButtonEventListener(new ButtonEventListener() {
             @Override
             public void onButtonClicked(int index) {
-                Toast.makeText(
-                        getContext(), "Index " + index + " clicked", Toast.LENGTH_SHORT).show();
-//                showToast("clicked index:" + index);
+                if (index == ADD_ROUTE_INDEX) {
+                    navController.navigate(R.id.action_homeFragment_to_createRouteFragment);
+                } else if (index == CONF_PAGE_INDEX) {
+                    navController.navigate(R.id.action_homeFragment_to_configureFragment);
+                } else if (index == SIGN_OUT_INDEX) {
+
+                }
             }
 
             @Override
             public void onExpand() {
-//                showToast("onExpand");
-                Toast.makeText(getContext(), "Expanded", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "Expanded", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onCollapse() {
 //                showToast("onCollapse");
-                Toast.makeText(getContext(), "Collapsed", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "Collapsed", Toast.LENGTH_SHORT).show();
 
             }
         });
