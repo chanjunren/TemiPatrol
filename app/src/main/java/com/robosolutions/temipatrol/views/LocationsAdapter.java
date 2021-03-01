@@ -9,17 +9,22 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.robosolutions.temipatrol.R;
+import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.LocationViewHolder> {
-    private final String TAG = "DestinationAdapter";
-    private List<String> route;
-
-    public DestinationAdapter(ArrayList<String> route) {
-        this.route = route;
+public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.LocationViewHolder> {
+    private final String TAG = "LocationsAdapter";
+    private List<String> locations;
+    private GlobalViewModel viewModel;
+    private CreateRouteAdapter routeAdapter;
+    public LocationsAdapter(ArrayList<String> locations, GlobalViewModel viewModel,
+                            CreateRouteAdapter routeAdapter) {
+        this.locations = locations;
+        this.viewModel = viewModel;
+        this.routeAdapter = routeAdapter;
     }
 
     @NonNull
@@ -33,11 +38,15 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
     @Override
     public void onBindViewHolder(@NonNull LocationViewHolder holder, int position) {
         holder.setText(position);
+        holder.locationTv.setOnClickListener(v -> {
+            viewModel.insertLocationIntoHelper(locations.get(position));
+            routeAdapter.notifyItemInserted(viewModel.getCreateRouteHelperList().size());
+        });
     }
 
     @Override
     public int getItemCount() {
-        return route.size();
+        return locations.size();
     }
 
     public class LocationViewHolder extends RecyclerView.ViewHolder {
@@ -48,7 +57,7 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
         }
 
         void setText(int position) {
-            locationTv.setText(route.get(position));
+            locationTv.setText(locations.get(position));
         }
     }
 }

@@ -18,10 +18,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.robosolutions.temipatrol.R;
@@ -36,17 +34,14 @@ import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 
 public class CreateRouteFragment extends Fragment {
     private final String TAG = "CreateRouteFragment";
-    private DestinationAdapter destinationAdapter;
-    private Button addLocationBtn, saveRouteBtn;
+    private CreateRouteAdapter createRouteAdapter;
+    private LocationsAdapter locationsAdapter;
+    private Button saveRouteBtn;
     private EditText routeTitle;
-    private RecyclerView destinationRv;
+    private RecyclerView createRouteRv, locationsRv;
     private TemiSpeaker temiSpeaker;
     private NavController navController;
     private GlobalViewModel viewModel;
-    private ArrayList<String> route;
-
-    private Spinner locationSpinner;
-    private ArrayAdapter<String> spinnerAdapter;
 
     private String deletedDestination;
 
@@ -58,8 +53,9 @@ public class CreateRouteFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
+        viewModel.initializeForRouteCreation();
+
         temiSpeaker = new TemiSpeaker(viewModel.getTemiRobot());
-        route = new ArrayList<>();
         deletedDestination = null;
     }
 
@@ -76,50 +72,43 @@ public class CreateRouteFragment extends Fragment {
         navController = Navigation.findNavController(view);
 
         routeTitle = view.findViewById(R.id.routeTitle);
-        addLocationBtn = view.findViewById(R.id.addLocationBtn);
-        addLocationBtn.setOnClickListener(v -> {
-            addDestination();
-        });
 
         saveRouteBtn = view.findViewById(R.id.saveRouteBtn);
         saveRouteBtn.setOnClickListener(v -> {
             saveCurrentRoute();
         });
 
-        destinationRv = view.findViewById(R.id.destinationRv);
-        buildRecyclerView();
+        createRouteRv = view.findViewById(R.id.createRouteRv);
+        buildRouteRecyclerView();
 
         ItemTouchHelper myTouchHelper = generateTouchHelper();
-        myTouchHelper.attachToRecyclerView(destinationRv);
+        myTouchHelper.attachToRecyclerView(createRouteRv);
 
-        locationSpinner = view.findViewById(R.id.locationSpinner);
-        buildLocationSpinner();
+        locationsRv = view.findViewById(R.id.locationsRv);
+        buildLocationRecyclerView();
 
     }
 
-    private void buildRecyclerView() {
-        destinationAdapter =  new DestinationAdapter(route);
-        destinationRv.setAdapter(destinationAdapter);
+    private void buildRouteRecyclerView() {
+        createRouteAdapter =  new CreateRouteAdapter(viewModel.getCreateRouteHelperList());
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 
-        destinationRv.setLayoutManager(mLayoutManager);
-        destinationRv.setAdapter(destinationAdapter);
+        createRouteRv.setLayoutManager(mLayoutManager);
+        createRouteRv.setAdapter(createRouteAdapter);
     }
 
-    private void buildLocationSpinner() {
-        spinnerAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item,
-                temiSpeaker.getLocationsFromTemi());
-        locationSpinner.setAdapter(spinnerAdapter);
-    }
+    private void buildLocationRecyclerView() {
+        locationsAdapter = new LocationsAdapter(temiSpeaker.getLocationsFromTemi(), viewModel, createRouteAdapter);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity(),
+                LinearLayoutManager.HORIZONTAL, false);
 
-    private void addDestination() {
-        route.add(locationSpinner.getSelectedItem().toString());
-        Log.i(TAG, "route: " + route.toString());
-        destinationAdapter.notifyItemInserted(route.size());
+        locationsRv.setLayoutManager(mLayoutManager);
+        locationsRv.setAdapter(locationsAdapter);
     }
 
     private void saveCurrentRoute() {
-        TemiRoute temiRoute = new TemiRoute(routeTitle.getText().toString(), route);
+        TemiRoute temiRoute = new TemiRoute(routeTitle.getText().toString(),
+                viewModel.getCreateRouteHelperList());
         viewModel.insertRouteIntoRepo(temiRoute);
         navController.navigate(R.id.action_createRouteFragment_to_homeFragment);
     }
@@ -134,7 +123,7 @@ public class CreateRouteFragment extends Fragment {
                         int from = viewHolder.getAdapterPosition();
                         int to = target.getAdapterPosition();
 
-                        destinationAdapter.notifyItemMoved(from, to);
+                        createRouteAdapter.notifyItemMoved(from, to);
 
                         return true;
                     }
@@ -142,14 +131,15 @@ public class CreateRouteFragment extends Fragment {
                     @Override
                     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                         int position = viewHolder.getAdapterPosition();
+                        ArrayList<String> route = viewModel.getCreateRouteHelperList();
                         deletedDestination = route.get(position);
                         route.remove(position);
-                        destinationAdapter.notifyItemRemoved(position);
+                        createRouteAdapter.notifyItemRemoved(position);
 
-                        Snackbar.make(destinationRv, "Deleted " + deletedDestination, Snackbar.LENGTH_LONG)
+                        Snackbar.make(createRouteRv, "Deleted " + deletedDestination, Snackbar.LENGTH_LONG)
                                 .setAction("Undo", v -> {
                                     route.add(position, deletedDestination);
-                                    destinationAdapter.notifyItemInserted(position);
+                                    createRouteAdapter.notifyItemInserted(position);
                                 }).show();
                     }
 

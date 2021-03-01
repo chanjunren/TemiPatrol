@@ -9,54 +9,44 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <Spinner
-            android:id="@+id/locationSpinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="224dp"
-            android:layout_marginTop="320dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <Button
             android:id="@+id/saveRouteBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="476dp"
-            android:layout_marginTop="300dp"
+            android:layout_marginStart="1112dp"
+            android:layout_marginTop="688dp"
             android:text="SAVE"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/addLocationBtn"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/createRouteRv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="356dp"
-            android:layout_marginTop="300dp"
-            android:text="ADD"
+            android:layout_marginTop="272dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/destinationRv"
+            android:id="@+id/locationsRv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="344dp"
-            android:layout_marginTop="44dp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="580dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="
+            parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
             android:id="@+id/routeTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="216dp"
-            android:layout_marginTop="244dp"
+            android:layout_marginTop="180dp"
             android:ems="10"
+            android:hint="Route Title"
             android:inputType="textPersonName"
-            android:text="Route Title"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,6 +20,7 @@ import com.robosolutions.temipatrol.repository.TemiPatrolRepository;
 import com.robotemi.sdk.Robot;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,6 +37,8 @@ public class GlobalViewModel extends AndroidViewModel {
     private ExecutorService executorService;
     private HashMap<String, String> fileIdMap;
     private Robot temiRobot;
+
+    private ArrayList<String> createRouteHelperList;
 
     private TemiRoute selectedRoute;
 
@@ -71,6 +74,18 @@ public class GlobalViewModel extends AndroidViewModel {
                 credential)
                 .build();
         mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
+    }
+
+    public void initializeForRouteCreation() {
+        createRouteHelperList = new ArrayList<>();
+    }
+
+    public void insertLocationIntoHelper(String location) {
+        createRouteHelperList.add(location);
+    }
+
+    public ArrayList<String> getCreateRouteHelperList() {
+        return createRouteHelperList;
     }
 
     public DriveServiceHelper getmDriveServiceHelper() {

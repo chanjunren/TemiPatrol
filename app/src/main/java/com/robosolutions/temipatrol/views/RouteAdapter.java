@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHolder> {
-    private final String TAG = "DestinationAdapter";
+    private final String TAG = "CreateRouteAdapter";
     private List<TemiRoute> routes;
     private OnRouteClickListener onRouteClickListener;
 
