@@ -42,6 +42,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import static com.robosolutions.temipatrol.google.MediaHelper.CLUSTER_DETECTED;
 import static com.robosolutions.temipatrol.google.MediaHelper.NOT_WEARING_MASK_DETECTED;
 
 
@@ -113,20 +114,20 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
             public void onPictureTaken(@NonNull PictureResult result) {
                 super.onPictureTaken(result);
                 byte[] image = result.getData();
-                JSONObject maskReqMsg = JsonRequestUtils.generateJsonMessageForMaskDetection(image);
-                boolean isWearingMask = sendImageToServerAndGetMaskDetectionResult(maskReqMsg);
-                Log.i(TAG, "Value received: " + isWearingMask);
-//                JSONObject clusterReqMsg = JsonRequestUtils.generateJsonMessageForHumanDistance(image);
-//                boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(clusterReqMsg);
+//                JSONObject maskReqMsg = JsonRequestUtils.generateJsonMessageForMaskDetection(image);
+//                boolean isWearingMask = sendImageToServerAndGetMaskDetectionResult(maskReqMsg);
+//                Log.i(TAG, "Value received: " + isWearingMask);
+                JSONObject clusterReqMsg = JsonRequestUtils.generateJsonMessageForHumanDistance(image);
+                boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(clusterReqMsg);
 
-                if (!isWearingMask) {
-                    mediaHelper.uploadImage(image, NOT_WEARING_MASK_DETECTED);
-                    pauseAndMakeMaskAnnouncement();
-                }
-//                if (clusterDetected) {
-//                    mediaHelper.uploadImage(image, CLUSTER_DETECTED);
-//                    pauseAndMakeClusterAnnouncement();
+//                if (!isWearingMask) {
+//                    mediaHelper.uploadImage(image, NOT_WEARING_MASK_DETECTED);
+//                    pauseAndMakeMaskAnnouncement();
 //                }
+                if (clusterDetected) {
+                    mediaHelper.uploadImage(image, CLUSTER_DETECTED);
+                    pauseAndMakeClusterAnnouncement();
+                }
             }
         });
     }

@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_homeFragment_to_configureFragment"
             app:destination="@id/configureFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_routeExecutionFragment"
+            app:destination="@id/routeExecutionFragment" />
     </fragment>
     <fragment
         android:id="@+id/createRouteFragment"
@@ -54,6 +57,15 @@
         tools:layout="@layout/configure_fragment" >
         <action
             android:id="@+id/action_configureFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/routeExecutionFragment"
+        android:name="com.robosolutions.temipatrol.views.RouteExecutionFragment"
+        android:label="fragment_route_execution"
+        tools:layout="@layout/route_execution_fragment" >
+        <action
+            android:id="@+id/action_routeExecutionFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
 </navigation>

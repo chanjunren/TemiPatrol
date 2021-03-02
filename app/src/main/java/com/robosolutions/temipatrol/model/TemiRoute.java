@@ -48,4 +48,13 @@ public class TemiRoute {
     public void setDestinations(ArrayList<String> destinations) {
         this.destinations = destinations;
     }
+
+    @Override
+    public String toString() {
+        return "TemiRoute{" +
+                "routeIdx=" + routeIdx +
+                ", routeTitle='" + routeTitle + '\'' +
+                ", destinations=" + destinations.toString() +
+                '}';
+    }
 }

@@ -1,5 +1,6 @@
 package com.robosolutions.temipatrol.views;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Canvas;
 import android.os.Bundle;
@@ -17,13 +18,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.ramotion.fluidslider.FluidSlider;
 import com.robosolutions.temipatrol.R;
 import com.robosolutions.temipatrol.model.TemiRoute;
 import com.robosolutions.temipatrol.temi.TemiSpeaker;
@@ -32,6 +36,8 @@ import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 import java.util.ArrayList;
 
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 
 
 public class CreateRouteFragment extends Fragment {
@@ -44,6 +50,9 @@ public class CreateRouteFragment extends Fragment {
     private TemiSpeaker temiSpeaker;
     private NavController navController;
     private GlobalViewModel viewModel;
+    private FluidSlider slider;
+    private FrameLayout parentLayout;
+    private int patrolCount;
 
     private String deletedDestination;
 
@@ -68,17 +77,19 @@ public class CreateRouteFragment extends Fragment {
         return inflater.inflate(R.layout.create_route_fragment, container, false);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
 
-        routeTitle = view.findViewById(R.id.routeTitle);
-        routeTitle.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                hideKeyboard(v);
-            }
+        parentLayout = view.findViewById(R.id.createRouteFrameLayout);
+        parentLayout.setOnTouchListener((v, motionEvent) -> {
+            hideKeyboard(v);
+            return true;
         });
+
+        routeTitle = view.findViewById(R.id.routeTitle);
 
         saveRouteBtn = view.findViewById(R.id.saveRouteBtn);
         saveRouteBtn.setOnClickListener(v -> {
@@ -94,11 +105,15 @@ public class CreateRouteFragment extends Fragment {
         locationsRv = view.findViewById(R.id.locationsRv);
         buildLocationRecyclerView();
 
+        slider = view.findViewById(R.id.patrolCountSlider);
+        buildSlider();
+
     }
 
     private void buildRouteRecyclerView() {
         createRouteAdapter =  new CreateRouteAdapter(viewModel.getCreateRouteHelperList());
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity(),
+                LinearLayoutManager.HORIZONTAL, false);
 
         createRouteRv.setLayoutManager(mLayoutManager);
         createRouteRv.setAdapter(createRouteAdapter);
@@ -113,9 +128,35 @@ public class CreateRouteFragment extends Fragment {
         locationsRv.setAdapter(locationsAdapter);
     }
 
+    private void buildSlider() {
+        final int max = 20;
+        final int min = 1;
+        final int total = max - min;
+
+        slider.setPositionListener(pos -> {
+            final String value = String.valueOf( (int)(min + total * pos) );
+            slider.setBubbleText(value);
+            patrolCount = Integer.parseInt(value);
+            return Unit.INSTANCE;
+        });
+
+
+        slider.setPosition(0f);
+        slider.setStartText(String.valueOf(min));
+        slider.setEndText(String.valueOf(max));
+
+    }
+
     private void saveCurrentRoute() {
+        ArrayList<String> createdRoute = new ArrayList<>();
+        Log.i(TAG, "Patrol count: " + patrolCount);
+        for (int i = 0; i < patrolCount; i++) {
+            createdRoute.addAll(viewModel.getCreateRouteHelperList());
+        }
+
         TemiRoute temiRoute = new TemiRoute(routeTitle.getText().toString(),
-                viewModel.getCreateRouteHelperList());
+                createdRoute);
+        Log.i(TAG, "route added: " + temiRoute.toString());
         viewModel.insertRouteIntoRepo(temiRoute);
         navController.navigate(R.id.action_createRouteFragment_to_homeFragment);
     }

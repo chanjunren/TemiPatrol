@@ -9,6 +9,10 @@
     <color name="white">#FFFFFFFF</color>
     <color name="transparent_gray">#808000</color>
     <color name="red">#FF5858</color>
+    <color name="temi_teal">#46DBB4</color>
+    <color name="slider_color">#E65572</color>
     <color name="blue">#58A5FF</color>
     <color name="yellow">#CBDF52</color>
+    <color name="lightWhite">#f2f5f8</color>
+
 </resources>

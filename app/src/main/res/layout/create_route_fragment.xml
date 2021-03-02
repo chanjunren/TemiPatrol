@@ -2,10 +2,12 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/createRouteFrameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".views.CreateRouteFragment"
     android:clickable="true"
+    android:focusable="true"
     android:focusableInTouchMode="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,10 +18,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            app:borderColor="@color/teal_700"
+            app:borderColor="@color/temi_teal"
             app:borderWidth="2dp"
             app:cornerRadius="8dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="180dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -30,11 +32,30 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="Route Title"
+                android:textSize="30sp"
                 android:inputType="textPersonName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
+
+        <com.ramotion.fluidslider.FluidSlider
+            android:id="@+id/patrolCountSlider"
+            android:layout_width="576dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="200dp"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:bar_color="@color/slider_color"
+            android:layout_marginEnd="16dp"
+            android:elevation="2dp"
+            app:text_size="20dp"
+            app:duration="@android:integer/config_mediumAnimTime"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:size="normal"
+            tools:targetApi="lollipop" />
+
         <Button
             android:id="@+id/saveRouteBtn"
             android:layout_width="wrap_content"
@@ -49,19 +70,58 @@
             android:id="@+id/createRouteRv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="272dp"
+            android:layout_marginTop="430dp"
+            android:layout_marginEnd="100dp"
+            android:layout_marginStart="100dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/routeTv"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/locationsRv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="580dp"
+
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="
             parent"
+            android:layout_marginTop="600dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/patrolCountTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="290dp"
+            android:text="Patrol Count"
+            app:layout_constraintHorizontal_bias="0.1"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/routeTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="430dp"
+            android:text="Route"
+            app:layout_constraintHorizontal_bias="0.1"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/locationsTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="600dp"
+            android:text="Saved Locations"
+            app:layout_constraintHorizontal_bias="0.1"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
