@@ -31,6 +31,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    dataBinding{
+        enabled true
+    }
 }
 
 dependencies {
@@ -92,5 +95,9 @@ dependencies {
 
     // Dialog Library
     implementation 'com.github.mejdi14:Flat-Dialog-Android:1.0.5'
+
+    // Ripple effect
+    implementation 'com.balysv:material-ripple:1.0.2'
+
 
 }

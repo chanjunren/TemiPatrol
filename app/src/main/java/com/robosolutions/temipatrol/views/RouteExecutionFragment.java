@@ -63,8 +63,7 @@ public class RouteExecutionFragment extends Fragment implements RouteAdapter.OnR
     private void initializeRecylerView() {
         Log.i(TAG, "buildRecyclerView called");
         routeAdapter =  new RouteAdapter(routes, this);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity(),
-                LinearLayoutManager.HORIZONTAL, false);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         routeRv.setAdapter(routeAdapter);
         routeRv.setLayoutManager(mLayoutManager);
     }
@@ -78,7 +77,9 @@ public class RouteExecutionFragment extends Fragment implements RouteAdapter.OnR
             }
             routes.clear();
             routes.addAll(temiRoutes);
+            routeAdapter.updateHelper(temiRoutes);
             routeAdapter.notifyDataSetChanged();
+
         };
         viewModel.getRouteLiveDataFromRepo().observe(getActivity(), routeListObserver);
     }
@@ -88,12 +89,6 @@ public class RouteExecutionFragment extends Fragment implements RouteAdapter.OnR
         TemiRoute selectedRoute = routes.get(position);
         Log.i(TAG, "Selected Route: " + selectedRoute.toString());
         viewModel.setSelectedRoute(selectedRoute);
-        navController.navigate(R.id.action_homeFragment_to_patrolFragment);
+        navController.navigate(R.id.action_routeExecutionFragment_to_patrolFragment);
     }
-
-    @Override
-    public void onRouteLongClick(int position) {
-        Toast.makeText(getContext(), "Hi im a long click", Toast.LENGTH_SHORT).show();
-    }
-
 }

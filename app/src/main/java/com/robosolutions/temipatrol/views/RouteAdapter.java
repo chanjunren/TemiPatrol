@@ -1,8 +1,10 @@
 package com.robosolutions.temipatrol.views;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +20,7 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
     private final String TAG = "CreateRouteAdapter";
     private List<TemiRoute> routes;
     private OnRouteClickListener onRouteClickListener;
+    private boolean[] expandedArrHelper;
 
     public RouteAdapter(ArrayList<TemiRoute> routes, OnRouteClickListener onRouteClickListener) {
         this.routes = routes;
@@ -35,7 +38,10 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
     @Override
     public void onBindViewHolder(@NonNull RouteAdapter.RouteViewHolder holder, int position) {
         holder.setText(position);
-
+        holder.dropDownBtn.setOnClickListener(v -> {
+            boolean show = toggleLayout(!expandedArrHelper[position], v);
+            expandedArrHelper[position] = show;
+        });
     }
 
     @Override
@@ -43,15 +49,17 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
         return routes.size();
     }
 
-    public class RouteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
-        View.OnLongClickListener {
-        TextView routeTv;
+    public class RouteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        TextView routeTitleTv, routePathTv;
+        ImageView dropDownBtn;
         OnRouteClickListener onRouteClickListener;
         public RouteViewHolder(@NonNull View itemView, OnRouteClickListener onRouteClickListener) {
             super(itemView);
-            routeTv = itemView.findViewById(R.id.routeTv);
+            routeTitleTv = itemView.findViewById(R.id.routeTitleTv);
+            routePathTv = itemView.findViewById(R.id.routePathTv);
+            dropDownBtn = itemView.findViewById(R.id.dropDownBtn);
             this.onRouteClickListener = onRouteClickListener;
-            itemView.setOnClickListener(this);
+//            itemView.setOnClickListener(this);
         }
 
         @Override
@@ -59,20 +67,46 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
             onRouteClickListener.onRouteClick(getAdapterPosition());
         }
 
-        @Override
-        public boolean onLongClick(View v) {
-            onRouteClickListener.onRouteLongClick(getAdapterPosition());
-            //true if the callback consumed the long click, false otherwise. idgi
-            return false;
-        }
-
         void setText(int position) {
-            routeTv.setText(routes.get(position).getRouteTitle());
+            routeTitleTv.setText(routes.get(position).getRouteTitle());
+            routePathTv.setText(getRouteString(routes.get(position)));
         }
     }
 
     public interface OnRouteClickListener {
         void onRouteClick(int position);
-        void onRouteLongClick(int position);
+    }
+
+    private String getRouteString(TemiRoute temiRoute) {
+        if (temiRoute.getDestinations().size() == 0) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < temiRoute.getDestinations().size() - 1; i++) {
+            sb.append(temiRoute.getDestinations().get(i));
+            sb.append(" --- ");
+        }
+        sb.append(temiRoute.getDestinations().get(temiRoute.getDestinations().size() - 1));
+        return sb.toString();
+    }
+
+    private boolean toggleLayout(boolean isExpanded, View v) {
+        toggleArrow(v, isExpanded);
+        return isExpanded;
+    }
+
+    public static boolean toggleArrow(View view, boolean isExpanded) {
+        if (isExpanded) {
+            view.animate().setDuration(200).rotation(180);
+            return true;
+        } else {
+            view.animate().setDuration(200).rotation(0);
+            return false;
+        }
+    }
+
+    public void updateHelper(List<TemiRoute> temiRoutes) {
+        Log.i(TAG, "routes.size() = " + temiRoutes.size());
+        expandedArrHelper = new boolean[temiRoutes.size()];
     }
 }
