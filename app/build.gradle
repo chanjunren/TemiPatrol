@@ -90,4 +90,7 @@ dependencies {
     // Menu Library
     implementation 'androidx.cardview:cardview:1.0.0'
 
+    // Dialog Library
+    implementation 'com.github.mejdi14:Flat-Dialog-Android:1.0.5'
+
 }
