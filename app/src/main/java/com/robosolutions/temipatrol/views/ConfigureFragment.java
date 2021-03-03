@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -17,9 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.flatdialoglibrary.dialog.FlatDialog;
 import com.robosolutions.temipatrol.R;
@@ -39,15 +39,7 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
     private GlobalViewModel viewModel;
     private TemiSpeaker temiSpeaker;
     private ArrayList<TemiConfiguration> temiConfigurations;
-    private TextView maskMsgTv;
-    private TextView serverIpTv;
-    private TextView adminPwTv;
     private HashMap<Integer, TextView> tvMap;
-    // Buttons to open dialog
-    private Button maskDialogBtn;
-    private Button humanDistDialogBtn;
-    private Button adminPwDialogBtn;
-    private Button exitBtn;
     private FlatDialog maskDetectionDialog, humanDistanceDialog, serverIpDialog, adminPwDialog;
 
     private View createdView;
@@ -97,27 +89,36 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
     }
 
     private void findAndSetViews(View view) {
-        maskMsgTv = view.findViewById(R.id.maskDetectionMsgTv);
+        TextView maskMsgTv = view.findViewById(R.id.maskDetectionMsgTv);
         TextView humanDistTv = view.findViewById(R.id.humanDistanceMsgTv);
-        serverIpTv = view.findViewById(R.id.serverIpTv);
-        adminPwTv = view.findViewById(R.id.adminPwTv);
+        TextView serverIpTv = view.findViewById(R.id.serverIpTv);
+        TextView adminPwTv = view.findViewById(R.id.adminPwTv);
 
         tvMap.put(1, maskMsgTv);
         tvMap.put(2, humanDistTv);
         tvMap.put(3, serverIpTv);
         tvMap.put(4, adminPwTv);
 
-        maskDialogBtn = view.findViewById(R.id.button);
-        humanDistDialogBtn = view.findViewById(R.id.button2);
-        Button serverIpDialogBtn = view.findViewById(R.id.button3);
-        adminPwDialogBtn = view.findViewById(R.id.button4);
-        exitBtn = view.findViewById(R.id.exitBtn);
+        // Buttons to open dialog
+        ImageView maskDialogBtn = view.findViewById(R.id.updateMaskMsgBtn);
+        ImageView humanDistDialogBtn = view.findViewById(R.id.updateClusterMsgBtn);
+        ImageView serverIpDialogBtn = view.findViewById(R.id.updateServerBtn);
+        ImageView adminPwDialogBtn = view.findViewById(R.id.updatePwBtn);
+        ConstraintLayout exitBtn = view.findViewById(R.id.exitBtn);
 
         maskDialogBtn.setOnClickListener(this);
         humanDistDialogBtn.setOnClickListener(this);
         serverIpDialogBtn.setOnClickListener(this);
         adminPwDialogBtn.setOnClickListener(this);
         exitBtn.setOnClickListener(this);
+
+        ImageView testMaskMsgBtn = view.findViewById(R.id.playMaskMsgBtn);
+        ImageView testClusterMsgBtn = view.findViewById(R.id.playClusterMsgBtn);
+        ImageView testConnectionBtn = view.findViewById(R.id.testConnectionBtn);
+
+        testMaskMsgBtn.setOnClickListener(this);
+        testClusterMsgBtn.setOnClickListener(this);
+        testConnectionBtn.setOnClickListener(this);
 
         maskDetectionDialog = buildMaskDetectionDialog();
         humanDistanceDialog = buildHumanDistanceDialog();
@@ -223,34 +224,26 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
         return flatDialog;
     }
 
-
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.exitBtn) {
             navController.navigate(R.id.action_configureFragment_to_homeFragment);
-        } else if (v.getId() == R.id.button) {
+        } else if (v.getId() == R.id.updateMaskMsgBtn) {
             maskDetectionDialog.show();
-        } else if (v.getId() == R.id.button2) {
+        } else if (v.getId() == R.id.updateClusterMsgBtn) {
             humanDistanceDialog.show();
-        } else if (v.getId() == R.id.button3) {
+        } else if (v.getId() == R.id.updateServerBtn) {
             serverIpDialog.show();
-        } else if (v.getId() == R.id.button4) {
+        } else if (v.getId() == R.id.updatePwBtn) {
             adminPwDialog.show();
+        } else if (v.getId() == R.id.playMaskMsgBtn) {
+            String maskCmd = temiConfigurations.get(0).getValue();
+            temiSpeaker.temiSpeak(maskCmd);
+        } else if (v.getId() == R.id.playClusterMsgBtn) {
+            String clusterCmd = temiConfigurations.get(1).getValue();
+            temiSpeaker.temiSpeak(clusterCmd);
+        } else if (v.getId() == R.id.testConnectionBtn) {
+
         }
-    }
-
-    private void hideKeyboard() {
-        // Check if no view has focus:
-        InputMethodManager imm =
-                (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(createdView.getWindowToken(), 0);
-    }
-
-    private void updateVoiceCmd(String command, int index) {
-//        if (temiConfigurations.get(index) != null) {
-//            viewModel.deleteConfigurationFromRepo(temiConfigurations.get(index));
-//        }
-//        TemiConfiguration temiConfiguration = new TemiConfiguration(command, index);
-//        viewModel.insertConfigurationIntoRepo(voiceCmd);
     }
 }
