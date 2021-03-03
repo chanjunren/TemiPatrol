@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.robosolutions.temipatrol.R;
@@ -15,6 +16,10 @@ import com.robosolutions.temipatrol.model.TemiRoute;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.robosolutions.temipatrol.views.CustomAnimation.collapse;
+import static com.robosolutions.temipatrol.views.CustomAnimation.expand;
+import static com.robosolutions.temipatrol.views.CustomAnimation.toggleArrow;
 
 public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHolder> {
     private final String TAG = "CreateRouteAdapter";
@@ -39,7 +44,7 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
     public void onBindViewHolder(@NonNull RouteAdapter.RouteViewHolder holder, int position) {
         holder.setText(position);
         holder.dropDownBtn.setOnClickListener(v -> {
-            boolean show = toggleLayout(!expandedArrHelper[position], v);
+            boolean show = toggleLayout(!expandedArrHelper[position], v, holder.expandLayout);
             expandedArrHelper[position] = show;
         });
     }
@@ -52,14 +57,15 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
     public class RouteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView routeTitleTv, routePathTv;
         ImageView dropDownBtn;
+        ConstraintLayout expandLayout;
         OnRouteClickListener onRouteClickListener;
         public RouteViewHolder(@NonNull View itemView, OnRouteClickListener onRouteClickListener) {
             super(itemView);
             routeTitleTv = itemView.findViewById(R.id.routeTitleTv);
             routePathTv = itemView.findViewById(R.id.routePathTv);
             dropDownBtn = itemView.findViewById(R.id.dropDownBtn);
+            expandLayout = itemView.findViewById(R.id.expandLayout);
             this.onRouteClickListener = onRouteClickListener;
-//            itemView.setOnClickListener(this);
         }
 
         @Override
@@ -90,19 +96,15 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
         return sb.toString();
     }
 
-    private boolean toggleLayout(boolean isExpanded, View v) {
+    private boolean toggleLayout(boolean isExpanded, View v, ConstraintLayout layoutExpand) {
         toggleArrow(v, isExpanded);
-        return isExpanded;
-    }
-
-    public static boolean toggleArrow(View view, boolean isExpanded) {
         if (isExpanded) {
-            view.animate().setDuration(200).rotation(180);
-            return true;
+            expand(layoutExpand);
         } else {
-            view.animate().setDuration(200).rotation(0);
-            return false;
+            collapse(layoutExpand);
         }
+        return isExpanded;
+
     }
 
     public void updateHelper(List<TemiRoute> temiRoutes) {
