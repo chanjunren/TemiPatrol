@@ -18,7 +18,8 @@
             android:name="com.robotemi.sdk.metadata.SKILL"
             android:value="@string/app_name"/>
         <activity android:name="com.robosolutions.temipatrol.MainActivity"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,5 +27,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

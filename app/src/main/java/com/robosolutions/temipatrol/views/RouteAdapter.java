@@ -48,6 +48,20 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
             boolean show = toggleLayout(!expandedArrHelper[position], v, holder.expandLayout);
             expandedArrHelper[position] = show;
         });
+
+        holder.deleteRouteBtn.setOnClickListener(v -> {
+            onRouteClickListener.onRouteDeleteClick(position);
+            boolean show = toggleLayout(!expandedArrHelper[position], v, holder.expandLayout);
+            expandedArrHelper[position] = show;
+        });
+
+        holder.editRouteBtn.setOnClickListener(v -> {
+            onRouteClickListener.onRouteEditClick(position);
+        });
+
+        holder.executeRouteBtn.setOnClickListener(v -> {
+            onRouteClickListener.onRouteExecuteClick(position);
+        });
     }
 
     @Override
@@ -55,7 +69,7 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
         return routes.size();
     }
 
-    public class RouteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class RouteViewHolder extends RecyclerView.ViewHolder {
         TextView routeTitleTv, routePathTv;
         ImageView dropDownBtn;
         CardView deleteRouteBtn, editRouteBtn, executeRouteBtn;
@@ -71,21 +85,6 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
             editRouteBtn = itemView.findViewById(R.id.editRouteBtn);
             executeRouteBtn = itemView.findViewById(R.id.execRouteBtn);
             this.onRouteClickListener = onRouteClickListener;
-
-            deleteRouteBtn.setOnClickListener(this);
-            editRouteBtn.setOnClickListener(this);
-            executeRouteBtn.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            if (v.getId() == R.id.deleteRouteBtn) {
-                onRouteClickListener.onRouteDeleteClick(getAdapterPosition());
-            } else if (v.getId() == R.id.editRouteBtn) {
-                onRouteClickListener.onRouteEditClick(getAdapterPosition());
-            } else if (v.getId() == R.id.execRouteBtn) {
-                onRouteClickListener.onRouteExecuteClick(getAdapterPosition());
-            }
         }
 
         void setText(int position) {
