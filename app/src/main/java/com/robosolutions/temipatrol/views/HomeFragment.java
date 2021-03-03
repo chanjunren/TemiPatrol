@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.robosolutions.temipatrol.R;
+import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
     private final String TAG = "HomeFragment";
@@ -46,6 +48,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.addRouteBtn) {
+            GlobalViewModel viewModel = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
+            viewModel.initializeForRouteCreation();
             navController.navigate(R.id.action_homeFragment_to_createRouteFragment);
         } else if (v.getId() == R.id.patrolPageBtn) {
             navController.navigate(R.id.action_homeFragment_to_routeExecutionFragment);

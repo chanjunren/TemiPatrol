@@ -67,8 +67,6 @@ public class CreateRouteFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
-        viewModel.initializeForRouteCreation();
-
         temiSpeaker = new TemiSpeaker(viewModel.getTemiRobot());
         deletedDestination = null;
     }
@@ -93,6 +91,9 @@ public class CreateRouteFragment extends Fragment {
         });
 
         routeTitle = view.findViewById(R.id.routeTitle);
+        if (viewModel.isRouteUpdate()) {
+            routeTitle.setText(viewModel.getUpdatingRoute().getRouteTitle());
+        }
 
         saveRouteBtn = view.findViewById(R.id.saveRouteBtn);
         saveRouteBtn.setOnClickListener(v -> {
@@ -156,16 +157,28 @@ public class CreateRouteFragment extends Fragment {
     }
 
     private void saveCurrentRoute() {
-        ArrayList<String> createdRoute = new ArrayList<>();
-        Log.i(TAG, "Patrol count: " + patrolCount);
-        for (int i = 0; i < patrolCount; i++) {
-            createdRoute.addAll(viewModel.getCreateRouteHelperList());
-        }
+        if (viewModel.isRouteUpdate()) {
+            TemiRoute updatingRoute = viewModel.getUpdatingRoute();
+            ArrayList<String> newRoute = new ArrayList<>();
+            Log.i(TAG, "Patrol count: " + patrolCount);
+            for (int i = 0; i < patrolCount; i++) {
+                newRoute.addAll(viewModel.getCreateRouteHelperList());
+            }
+            updatingRoute.setRouteTitle(routeTitle.getText().toString());
+            updatingRoute.setDestinations(newRoute);
+            viewModel.updateRouteInRepo(updatingRoute);
+        } else {
+            ArrayList<String> createdRoute = new ArrayList<>();
+            Log.i(TAG, "Patrol count: " + patrolCount);
+            for (int i = 0; i < patrolCount; i++) {
+                createdRoute.addAll(viewModel.getCreateRouteHelperList());
+            }
 
-        TemiRoute temiRoute = new TemiRoute(routeTitle.getText().toString(),
-                createdRoute);
-        Log.i(TAG, "route added: " + temiRoute.toString());
-        viewModel.insertRouteIntoRepo(temiRoute);
+            TemiRoute temiRoute = new TemiRoute(routeTitle.getText().toString(),
+                    createdRoute);
+            Log.i(TAG, "route added: " + temiRoute.toString());
+            viewModel.insertRouteIntoRepo(temiRoute);
+        }
         navController.navigate(R.id.action_createRouteFragment_to_homeFragment);
     }
 

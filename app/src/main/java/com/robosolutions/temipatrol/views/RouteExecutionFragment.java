@@ -94,10 +94,10 @@ public class RouteExecutionFragment extends Fragment implements RouteAdapter.OnR
     @Override
     public void onRouteEditClick(int position) {
         Log.i(TAG, "Edit clicked");
-//        TemiRoute selectedRoute = routes.get(position);
-//        Log.i(TAG, "Selected Route: " + selectedRoute.toString());
-//        viewModel.setSelectedRoute(selectedRoute);
-//        navController.navigate(R.id.action_routeExecutionFragment_to_patrolFragment);
+        TemiRoute selectedRoute = routes.get(position);
+        Log.i(TAG, "Selected Route: " + selectedRoute.toString());
+        viewModel.initializeForRouteEdit(selectedRoute);
+        navController.navigate(R.id.action_routeExecutionFragment_to_createRouteFragment);
     }
 
     @Override

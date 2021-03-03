@@ -61,6 +61,13 @@ public class TemiPatrolRepository {
         });
     }
 
+    public void updateRouteInDb(TemiRoute temiRoute) {
+        TemiPatrolRoomDatabase.getDbWriterExecutor().execute(() -> {
+            Log.i(TAG, "Updating route...");
+            mTemiRouteDao.updateRoute(temiRoute);
+        });
+    }
+
     public LiveData<List<TemiConfiguration>> getAllCmdsFromDb() {
         if (commands.getValue() == null) {
             commands = mTemiConfigurationDao.getTemiConfigurationsFromDb();

@@ -41,6 +41,9 @@ public class GlobalViewModel extends AndroidViewModel {
     private ArrayList<String> createRouteHelperList;
 
     private TemiRoute selectedRoute;
+    private TemiRoute updatingRoute;
+
+    private boolean isRouteUpdate;
 
     public GlobalViewModel(Application application) {
         super(application);
@@ -77,7 +80,16 @@ public class GlobalViewModel extends AndroidViewModel {
     }
 
     public void initializeForRouteCreation() {
+        isRouteUpdate = false;
         createRouteHelperList = new ArrayList<>();
+    }
+
+    public void initializeForRouteEdit(TemiRoute temiRoute) {
+        createRouteHelperList = new ArrayList<>();
+
+        isRouteUpdate = true;
+        this.updatingRoute = temiRoute;
+        createRouteHelperList.addAll(updatingRoute.getDestinations());
     }
 
     public void insertLocationIntoHelper(String location) {
@@ -121,6 +133,10 @@ public class GlobalViewModel extends AndroidViewModel {
         temiPatrolRepo.deleteTemiRouteFromDb(temiRoute);
     }
 
+    public void updateRouteInRepo(TemiRoute temiRoute) {
+        temiPatrolRepo.updateRouteInDb(temiRoute);
+    }
+
     public void insertConfigurationIntoRepo(TemiConfiguration temiConfiguration) {
         Log.i(TAG, "insertVoiceCmdIntoRepo: " + temiConfiguration);
         temiPatrolRepo.insertConfigurationIntoDb(temiConfiguration);
@@ -149,5 +165,17 @@ public class GlobalViewModel extends AndroidViewModel {
 
     public Robot getTemiRobot() {
         return temiRobot;
+    }
+
+    public boolean isRouteUpdate() {
+        return isRouteUpdate;
+    }
+
+    public TemiRoute getUpdatingRoute() {
+        return updatingRoute;
+    }
+
+    public void setUpdatingRoute(TemiRoute updatingRoute) {
+        this.updatingRoute = updatingRoute;
     }
 }

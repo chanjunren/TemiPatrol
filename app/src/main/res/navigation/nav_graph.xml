@@ -67,5 +67,8 @@
         <action
             android:id="@+id/action_routeExecutionFragment_to_patrolFragment"
             app:destination="@id/patrolFragment" />
+        <action
+            android:id="@+id/action_routeExecutionFragment_to_createRouteFragment"
+            app:destination="@id/createRouteFragment" />
     </fragment>
 </navigation>

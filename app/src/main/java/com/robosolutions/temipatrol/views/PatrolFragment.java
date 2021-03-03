@@ -99,7 +99,10 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
         initializeVoiceCmds();
         configureCamera(camera);
         startCamera();
-        startPatrol();
+
+        if (viewModel.getSelectedRoute().getDestinations().size() != 0) {
+            startPatrol();
+        }
     }
 
 
