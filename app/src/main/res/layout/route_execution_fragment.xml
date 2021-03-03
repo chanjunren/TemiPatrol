@@ -12,12 +12,44 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/routeRv"
             android:layout_width="wrap_content"
-            android:layout_height="500dp"
+            android:layout_height="600dp"
             android:layout_marginTop="200dp"
             android:overScrollMode="never"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/exitBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="1136dp"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            android:id="@+id/exitPt1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_condensed_regular"
+            android:text="&lt;"
+            android:textSize="40sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/exitPt2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:textSize="30sp"
+            android:text="Back"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/exitPt1"
+            android:fontFamily="@font/roboto_condensed_regular"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

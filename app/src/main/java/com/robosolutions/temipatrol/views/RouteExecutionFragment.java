@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -34,6 +35,7 @@ public class RouteExecutionFragment extends Fragment implements RouteAdapter.OnR
     private HashMap<String, TemiRoute> routeMap;
     private ArrayList<TemiRoute> routes;
     private GlobalViewModel viewModel;
+    private ConstraintLayout exitBtn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,6 +60,11 @@ public class RouteExecutionFragment extends Fragment implements RouteAdapter.OnR
         routeRv = view.findViewById(R.id.routeRv);
         initializeRecylerView();
         attachLiveDataToRecyclerView();
+
+        exitBtn = view.findViewById(R.id.exitBtn);
+        exitBtn.setOnClickListener(v -> {
+            navController.navigate(R.id.action_routeExecutionFragment_to_homeFragment);
+        });
     }
 
     private void initializeRecylerView() {
@@ -85,7 +92,22 @@ public class RouteExecutionFragment extends Fragment implements RouteAdapter.OnR
     }
 
     @Override
-    public void onRouteClick(int position) {
+    public void onRouteEditClick(int position) {
+        Log.i(TAG, "Edit clicked");
+//        TemiRoute selectedRoute = routes.get(position);
+//        Log.i(TAG, "Selected Route: " + selectedRoute.toString());
+//        viewModel.setSelectedRoute(selectedRoute);
+//        navController.navigate(R.id.action_routeExecutionFragment_to_patrolFragment);
+    }
+
+    @Override
+    public void onRouteDeleteClick(int position) {
+        TemiRoute selectedRoute = routes.get(position);
+        viewModel.deleteRouteFromRepo(selectedRoute);
+    }
+
+    @Override
+    public void onRouteExecuteClick(int position) {
         TemiRoute selectedRoute = routes.get(position);
         Log.i(TAG, "Selected Route: " + selectedRoute.toString());
         viewModel.setSelectedRoute(selectedRoute);

@@ -7,6 +7,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -44,7 +46,7 @@ public class CreateRouteFragment extends Fragment {
     private final String TAG = "CreateRouteFragment";
     private CreateRouteAdapter createRouteAdapter;
     private LocationsAdapter locationsAdapter;
-    private Button saveRouteBtn;
+    private CardView saveRouteBtn;
     private EditText routeTitle;
     private RecyclerView createRouteRv, locationsRv;
     private TemiSpeaker temiSpeaker;
@@ -53,6 +55,7 @@ public class CreateRouteFragment extends Fragment {
     private FluidSlider slider;
     private FrameLayout parentLayout;
     private int patrolCount;
+    private ConstraintLayout exitBtn;
 
     private String deletedDestination;
 
@@ -107,6 +110,11 @@ public class CreateRouteFragment extends Fragment {
 
         slider = view.findViewById(R.id.patrolCountSlider);
         buildSlider();
+
+        exitBtn = view.findViewById(R.id.exitBtn);
+        exitBtn.setOnClickListener(v -> {
+            navController.navigate(R.id.action_createRouteFragment_to_homeFragment);
+        });
 
     }
 

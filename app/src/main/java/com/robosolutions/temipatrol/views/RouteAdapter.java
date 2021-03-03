@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -57,6 +58,7 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
     public class RouteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView routeTitleTv, routePathTv;
         ImageView dropDownBtn;
+        CardView deleteRouteBtn, editRouteBtn, executeRouteBtn;
         ConstraintLayout expandLayout;
         OnRouteClickListener onRouteClickListener;
         public RouteViewHolder(@NonNull View itemView, OnRouteClickListener onRouteClickListener) {
@@ -65,22 +67,31 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
             routePathTv = itemView.findViewById(R.id.routePathTv);
             dropDownBtn = itemView.findViewById(R.id.dropDownBtn);
             expandLayout = itemView.findViewById(R.id.expandLayout);
+            deleteRouteBtn = itemView.findViewById(R.id.deleteRouteBtn);
+            editRouteBtn = itemView.findViewById(R.id.editRouteBtn);
+            executeRouteBtn = itemView.findViewById(R.id.execRouteBtn);
             this.onRouteClickListener = onRouteClickListener;
+
+            deleteRouteBtn.setOnClickListener(this);
+            editRouteBtn.setOnClickListener(this);
+            executeRouteBtn.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            onRouteClickListener.onRouteClick(getAdapterPosition());
+            if (v.getId() == R.id.deleteRouteBtn) {
+                onRouteClickListener.onRouteDeleteClick(getAdapterPosition());
+            } else if (v.getId() == R.id.editRouteBtn) {
+                onRouteClickListener.onRouteEditClick(getAdapterPosition());
+            } else if (v.getId() == R.id.execRouteBtn) {
+                onRouteClickListener.onRouteExecuteClick(getAdapterPosition());
+            }
         }
 
         void setText(int position) {
             routeTitleTv.setText(routes.get(position).getRouteTitle());
             routePathTv.setText(getRouteString(routes.get(position)));
         }
-    }
-
-    public interface OnRouteClickListener {
-        void onRouteClick(int position);
     }
 
     private String getRouteString(TemiRoute temiRoute) {
@@ -110,5 +121,11 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
     public void updateHelper(List<TemiRoute> temiRoutes) {
         Log.i(TAG, "routes.size() = " + temiRoutes.size());
         expandedArrHelper = new boolean[temiRoutes.size()];
+    }
+
+    public interface OnRouteClickListener {
+        void onRouteExecuteClick(int position);
+        void onRouteDeleteClick(int position);
+        void onRouteEditClick(int position);
     }
 }
