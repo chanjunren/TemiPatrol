@@ -196,7 +196,10 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
     public void onTtsStatusChanged(@NotNull TtsRequest ttsRequest) {
         if (ttsRequest.getStatus() == TtsRequest.Status.COMPLETED) {
             Log.i(TAG, "SPEECH COMPLETED");
-            temiNavigator.resumePatrol();
+
+            if (viewModel.getSelectedRoute().getDestinations().size() != 0) {
+                temiNavigator.resumePatrol();
+            }
         }
 //        temiNavigator.getTemiRobot().tiltAngle(20);
     }

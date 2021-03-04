@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -17,7 +18,7 @@ import java.net.URL;
 
 public class JsonPostman {
     private static final String TAG = "JsonPostman";
-    private static final String AWS_HOST = "http://13.213.6.222";
+    private static final String AWS_HOST = "http://192.168.10.104";
     private static final int MASK_DETECTION_PORT = 5000;
     private static final int HUMAN_DISTANCE_PORT = 5002;
 
@@ -44,7 +45,7 @@ public class JsonPostman {
 
     public JsonPostman() {
         try {
-            setupHumanDistanceConnection();
+            // SETUP IP ADDRESS
         } catch (Exception e) {
             Log.e(TAG, "JsonPostman init exception: " + e.toString());
 
@@ -79,6 +80,7 @@ public class JsonPostman {
             setupMaskDetectionConnection();
             Log.i(TAG, "=== SENT ===\n" + requestJson.toString());
             OutputStream os = maskDetectionConnection.getOutputStream();
+            Log.i(TAG, "Exception is thrown before me!");
             byte[] input = requestJson.toString().getBytes("utf-8");
             os.write(input, 0, input.length);
 
@@ -93,7 +95,20 @@ public class JsonPostman {
             return isWearingMask(response.toString());
         } catch (Exception e) {
             Log.e(TAG, "postRequest exception: " + e.toString());
-            return true;
+            try {
+                int status = humanDistanceConnection.getResponseCode();
+                Log.e(TAG, "Status: " + status);
+                BufferedReader br = new BufferedReader(
+                        new InputStreamReader(humanDistanceConnection.getErrorStream(), "utf-8"));
+                StringBuilder errorResponse = new StringBuilder();
+                String errorResponseLine = null;
+                while ((errorResponseLine = br.readLine()) != null) {
+                    errorResponse.append(errorResponseLine);
+                }
+                Log.i(TAG, " === ERROR RESPONSE ===\n" + errorResponse.toString());
+            } catch (IOException err) {
+                Log.e(TAG, "Connection Debug: " + err.toString());
+            }            return true;
         }
     }
 
@@ -124,7 +139,7 @@ public class JsonPostman {
     public boolean postHumanDistanceRequestAndGetResult(JSONObject requestJson) {
         try {
             Log.i(TAG, "=== SENT ===\n" + requestJson.toString());
-
+            setupHumanDistanceConnection();
             OutputStream os = humanDistanceConnection.getOutputStream();
             byte[] input = requestJson.toString().getBytes("utf-8");
             os.write(input, 0, input.length);
@@ -140,7 +155,21 @@ public class JsonPostman {
             return isClusterDetected(response.toString());
         } catch (Exception e) {
             Log.e(TAG, "postRequest exception: " + e.toString());
-            return true;
+            try {
+                int status = humanDistanceConnection.getResponseCode();
+                Log.e(TAG, "Status: " + status);
+                BufferedReader br = new BufferedReader(
+                        new InputStreamReader(humanDistanceConnection.getErrorStream(), "utf-8"));
+                StringBuilder errorResponse = new StringBuilder();
+                String errorResponseLine = null;
+                while ((errorResponseLine = br.readLine()) != null) {
+                    errorResponse.append(errorResponseLine);
+                }
+                Log.i(TAG, " === ERROR RESPONSE ===\n" + errorResponse.toString());
+            } catch (IOException err) {
+                Log.e(TAG, "Connection Debug: " + err.toString());
+            }
+            return false;
         }
     }
 
@@ -149,6 +178,7 @@ public class JsonPostman {
         JSONArray arr = response.getJSONArray(DISTANCE_RESPONSE_ARRAY_NAME);
         for (int i = 0; i < arr.length(); i++) {
             JSONObject cluster = (JSONObject) arr.get(i);
+            Log.i(TAG, "Number of hoomans detected: " + cluster.get(HUMAN_NUM));
             if ((int) cluster.get(HUMAN_NUM) > HUMAN_LIMIT) {
                 return true;
             }

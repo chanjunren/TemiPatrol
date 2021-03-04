@@ -84,10 +84,9 @@ public class JsonRequestUtils {
         JSONObject featuresBody = new JSONObject();
         featuresBody.put("Fx", MD_FX_VALUE);
         featuresBody.put("Fy", MD_FY_VALUE);
-        featuresBody.put("CenterX", MD_CENTER_X_VALUE);
+        featuresBody.put("centerX", MD_CENTER_X_VALUE);
         featuresBody.put("type", MD_HUMAN_DIST_TYPE);
         featuresArr.put(featuresBody);
         return featuresArr;
     }
-
 }
