@@ -7,7 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="transparent_gray">#808000</color>
+    <color name="gray">#808080</color>
     <color name="red">#FF5858</color>
     <color name="temi_teal">#46DBB4</color>
     <color name="slider_color">#E65572</color>
@@ -17,5 +17,4 @@
     <color name="niceBlue">#1FA6DB</color>
     <color name="niceDarkRed">#A83E53</color>
     <color name="niceLightPink">#E197A6</color>
-
 </resources>

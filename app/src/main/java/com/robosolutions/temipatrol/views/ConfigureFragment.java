@@ -1,5 +1,8 @@
 package com.robosolutions.temipatrol.views;
 
+import android.annotation.SuppressLint;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,7 +15,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +41,7 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
     private ArrayList<TemiConfiguration> temiConfigurations;
     private HashMap<Integer, TextView> tvMap;
     private FlatDialog maskDetectionDialog, humanDistanceDialog, serverIpDialog, adminPwDialog;
+    private Resources resources;
 
 
     public ConfigureFragment() {
@@ -53,6 +56,7 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
         TemiConfiguration[] tempArr = {null, null, null, null};
         temiConfigurations = new ArrayList<>(Arrays.asList(tempArr));
         tvMap = new HashMap<>();
+        resources = getResources();
     }
 
     @Override
@@ -72,8 +76,6 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
 
     private void attachConfigurationLiveData() {
         final Observer<List<TemiConfiguration>> configListObserver = liveDataConfigurations -> {
-            Log.i(TAG, "onChanged called");
-
             for (TemiConfiguration configuration: liveDataConfigurations) {
                 temiConfigurations.remove(configuration.getKey().getValue() - 1);
                 temiConfigurations.add(configuration.getKey().getValue() - 1, configuration);
@@ -126,6 +128,7 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
         adminPwDialog = buildAdminPwDialog();
     }
 
+    @SuppressLint("ResourceType")
     private FlatDialog buildMaskDetectionDialog() {
         FlatDialog flatDialog = new FlatDialog(getContext());
         flatDialog
@@ -144,13 +147,17 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
                 .withSecondButtonListner(view -> {
                     flatDialog.dismiss();
                 })
-                .setBackgroundColor(R.color.white)
-                .setFirstButtonColor(R.color.temi_teal)
-                .setSecondButtonColor(R.color.slider_color)
+                .setBackgroundColor(Color.parseColor(resources.getString(R.color.white)))
+                .setFirstButtonColor(Color.parseColor(resources.getString(R.color.temi_teal)))
+                .setSecondButtonColor(Color.parseColor(resources.getString(R.color.slider_color)))
+                .setFirstTextFieldTextColor(Color.parseColor(resources.getString(R.color.black)))
+                .setFirstTextFieldHintColor(Color.parseColor(resources.getString(R.color.gray)))
+                .setSubtitleColor(Color.parseColor(resources.getString(R.color.black)))
                 .setIcon(R.drawable.ic_configure_icon);
         return flatDialog;
     }
 
+    @SuppressLint("ResourceType")
     private FlatDialog buildHumanDistanceDialog() {
         FlatDialog flatDialog = new FlatDialog(getContext());
         flatDialog
@@ -167,14 +174,18 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
                     flatDialog.dismiss();
                 })
                 .withSecondButtonListner(view -> flatDialog.dismiss())
-                .setBackgroundColor(R.color.white)
-                .setFirstButtonColor(R.color.temi_teal)
-                .setSecondButtonColor(R.color.slider_color)
+                .setBackgroundColor(Color.parseColor(resources.getString(R.color.white)))
+                .setFirstButtonColor(Color.parseColor(resources.getString(R.color.temi_teal)))
+                .setSecondButtonColor(Color.parseColor(resources.getString(R.color.slider_color)))
+                .setFirstTextFieldTextColor(Color.parseColor(resources.getString(R.color.black)))
+                .setFirstTextFieldHintColor(Color.parseColor(resources.getString(R.color.gray)))
+                .setSubtitleColor(Color.parseColor(resources.getString(R.color.black)))
                 .setIcon(R.drawable.ic_configure_icon);
         return flatDialog;
     }
 
 
+    @SuppressLint("ResourceType")
     private FlatDialog buildServerIpDialog() {
         FlatDialog flatDialog = new FlatDialog(getContext());
         flatDialog
@@ -193,14 +204,18 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
                 .withSecondButtonListner(view -> {
                     flatDialog.dismiss();
                 })
-                .setBackgroundColor(R.color.white)
-                .setFirstButtonColor(R.color.temi_teal)
-                .setSecondButtonColor(R.color.slider_color)
+                .setBackgroundColor(Color.parseColor(resources.getString(R.color.white)))
+                .setFirstButtonColor(Color.parseColor(resources.getString(R.color.temi_teal)))
+                .setSecondButtonColor(Color.parseColor(resources.getString(R.color.slider_color)))
+                .setFirstTextFieldTextColor(Color.parseColor(resources.getString(R.color.black)))
+                .setFirstTextFieldHintColor(Color.parseColor(resources.getString(R.color.gray)))
+                .setSubtitleColor(Color.parseColor(resources.getString(R.color.black)))
                 .setIcon(R.drawable.ic_configure_icon);
         return flatDialog;
     }
 
 
+    @SuppressLint("ResourceType")
     private FlatDialog buildAdminPwDialog() {
         FlatDialog flatDialog = new FlatDialog(getContext());
         flatDialog
@@ -217,9 +232,12 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
                     flatDialog.dismiss();
                 })
                 .withSecondButtonListner(view -> flatDialog.dismiss())
-                .setBackgroundColor(R.color.white)
-                .setFirstButtonColor(R.color.temi_teal)
-                .setSecondButtonColor(R.color.slider_color)
+                .setBackgroundColor(Color.parseColor(resources.getString(R.color.white)))
+                .setFirstButtonColor(Color.parseColor(resources.getString(R.color.temi_teal)))
+                .setSecondButtonColor(Color.parseColor(resources.getString(R.color.slider_color)))
+                .setFirstTextFieldTextColor(Color.parseColor(resources.getString(R.color.black)))
+                .setFirstTextFieldHintColor(Color.parseColor(resources.getString(R.color.gray)))
+                .setSubtitleColor(Color.parseColor(resources.getString(R.color.black)))
                 .setIcon(R.drawable.ic_configure_icon);
         return flatDialog;
     }
