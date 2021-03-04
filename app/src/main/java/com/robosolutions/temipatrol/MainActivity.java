@@ -12,9 +12,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.robosolutions.temipatrol.client.JsonPostman;
-import com.robosolutions.temipatrol.client.JsonRequestUtils;
-import com.robosolutions.temipatrol.client.JsonResponseTests;
 import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 
 

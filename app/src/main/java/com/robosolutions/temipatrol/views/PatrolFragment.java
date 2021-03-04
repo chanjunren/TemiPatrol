@@ -21,7 +21,6 @@ import com.otaliastudios.cameraview.CameraView;
 import com.otaliastudios.cameraview.PictureResult;
 import com.robosolutions.temipatrol.R;
 import com.robosolutions.temipatrol.client.JsonPostman;
-import com.robosolutions.temipatrol.client.JsonRequestUtils;
 import com.robosolutions.temipatrol.google.MediaHelper;
 import com.robosolutions.temipatrol.model.ConfigurationEnum;
 import com.robosolutions.temipatrol.model.TemiConfiguration;
@@ -31,6 +30,7 @@ import com.robosolutions.temipatrol.temi.TemiSpeaker;
 import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 import com.robotemi.sdk.Robot;
 import com.robotemi.sdk.TtsRequest;
+import com.tomer.fadingtextview.FadingTextView;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
@@ -43,14 +43,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import static com.robosolutions.temipatrol.google.MediaHelper.CLUSTER_DETECTED;
-import static com.robosolutions.temipatrol.google.MediaHelper.NOT_WEARING_MASK_DETECTED;
+import java.util.concurrent.TimeUnit;
 
 
 // Page shown when Temi is patrolling
 public class PatrolFragment extends Fragment implements Robot.TtsListener {
     private static final String TAG = "PatrolFragment";
+
 
     private class CameraTask extends TimerTask {
         @Override
@@ -68,6 +67,7 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
     private TemiNavigator temiNavigator;
     private TemiSpeaker temiSpeaker;
     private MediaHelper mediaHelper;
+    private FadingTextView fadingTv;
 
     private boolean isStationaryPatrol;
 
@@ -101,6 +101,10 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
+        String[] texts = new String[]{"Message 1", "Message 2", "Message 3"};
+
+        fadingTv = view.findViewById(R.id.fadingTv);
+        fadingTv.setTimeout(10, TimeUnit.SECONDS);
 
         camera = view.findViewById(R.id.camera);
         camera.setLifecycleOwner(getViewLifecycleOwner());
@@ -133,20 +137,20 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
                 super.onPictureTaken(result);
                 try {
                     byte[] image = result.getData();
-                    JSONObject maskReqMsg = JsonRequestUtils.generateJsonMessageForMaskDetection(image);
-                    boolean isWearingMask = sendImageToServerAndGetMaskDetectionResult(maskReqMsg);
-                    Log.i(TAG, "Wearing mask value: " + isWearingMask);
-                    JSONObject clusterReqMsg = JsonRequestUtils.generateJsonMessageForHumanDistance(image);
-                    boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(clusterReqMsg);
-                    Log.i(TAG, "Cluster detected value: " + clusterDetected);
-                    if (!isWearingMask) {
-                        mediaHelper.uploadImage(image, NOT_WEARING_MASK_DETECTED);
-                        pauseAndMakeMaskAnnouncement();
-                    }
-                    if (clusterDetected) {
-                        mediaHelper.uploadImage(image, CLUSTER_DETECTED);
-                        pauseAndMakeClusterAnnouncement();
-                    }
+//                    JSONObject maskReqMsg = JsonRequestUtils.generateJsonMessageForMaskDetection(image);
+//                    boolean isWearingMask = sendImageToServerAndGetMaskDetectionResult(maskReqMsg);
+//                    Log.i(TAG, "Wearing mask value: " + isWearingMask);
+//                    JSONObject clusterReqMsg = JsonRequestUtils.generateJsonMessageForHumanDistance(image);
+//                    boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(clusterReqMsg);
+//                    Log.i(TAG, "Cluster detected value: " + clusterDetected);
+//                    if (!isWearingMask) {
+//                        mediaHelper.uploadImage(image, NOT_WEARING_MASK_DETECTED);
+//                        pauseAndMakeMaskAnnouncement();
+//                    }
+//                    if (clusterDetected) {
+//                        mediaHelper.uploadImage(image, CLUSTER_DETECTED);
+//                        pauseAndMakeClusterAnnouncement();
+//                    }
                 } catch (Exception e) {
                     Log.e(TAG, "Error in onPictureTaken: " + e.toString());
                     Toast.makeText(getActivity(), "Error while patrolling: " + e.toString(),

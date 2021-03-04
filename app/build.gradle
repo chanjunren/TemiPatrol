@@ -96,8 +96,6 @@ dependencies {
     // Dialog Library
     implementation 'com.github.mejdi14:Flat-Dialog-Android:1.0.5'
 
-    // Ripple effect
-    implementation 'com.balysv:material-ripple:1.0.2'
-
-
+    // TextView library for patrol page
+    implementation 'com.tomer:fadingtextview:2.6'
 }
