@@ -8,24 +8,20 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 
 public class JsonPostman {
     private static final String TAG = "JsonPostman";
-    private static final String AWS_HOST = "http://192.168.10.104";
+
+    private String AWS_HOST;
     private static final int MASK_DETECTION_PORT = 5000;
     private static final int HUMAN_DISTANCE_PORT = 5002;
 
-    private static final String MASK_DETECTION_POST_ENDPOINT = AWS_HOST + ":"
-            + MASK_DETECTION_PORT + "/api";
-    private static final String HUMAN_DISTANCE_POST_ENDPOINT = AWS_HOST + ":"
-            + HUMAN_DISTANCE_PORT + "/api";
+    private String MASK_DETECTION_POST_ENDPOINT;
+    private String HUMAN_DISTANCE_POST_ENDPOINT;
 
     // Values for parsing
     private static final String MASK_VALUE = "name";
@@ -38,23 +34,23 @@ public class JsonPostman {
     private static final String HUMAN_NUM = "human_num";
     private static final int HUMAN_LIMIT = 8;
 
-
-    private URL maskDetectionUrl, humanDistanceUrl;
     private HttpURLConnection maskDetectionConnection, humanDistanceConnection;
 
 
-    public JsonPostman() {
+    public JsonPostman(String serverIp) {
         try {
             // SETUP IP ADDRESS
+            this.AWS_HOST = serverIp;
+            MASK_DETECTION_POST_ENDPOINT = "http://" + AWS_HOST + ":" + MASK_DETECTION_PORT + "/api";
+            HUMAN_DISTANCE_POST_ENDPOINT = "http://" + AWS_HOST + ":" + HUMAN_DISTANCE_PORT + "/api";
         } catch (Exception e) {
             Log.e(TAG, "JsonPostman init exception: " + e.toString());
 
         }
     }
 
-    private void setupMaskDetectionConnection() throws MalformedURLException,
-            ProtocolException, IOException {
-        maskDetectionUrl = new URL(MASK_DETECTION_POST_ENDPOINT);
+    private void setupMaskDetectionConnection() throws IOException {
+        URL maskDetectionUrl = new URL(MASK_DETECTION_POST_ENDPOINT);
         maskDetectionConnection = (HttpURLConnection) maskDetectionUrl.openConnection();
         maskDetectionConnection.setRequestMethod("POST");
         maskDetectionConnection.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -63,9 +59,8 @@ public class JsonPostman {
         maskDetectionConnection.setDoOutput(true);
     }
 
-    private void setupHumanDistanceConnection() throws MalformedURLException,
-            ProtocolException, IOException {
-        humanDistanceUrl = new URL(HUMAN_DISTANCE_POST_ENDPOINT);
+    private void setupHumanDistanceConnection() throws IOException {
+        URL humanDistanceUrl = new URL(HUMAN_DISTANCE_POST_ENDPOINT);
         humanDistanceConnection = (HttpURLConnection) humanDistanceUrl.openConnection();
         humanDistanceConnection.setRequestMethod("POST");
         humanDistanceConnection.setRequestProperty("Content-Type", "application/json; utf-8");

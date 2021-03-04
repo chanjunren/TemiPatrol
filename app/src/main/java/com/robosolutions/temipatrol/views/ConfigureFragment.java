@@ -1,6 +1,5 @@
 package com.robosolutions.temipatrol.views;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,8 +15,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,8 +38,6 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
     private ArrayList<TemiConfiguration> temiConfigurations;
     private HashMap<Integer, TextView> tvMap;
     private FlatDialog maskDetectionDialog, humanDistanceDialog, serverIpDialog, adminPwDialog;
-
-    private View createdView;
 
 
     public ConfigureFragment() {
@@ -69,14 +64,13 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        this.createdView = view;
         findAndSetViews(view);
         navController = Navigation.findNavController(view);
         attachConfigurationLiveData();
     }
 
     private void attachConfigurationLiveData() {
-        final Observer<List<TemiConfiguration>> voiceCmdListObserver = liveDataConfigurations -> {
+        final Observer<List<TemiConfiguration>> configListObserver = liveDataConfigurations -> {
             Log.i(TAG, "onChanged called");
 
             for (TemiConfiguration configuration: liveDataConfigurations) {
@@ -85,7 +79,7 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
                 tvMap.get(configuration.getKey().getValue()).setText(configuration.getValue());
             }
         };
-        viewModel.getConfigurationLiveDataFromRepo().observe(getActivity(), voiceCmdListObserver);
+        viewModel.getConfigurationLiveDataFromRepo().observe(getActivity(), configListObserver);
     }
 
     private void findAndSetViews(View view) {

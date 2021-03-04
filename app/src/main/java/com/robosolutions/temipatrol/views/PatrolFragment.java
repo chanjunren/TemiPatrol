@@ -22,6 +22,7 @@ import com.robosolutions.temipatrol.R;
 import com.robosolutions.temipatrol.client.JsonPostman;
 import com.robosolutions.temipatrol.client.JsonRequestUtils;
 import com.robosolutions.temipatrol.google.MediaHelper;
+import com.robosolutions.temipatrol.model.ConfigurationEnum;
 import com.robosolutions.temipatrol.model.TemiConfiguration;
 import com.robosolutions.temipatrol.model.TemiRoute;
 import com.robosolutions.temipatrol.temi.TemiNavigator;
@@ -66,7 +67,13 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
     private TemiNavigator temiNavigator;
     private TemiSpeaker temiSpeaker;
     private MediaHelper mediaHelper;
+
+    private boolean isStationaryPatrol;
+
     private ArrayList<TemiConfiguration> temiConfigurations;
+    private String maskDetectionCmd;
+    private String humanDistanceCmd;
+    private String serverIp;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,7 +81,6 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
         viewModel = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
         globalExecutorService = viewModel.getExecutorService();
         postmanExecutorService = Executors.newFixedThreadPool(20);
-        jsonPostman = new JsonPostman();
         temiNavigator = new TemiNavigator(viewModel.getTemiRobot(), this);
         temiSpeaker = new TemiSpeaker(viewModel.getTemiRobot());
         mediaHelper = new MediaHelper(getContext(), viewModel);
@@ -94,14 +100,21 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
+
         camera = view.findViewById(R.id.camera);
         camera.setLifecycleOwner(getViewLifecycleOwner());
-        initializeVoiceCmds();
+
+        initConfigurations();
+
         configureCamera(camera);
         startCamera();
 
+        // No patrol for stationary patrol
         if (viewModel.getSelectedRoute().getDestinations().size() != 0) {
+            isStationaryPatrol = false;
             startPatrol();
+        } else {
+            isStationaryPatrol = true;
         }
     }
 
@@ -119,10 +132,10 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
                 byte[] image = result.getData();
 //                JSONObject maskReqMsg = JsonRequestUtils.generateJsonMessageForMaskDetection(image);
 //                boolean isWearingMask = sendImageToServerAndGetMaskDetectionResult(maskReqMsg);
-//                Log.i(TAG, "Value received: " + isWearingMask);
+//                Log.i(TAG, "Wearing mask value: " + isWearingMask);
                 JSONObject clusterReqMsg = JsonRequestUtils.generateJsonMessageForHumanDistance(image);
                 boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(clusterReqMsg);
-
+                Log.i(TAG, "Cluster detected value: " + clusterDetected);
 //                if (!isWearingMask) {
 //                    mediaHelper.uploadImage(image, NOT_WEARING_MASK_DETECTED);
 //                    pauseAndMakeMaskAnnouncement();
@@ -154,13 +167,23 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
         });
     }
 
-    private void initializeVoiceCmds() {
-        final Observer<List<TemiConfiguration>> voiceCmdListener = voiceCmds -> {
+    private void initConfigurations() {
+        final Observer<List<TemiConfiguration>> voiceCmdListener = configs -> {
             temiConfigurations.clear();
-            for (TemiConfiguration voiceCmd: voiceCmds) {
-                this.temiConfigurations.add(voiceCmd);
+            for (TemiConfiguration config: configs) {
+                if (config.getKey() == ConfigurationEnum.MASK_DETECTION_MSG) {
+                    maskDetectionCmd = config.getValue();
+                }
+                else if (config.getKey() == ConfigurationEnum.HUMAN_DIST_MSG) {
+                    humanDistanceCmd = config.getValue();
+                } else if (config.getKey() == ConfigurationEnum.SERVER_IP_ADD) {
+                    serverIp = config.getValue();
+                    jsonPostman = new JsonPostman(serverIp);
+                }
             }
-            Log.i(TAG, "Voice Cmds: " + temiConfigurations.toString());
+            Log.i(TAG, "Mask msg: " + maskDetectionCmd);
+            Log.i(TAG, "Human Distance msg: " + humanDistanceCmd);
+            Log.i(TAG, "Server IP: " + serverIp);
         };
 
         viewModel.getConfigurationLiveDataFromRepo().observe(getViewLifecycleOwner(), voiceCmdListener);
@@ -197,11 +220,10 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
         if (ttsRequest.getStatus() == TtsRequest.Status.COMPLETED) {
             Log.i(TAG, "SPEECH COMPLETED");
 
-            if (viewModel.getSelectedRoute().getDestinations().size() != 0) {
+            if (!isStationaryPatrol) {
                 temiNavigator.resumePatrol();
             }
         }
-//        temiNavigator.getTemiRobot().tiltAngle(20);
     }
 
     public void navigateToHomePage() {
