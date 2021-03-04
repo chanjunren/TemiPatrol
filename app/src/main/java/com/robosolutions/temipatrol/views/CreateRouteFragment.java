@@ -200,7 +200,6 @@ public class CreateRouteFragment extends Fragment {
                     @Override
                     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                         int position = viewHolder.getAdapterPosition();
-                        Log.i(TAG, "Swiped on " + position + " Direction: " + direction);
                         ArrayList<String> route = viewModel.getCreateRouteHelperList();
                         deletedDestination = route.get(position);
                         route.remove(position);

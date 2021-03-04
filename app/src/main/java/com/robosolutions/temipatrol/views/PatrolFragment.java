@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.otaliastudios.cameraview.CameraListener;
 import com.otaliastudios.cameraview.CameraView;
@@ -116,6 +117,7 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
         } else {
             isStationaryPatrol = true;
         }
+
     }
 
 
@@ -129,20 +131,27 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
             @Override
             public void onPictureTaken(@NonNull PictureResult result) {
                 super.onPictureTaken(result);
-                byte[] image = result.getData();
-//                JSONObject maskReqMsg = JsonRequestUtils.generateJsonMessageForMaskDetection(image);
-//                boolean isWearingMask = sendImageToServerAndGetMaskDetectionResult(maskReqMsg);
-//                Log.i(TAG, "Wearing mask value: " + isWearingMask);
-                JSONObject clusterReqMsg = JsonRequestUtils.generateJsonMessageForHumanDistance(image);
-                boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(clusterReqMsg);
-                Log.i(TAG, "Cluster detected value: " + clusterDetected);
-//                if (!isWearingMask) {
-//                    mediaHelper.uploadImage(image, NOT_WEARING_MASK_DETECTED);
-//                    pauseAndMakeMaskAnnouncement();
-//                }
-                if (clusterDetected) {
-                    mediaHelper.uploadImage(image, CLUSTER_DETECTED);
-                    pauseAndMakeClusterAnnouncement();
+                try {
+                    byte[] image = result.getData();
+                    JSONObject maskReqMsg = JsonRequestUtils.generateJsonMessageForMaskDetection(image);
+                    boolean isWearingMask = sendImageToServerAndGetMaskDetectionResult(maskReqMsg);
+                    Log.i(TAG, "Wearing mask value: " + isWearingMask);
+                    JSONObject clusterReqMsg = JsonRequestUtils.generateJsonMessageForHumanDistance(image);
+                    boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(clusterReqMsg);
+                    Log.i(TAG, "Cluster detected value: " + clusterDetected);
+                    if (!isWearingMask) {
+                        mediaHelper.uploadImage(image, NOT_WEARING_MASK_DETECTED);
+                        pauseAndMakeMaskAnnouncement();
+                    }
+                    if (clusterDetected) {
+                        mediaHelper.uploadImage(image, CLUSTER_DETECTED);
+                        pauseAndMakeClusterAnnouncement();
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Error in onPictureTaken: " + e.toString());
+                    Toast.makeText(getActivity(), "Error while patrolling: " + e.toString(),
+                            Toast.LENGTH_LONG).show();
+                    navController.navigate(R.id.action_patrolFragment_to_homeFragment);
                 }
             }
         });
