@@ -1,5 +1,8 @@
 package com.robosolutions.temipatrol.views;
 
+import android.annotation.SuppressLint;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,12 +13,15 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.flatdialoglibrary.dialog.FlatDialog;
 import com.otaliastudios.cameraview.CameraListener;
 import com.otaliastudios.cameraview.CameraView;
 import com.otaliastudios.cameraview.PictureResult;
@@ -68,6 +74,7 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
     private TemiSpeaker temiSpeaker;
     private MediaHelper mediaHelper;
     private FadingTextView fadingTv;
+    private FlatDialog passwordDialog;
 
     private boolean isStationaryPatrol;
 
@@ -75,6 +82,7 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
     private String maskDetectionCmd;
     private String humanDistanceCmd;
     private String serverIp;
+    private String password;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -101,7 +109,13 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
-        String[] texts = new String[]{"Message 1", "Message 2", "Message 3"};
+
+        passwordDialog = buildPasswordDialog();
+
+        ImageView robosolutionLogo = view.findViewById(R.id.robosolutionLogo);
+        robosolutionLogo.setOnClickListener(v -> {
+            passwordDialog.show();
+        });
 
         fadingTv = view.findViewById(R.id.fadingTv);
         fadingTv.setTimeout(10, TimeUnit.SECONDS);
@@ -192,6 +206,8 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
                 } else if (config.getKey() == ConfigurationEnum.SERVER_IP_ADD) {
                     serverIp = config.getValue();
                     jsonPostman = new JsonPostman(serverIp);
+                } else if (config.getKey() == ConfigurationEnum.ADMIN_PW) {
+                    password = config.getValue();
                 }
             }
             Log.i(TAG, "Mask msg: " + maskDetectionCmd);
@@ -241,5 +257,35 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
 
     public void navigateToHomePage() {
         navController.navigate(R.id.action_patrolFragment_to_homeFragment);
+    }
+
+    @SuppressLint("ResourceType")
+    private FlatDialog buildPasswordDialog() {
+        Resources resources = getResources();
+        FlatDialog flatDialog = new FlatDialog(getContext());
+        flatDialog
+                .setSubtitle("Please enter the password to stop the current patrol")
+                .setFirstTextFieldHint("Password")
+                .setFirstTextFieldInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD)
+                .setFirstButtonText("Enter")
+                .setSecondButtonText("Cancel")
+                .withFirstButtonListner(view -> {
+                    if (flatDialog.getFirstTextField().equals(password)) {
+                        temiNavigator.getTemiRobot().stopMovement();
+                        navController.navigate(R.id.action_patrolFragment_to_homeFragment);
+                    } else {
+                        Toast.makeText(getContext(), "Incorrect password!", Toast.LENGTH_SHORT).show();
+                    }
+                    flatDialog.dismiss();
+                })
+                .withSecondButtonListner(view -> flatDialog.dismiss())
+                .setBackgroundColor(Color.parseColor(resources.getString(R.color.white)))
+                .setFirstButtonColor(Color.parseColor(resources.getString(R.color.temi_teal)))
+                .setSecondButtonColor(Color.parseColor(resources.getString(R.color.slider_color)))
+                .setFirstTextFieldTextColor(Color.parseColor(resources.getString(R.color.black)))
+                .setFirstTextFieldHintColor(Color.parseColor(resources.getString(R.color.gray)))
+                .setSubtitleColor(Color.parseColor(resources.getString(R.color.black)))
+                .setIcon(R.drawable.ic_configure_icon);
+        return flatDialog;
     }
 }
