@@ -11,18 +11,28 @@
         android:background="@color/white">
 
         <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:cardCornerRadius="30dp"
-            android:layout_marginTop="20dp"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:cardCornerRadius="100dp"
+            app:cardElevation="10dp"
+            android:layout_marginTop="25dp"
+            android:elevation="100dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_home_icon"
+                android:background="@color/white"/>
+        </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/addRouteBtn"
             android:layout_width="900dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="200dp"
+            android:layout_marginTop="280dp"
             app:cardBackgroundColor="#00000000"
             app:cardCornerRadius="20dp"
             app:cardElevation="8dp"
@@ -67,7 +77,7 @@
             android:id="@+id/patrolPageBtn"
             android:layout_width="900dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="370dp"
+            android:layout_marginTop="450dp"
             app:cardBackgroundColor="#00000000"
             app:cardCornerRadius="20dp"
             app:cardElevation="8dp"
@@ -110,7 +120,7 @@
             android:id="@+id/configurePageBtn"
             android:layout_width="900dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="540dp"
+            android:layout_marginTop="620dp"
             app:cardBackgroundColor="#00000000"
             app:cardCornerRadius="20dp"
             app:cardElevation="8dp"

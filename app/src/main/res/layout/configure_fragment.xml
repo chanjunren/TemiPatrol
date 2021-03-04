@@ -9,6 +9,23 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <androidx.cardview.widget.CardView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="25dp"
+            app:cardCornerRadius="100dp"
+            app:cardElevation="10dp"
+            android:elevation="100dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_home_icon"
+                android:background="@color/white"/>
+        </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/maskDetectionMsgLabelTv"
@@ -18,7 +35,7 @@
             app:layout_constraintHorizontal_bias="0.040"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="180dp"
+            android:layout_marginTop="260dp"
             app:cardCornerRadius="30dp">
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -41,7 +58,7 @@
                     android:id="@+id/textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_condensed_regular"
+                    android:fontFamily="@font/roboto_condensed_bold"
                     android:text="Mask Detection Message"
                     android:textAlignment="center"
                     android:textColor="@color/white"
@@ -61,7 +78,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.040"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="324dp"
+            android:layout_marginTop="404dp"
             app:layout_constraintTop_toTopOf="parent"
             app:cardCornerRadius="30dp">
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -106,7 +123,7 @@
             app:layout_constraintHorizontal_bias="0.040"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="468dp"
+            android:layout_marginTop="548dp"
             app:cardCornerRadius="30dp"
             >
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -147,7 +164,7 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/adminPwLabelTv"
-            android:layout_marginTop="612dp"
+            android:layout_marginTop="682dp"
             android:layout_width="440dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
@@ -188,7 +205,7 @@
 
         <HorizontalScrollView
             android:id="@+id/maskDetectionContainer"
-            android:layout_marginTop="200dp"
+            android:layout_marginTop="280dp"
             android:layout_width="380dp"
             android:layout_height="44dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -212,7 +229,7 @@
             android:id="@+id/humanDistanceMsgContainer"
             android:layout_width="380dp"
             android:layout_height="44dp"
-            android:layout_marginTop="344dp"
+            android:layout_marginTop="424dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.07"
             app:layout_constraintStart_toEndOf="@+id/humanDistanceMsgLabelTv"
@@ -239,7 +256,7 @@
             app:layout_constraintHorizontal_bias="0.08"
             app:layout_constraintStart_toEndOf="@+id/serverIpLabelTv"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="488dp"
+            android:layout_marginTop="568dp"
             android:layout_width="380dp"
             android:layout_height="44dp"
             >
@@ -261,7 +278,7 @@
             android:id="@+id/adminPwContainer"
             android:layout_width="380dp"
             android:layout_height="44dp"
-            android:layout_marginTop="632dp"
+            android:layout_marginTop="702dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.08"
             app:layout_constraintStart_toEndOf="@+id/adminPwLabelTv"
@@ -286,7 +303,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="110dp"
-            android:layout_marginTop="187dp"
+            android:layout_marginTop="267dp"
             android:src="@drawable/ic_edit_icon"
             android:padding="16dp"
             android:background="@drawable/button_background"
@@ -297,7 +314,7 @@
             android:id="@+id/playMaskMsgBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="187dp"
+            android:layout_marginTop="267dp"
             android:layout_marginStart="10dp"
             android:background="@drawable/button_background"
             android:src="@drawable/ic_play_icon"
@@ -309,7 +326,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="110dp"
-            android:layout_marginTop="331dp"
+            android:layout_marginTop="410dp"
             android:background="@drawable/button_background"
             android:src="@drawable/ic_edit_icon"
             android:padding="16dp"
@@ -320,7 +337,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="331dp"
+            android:layout_marginTop="410dp"
             android:background="@drawable/button_background"
             android:src="@drawable/ic_play_icon"
             android:padding="16dp"
@@ -332,7 +349,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="110dp"
-            android:layout_marginTop="475dp"
+            android:layout_marginTop="555dp"
             android:background="@drawable/button_background"
             android:src="@drawable/ic_edit_icon"
             android:padding="16dp"
@@ -344,7 +361,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="475dp"
+            android:layout_marginTop="555dp"
             android:background="@drawable/button_background"
             android:src="@drawable/ic_connect_icon"
             android:padding="16dp"
@@ -356,7 +373,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="110dp"
-            android:layout_marginTop="619dp"
+            android:layout_marginTop="689dp"
             android:background="@drawable/button_background"
             android:src="@drawable/ic_edit_icon"
             android:padding="16dp"

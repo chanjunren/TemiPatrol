@@ -42,8 +42,6 @@ public class CustomAnimation {
         animation.setDuration((long) (actualheight / view.getContext().getResources().getDisplayMetrics().density));
         view.startAnimation(animation);
         return animation;
-
-
     }
 
     public static void collapse(final View view) {

@@ -13,6 +13,23 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <androidx.cardview.widget.CardView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:cardCornerRadius="100dp"
+            app:cardElevation="10dp"
+            android:layout_marginTop="25dp"
+            android:elevation="100dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_home_icon"
+                android:background="@color/white"/>
+        </androidx.cardview.widget.CardView>
 
         <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
             android:layout_width="1000dp"
@@ -21,7 +38,7 @@
             app:borderColor="@color/slider_color"
             app:borderWidth="2dp"
             app:cornerRadius="8dp"
-            android:layout_marginTop="160dp"
+            android:layout_marginTop="240dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -46,7 +63,7 @@
             android:id="@+id/patrolCountSlider"
             android:layout_width="800dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="200dp"
+            android:layout_marginTop="280dp"
             app:layout_constraintHorizontal_bias="0.7"
             app:bar_color="@color/slider_color"
             android:layout_marginEnd="16dp"
@@ -67,10 +84,11 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginStart="1050dp"
             android:layout_marginTop="688dp"
-            app:cardCornerRadius="20dp">
+            app:cardCornerRadius="10dp">
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="5dp"
                 android:background="@color/niceBlue">
                 <ImageView
                     android:id="@+id/saveIcon"
@@ -83,18 +101,19 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintHorizontal_bias="0.1"
                     />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_condensed_regular"
+                    android:paddingRight="20dp"
                     android:text="Save"
                     android:textColor="@color/white"
-                    android:fontFamily="@font/roboto_condensed_regular"
                     android:textSize="30sp"
-                    android:paddingRight="20dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/saveIcon"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
@@ -104,29 +123,27 @@
             android:overScrollMode="never"
             android:layout_width="770dp"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="480dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.6"
             app:layout_constraintHorizontal_bias="0.7"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/locationsRv"
             android:overScrollMode="never"
-            android:layout_width="770dp"
+            android:layout_width="700dp"
             android:layout_height="wrap_content"
-            app:layout_constraintVertical_bias="0.8"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="660dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintHorizontal_bias="0.7"/>
+            app:layout_constraintHorizontal_bias="0.61"/>
         <TextView
             android:id="@+id/patrolCountTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="290dp"
+            android:layout_marginTop="370dp"
             android:text="Patrol Count"
             android:fontFamily="@font/roboto_condensed_regular"
             android:textColor="@color/black"
@@ -139,7 +156,7 @@
             android:id="@+id/routeTitleTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="440dp"
+            android:layout_marginTop="520dp"
             android:text="Route"
             android:fontFamily="@font/roboto_condensed_regular"
             android:textColor="@color/black"
@@ -152,7 +169,7 @@
             android:id="@+id/locationsTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="600dp"
+            android:layout_marginTop="690dp"
             android:fontFamily="@font/roboto_condensed_regular"
             android:textColor="@color/black"
             android:text="Saved Locations"
