@@ -187,7 +187,7 @@ public class CreateRouteFragment extends Fragment {
                 new ItemTouchHelper.SimpleCallback(ItemTouchHelper.START | ItemTouchHelper.END,
                         ItemTouchHelper.UP | ItemTouchHelper.DOWN) {
                     @Override
-                    public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull R000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ecyclerView.ViewHolder viewHolder,
+                    public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder,
                                           @NonNull RecyclerView.ViewHolder target) {
                         int from = viewHolder.getAdapterPosition();
                         int to = target.getAdapterPosition();
@@ -237,13 +237,6 @@ public class CreateRouteFragment extends Fragment {
                                             float dX, float dY, int actionState,
                                             boolean isCurrentlyActive) {
                         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-//                        new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-//                                .addSwipeLeftBackgroundColor(ContextCompat.getColor(getContext(),
-//                                        R.color.black))
-//                                .addSwipeLeftActionIcon(R.drawable.ic_baseline_delete_outline_24)
-//                                .create()
-//                                .decorate();
-
                     }
                 });
     }
