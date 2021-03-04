@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -87,6 +88,11 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
         TextView humanDistTv = view.findViewById(R.id.humanDistanceMsgTv);
         TextView serverIpTv = view.findViewById(R.id.serverIpTv);
         TextView adminPwTv = view.findViewById(R.id.adminPwTv);
+
+        maskMsgTv.setMovementMethod(new ScrollingMovementMethod());
+        humanDistTv.setMovementMethod(new ScrollingMovementMethod());
+        serverIpTv.setMovementMethod(new ScrollingMovementMethod());
+        adminPwTv.setMovementMethod(new ScrollingMovementMethod());
 
         tvMap.put(1, maskMsgTv);
         tvMap.put(2, humanDistTv);

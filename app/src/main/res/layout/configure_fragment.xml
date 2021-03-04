@@ -184,74 +184,102 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.0" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-
         </androidx.cardview.widget.CardView>
 
-
-
-        <TextView
-            android:id="@+id/maskDetectionMsgTv"
+        <HorizontalScrollView
+            android:id="@+id/maskDetectionContainer"
+            android:layout_marginTop="200dp"
             android:layout_width="380dp"
             android:layout_height="44dp"
-            android:layout_marginTop="200dp"
-            android:text="Text"
-            android:textAlignment="center"
-            android:textSize="30sp"
-            android:textColor="@color/black"
-            android:fontFamily="@font/roboto_condensed_regular"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.068"
             app:layout_constraintStart_toEndOf="@id/maskDetectionMsgLabelTv"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/humanDistanceMsgTv"
+            app:layout_constraintTop_toTopOf="parent">
+            <TextView
+                android:id="@+id/maskDetectionMsgTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Text"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:textSize="30sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/roboto_condensed_regular"
+                android:textStyle="bold"
+                />
+        </HorizontalScrollView>
+        <HorizontalScrollView
+            android:id="@+id/humanDistanceMsgContainer"
             android:layout_width="380dp"
             android:layout_height="44dp"
             android:layout_marginTop="344dp"
-            android:text="Text"
-            android:textAlignment="center"
-            android:textSize="30sp"
-            android:textColor="@color/black"
-            android:fontFamily="@font/roboto_condensed_regular"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.07"
             app:layout_constraintStart_toEndOf="@+id/humanDistanceMsgLabelTv"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            >
+            <TextView
+                android:id="@+id/humanDistanceMsgTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Text"
+                android:textAlignment="center"
+                android:textSize="30sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/roboto_condensed_regular"
+                android:textStyle="bold"
+                />
+        </HorizontalScrollView>
 
-        <TextView
-            android:id="@+id/serverIpTv"
-            android:layout_width="380dp"
-            android:layout_height="44dp"
-            android:layout_marginTop="488dp"
-            android:text="Text"
-            android:textAlignment="center"
-            android:textSize="30sp"
-            android:textColor="@color/black"
-            android:fontFamily="@font/roboto_condensed_regular"
-            android:textStyle="bold"
+
+        <ScrollView
+            android:id="@+id/serverIpContainer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.08"
             app:layout_constraintStart_toEndOf="@+id/serverIpLabelTv"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="488dp"
+            android:layout_width="380dp"
+            android:layout_height="44dp"
+            >
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:id="@+id/serverIpTv"
+                android:text="Text"
+                android:textAlignment="center"
+                android:textSize="30sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/roboto_condensed_regular"
+                android:textStyle="bold"
+                />
+        </ScrollView>
 
-        <TextView
-            android:id="@+id/adminPwTv"
+        <ScrollView
+            android:id="@+id/adminPwContainer"
             android:layout_width="380dp"
             android:layout_height="44dp"
             android:layout_marginTop="632dp"
-            android:text="Text"
-            android:textAlignment="center"
-            android:textSize="30sp"
-            android:textColor="@color/black"
-            android:fontFamily="@font/roboto_condensed_regular"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.08"
             app:layout_constraintStart_toEndOf="@+id/adminPwLabelTv"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            >
+            <TextView
+                android:id="@+id/adminPwTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Text"
+                android:textAlignment="center"
+                android:textSize="30sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/roboto_condensed_regular"
+                android:textStyle="bold"
+                />
+        </ScrollView>
 
         <ImageView
             android:id="@+id/updateMaskMsgBtn"
@@ -262,7 +290,7 @@
             android:src="@drawable/ic_edit_icon"
             android:padding="16dp"
             android:background="@drawable/button_background"
-            app:layout_constraintStart_toEndOf="@+id/maskDetectionMsgTv"
+            app:layout_constraintStart_toEndOf="@+id/maskDetectionContainer"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
@@ -285,7 +313,7 @@
             android:background="@drawable/button_background"
             android:src="@drawable/ic_edit_icon"
             android:padding="16dp"
-            app:layout_constraintStart_toEndOf="@+id/humanDistanceMsgTv"
+            app:layout_constraintStart_toEndOf="@+id/humanDistanceMsgContainer"
             app:layout_constraintTop_toTopOf="parent" />
         <ImageView
             android:id="@+id/playClusterMsgBtn"
@@ -308,7 +336,7 @@
             android:background="@drawable/button_background"
             android:src="@drawable/ic_edit_icon"
             android:padding="16dp"
-            app:layout_constraintStart_toEndOf="@+id/serverIpTv"
+            app:layout_constraintStart_toEndOf="@id/serverIpContainer"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
@@ -332,7 +360,7 @@
             android:background="@drawable/button_background"
             android:src="@drawable/ic_edit_icon"
             android:padding="16dp"
-            app:layout_constraintStart_toEndOf="@+id/adminPwTv"
+            app:layout_constraintStart_toEndOf="@id/adminPwContainer"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
