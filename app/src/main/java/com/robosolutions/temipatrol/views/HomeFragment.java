@@ -25,6 +25,9 @@ import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.example.flatdialoglibrary.dialog.FlatDialog;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.robosolutions.temipatrol.R;
 import com.robosolutions.temipatrol.model.ConfigurationEnum;
 import com.robosolutions.temipatrol.model.TemiConfiguration;
@@ -35,10 +38,21 @@ import java.util.List;
 public class HomeFragment extends Fragment implements View.OnClickListener {
     private final String TAG = "HomeFragment";
 
+    private GoogleSignInClient mGoogleSignInClient;
+
     private NavController navController;
     private GlobalViewModel viewModel;
     private String password;
     private FlatDialog passwordDialog;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this.getActivity(), gso);
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -61,10 +75,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         CardView addRouteBtn = view.findViewById(R.id.addRouteBtn);
         CardView patrolPageBtn = view.findViewById(R.id.patrolPageBtn);
         CardView configureBtn = view.findViewById(R.id.configurePageBtn);
+        CardView signoutBtn = view.findViewById(R.id.signoutBtn);
 
         addRouteBtn.setOnClickListener(this);
         patrolPageBtn.setOnClickListener(this);
         configureBtn.setOnClickListener(this);
+        signoutBtn.setOnClickListener(this);
 
         passwordDialog = buildPasswordDialog();
     }
@@ -120,6 +136,17 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             navController.navigate(R.id.action_homeFragment_to_routeExecutionFragment);
         } else if (v.getId() == R.id.configurePageBtn) {
             passwordDialog.show();
+        } else if (v.getId() == R.id.signoutBtn) {
+            signOut();
         }
+    }
+
+    private void signOut() {
+        mGoogleSignInClient.signOut()
+                .addOnCompleteListener(getActivity(), task -> {
+                    navController.navigate(R.id.action_homeFragment_to_signInFragment);
+                    Toast.makeText(getContext(),
+                            "Signed out successfully!", Toast.LENGTH_LONG).show();
+                });
     }
 }

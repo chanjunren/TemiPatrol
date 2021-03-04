@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_homeFragment_to_routeExecutionFragment"
             app:destination="@id/routeExecutionFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
     </fragment>
     <fragment
         android:id="@+id/createRouteFragment"
