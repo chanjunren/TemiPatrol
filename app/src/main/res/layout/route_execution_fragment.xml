@@ -10,6 +10,7 @@
         android:layout_height="match_parent"
         android:clipToPadding="false">
         <androidx.cardview.widget.CardView
+            android:id="@+id/execPageIcon"
             android:layout_width="200dp"
             android:layout_height="200dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -27,7 +28,7 @@
                 <ImageView
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:src="@drawable/ic_execute_page"
+                    android:src="@drawable/ic_exec_icon"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

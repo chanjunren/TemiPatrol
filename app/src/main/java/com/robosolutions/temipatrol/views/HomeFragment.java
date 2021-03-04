@@ -20,6 +20,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.example.flatdialoglibrary.dialog.FlatDialog;
@@ -35,10 +37,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private NavController navController;
     private GlobalViewModel viewModel;
-
-    private CardView addRouteBtn, patrolPageBtn, configureBtn;
     private String password;
-
     private FlatDialog passwordDialog;
 
     @Override
@@ -55,9 +54,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
 
-        addRouteBtn = view.findViewById(R.id.addRouteBtn);
-        patrolPageBtn = view.findViewById(R.id.patrolPageBtn);
-        configureBtn = view.findViewById(R.id.configurePageBtn);
+        Animation topAnim = AnimationUtils.loadAnimation(getContext(), R.anim.top_animation);
+        CardView pageLogo = view.findViewById(R.id.homePageLogo);
+        pageLogo.setAnimation(topAnim);
+
+        CardView addRouteBtn = view.findViewById(R.id.addRouteBtn);
+        CardView patrolPageBtn = view.findViewById(R.id.patrolPageBtn);
+        CardView configureBtn = view.findViewById(R.id.configurePageBtn);
 
         addRouteBtn.setOnClickListener(this);
         patrolPageBtn.setOnClickListener(this);

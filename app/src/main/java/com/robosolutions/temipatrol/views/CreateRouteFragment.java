@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -20,11 +19,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 
@@ -37,9 +36,7 @@ import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 
 import java.util.ArrayList;
 
-import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
 
 
 public class CreateRouteFragment extends Fragment {
@@ -83,6 +80,10 @@ public class CreateRouteFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
+
+        Animation topAnim = AnimationUtils.loadAnimation(getContext(), R.anim.top_animation);
+        CardView pageLogo = view.findViewById(R.id.createRoutePageLogo);
+        pageLogo.setAnimation(topAnim);
 
         parentLayout = view.findViewById(R.id.createRouteFrameLayout);
         parentLayout.setOnTouchListener((v, motionEvent) -> {

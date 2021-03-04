@@ -8,6 +8,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -17,12 +18,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.Task;
@@ -30,11 +34,12 @@ import com.robosolutions.temipatrol.R;
 import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 
 public class SignInFragment extends Fragment {
-    private SignInButton signInBtn;
     private GoogleSignInClient mGoogleSignInClient;
     private final String TAG = "SignInFragment";
     private NavController navController;
     private GlobalViewModel viewModel;
+
+    private Animation topAnim, bottomAnim;
 
     public SignInFragment() {
         // Required empty public constructor
@@ -43,6 +48,9 @@ public class SignInFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        topAnim = AnimationUtils.loadAnimation(getContext(), R.anim.top_animation);
+        bottomAnim = AnimationUtils.loadAnimation(getContext(), R.anim.bottom_animation);
     }
 
     @Override
@@ -63,11 +71,17 @@ public class SignInFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
-        viewModel = new ViewModelProvider((this.getActivity())).get(GlobalViewModel.class);
+        viewModel = new ViewModelProvider((getActivity())).get(GlobalViewModel.class);
 
-        signInBtn = view.findViewById(R.id.signInBtn);
-        signInBtn.setSize(SignInButton.SIZE_STANDARD);
+        ImageView temiPatrolLogo = view.findViewById(R.id.temiPatrolLogo);
+        TextView appTitle = view.findViewById(R.id.temiPatrolTitle);
+        TextView appDescription = view.findViewById(R.id.temiPatrolDescription);
+        temiPatrolLogo.setAnimation(topAnim);
+        appTitle.setAnimation(bottomAnim);
+        appDescription.setAnimation(bottomAnim);
 
+        CardView signInBtn = view.findViewById(R.id.signInBtn);
+        signInBtn.setAnimation(bottomAnim);
         signInBtn.setOnClickListener(v -> {
             signIn();
         });

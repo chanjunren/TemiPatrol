@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -18,6 +19,8 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -72,6 +75,10 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
         findAndSetViews(view);
         navController = Navigation.findNavController(view);
         attachConfigurationLiveData();
+
+        Animation topAnim = AnimationUtils.loadAnimation(getContext(), R.anim.top_animation);
+        CardView pageLogo = view.findViewById(R.id.configurePageLogo);
+        pageLogo.setAnimation(topAnim);
     }
 
     private void attachConfigurationLiveData() {
