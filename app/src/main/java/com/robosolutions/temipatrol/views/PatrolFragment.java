@@ -22,7 +22,7 @@ import com.otaliastudios.cameraview.CameraView;
 import com.otaliastudios.cameraview.PictureResult;
 import com.robosolutions.temipatrol.R;
 import com.robosolutions.temipatrol.client.JsonPostman;
-import com.robosolutions.temipatrol.client.JsonRequestUtils;
+import com.robosolutions.temipatrol.client.JsonRequestGenerator;
 import com.robosolutions.temipatrol.google.MediaHelper;
 import com.robosolutions.temipatrol.model.ConfigurationEnum;
 import com.robosolutions.temipatrol.model.TemiConfiguration;
@@ -156,10 +156,10 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
                 super.onPictureTaken(result);
                 try {
                     byte[] image = result.getData();
-                    JSONObject maskReqMsg = JsonRequestUtils.generateJsonMessageForMaskDetection(image);
+                    JSONObject maskReqMsg = JsonRequestGenerator.generateJsonMessageForMaskDetection(image);
                     boolean isWearingMask = sendImageToServerAndGetMaskDetectionResult(maskReqMsg);
                     Log.i(TAG, "Wearing mask value: " + isWearingMask);
-                    JSONObject clusterReqMsg = JsonRequestUtils.generateJsonMessageForHumanDistance(image);
+                    JSONObject clusterReqMsg = JsonRequestGenerator.generateJsonMessageForHumanDistance(image);
                     boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(clusterReqMsg);
                     Log.i(TAG, "Cluster detected value: " + clusterDetected);
                     if (!isWearingMask) {
