@@ -114,7 +114,9 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
 
         ImageView robosolutionLogo = view.findViewById(R.id.robosolutionLogo);
         robosolutionLogo.setOnClickListener(v -> {
+            Log.i(TAG, "Click counter: " + clickCounter);
             if (++clickCounter == NUMBER_OF_CLICKS_TO_STOP) {
+                Log.i(TAG, "Stopping...");
                 temiNavigator.getTemiRobot().stopMovement();
                 navController.navigate(R.id.action_patrolFragment_to_homeFragment);
             }

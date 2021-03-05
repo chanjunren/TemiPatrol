@@ -18,9 +18,16 @@ public class JsonRequestUtils {
     private static final int MD_CENTER_X_VALUE = 323;
     private static final String MD_HUMAN_DIST_TYPE = "HUMAN_DISTANCE";
 
+//    private static final double HD_MIN_HEIGHT = 0.03;
+//    private static final double HD_MIN_WIDTH =
+
     private static String encodeByteArrayToBase64String(byte[] image) {
         return Base64.encodeToString(image, Base64.DEFAULT);
     }
+
+//    public static JSONObject generateJsonMessageForHumanDetection(byte[] image) {
+//
+//    }
 
     public static JSONObject generateJsonMessageForMaskDetection(byte[] image) {
         JSONObject reqBody = new JSONObject();
