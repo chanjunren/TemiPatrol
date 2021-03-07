@@ -53,4 +53,9 @@ public class JsonParser {
         }
         return true;
     }
+
+    public static boolean isHuman(String jsonResponse) throws JSONException {
+        // To do
+        return false;
+    }
 }

@@ -22,7 +22,7 @@ import com.otaliastudios.cameraview.CameraView;
 import com.otaliastudios.cameraview.PictureResult;
 import com.robosolutions.temipatrol.R;
 import com.robosolutions.temipatrol.client.JsonPostman;
-import com.robosolutions.temipatrol.client.JsonRequestGenerator;
+import com.robosolutions.temipatrol.client.JsonRequestHelper;
 import com.robosolutions.temipatrol.google.MediaHelper;
 import com.robosolutions.temipatrol.model.ConfigurationEnum;
 import com.robosolutions.temipatrol.model.TemiConfiguration;
@@ -80,7 +80,6 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
     private String maskDetectionCmd;
     private String humanDistanceCmd;
     private String serverIp;
-    private String password;
 
     private int clickCounter;
 
@@ -156,20 +155,21 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
                 super.onPictureTaken(result);
                 try {
                     byte[] image = result.getData();
-                    JSONObject maskReqMsg = JsonRequestGenerator.generateJsonMessageForMaskDetection(image);
-                    boolean isWearingMask = sendImageToServerAndGetMaskDetectionResult(maskReqMsg);
-                    Log.i(TAG, "Wearing mask value: " + isWearingMask);
-                    JSONObject clusterReqMsg = JsonRequestGenerator.generateJsonMessageForHumanDistance(image);
-                    boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(clusterReqMsg);
-                    Log.i(TAG, "Cluster detected value: " + clusterDetected);
-                    if (!isWearingMask) {
-                        mediaHelper.uploadImage(image, NOT_WEARING_MASK_DETECTED);
-                        pauseAndMakeMaskAnnouncement();
-                    }
-                    if (clusterDetected) {
-                        mediaHelper.uploadImage(image, CLUSTER_DETECTED);
-                        pauseAndMakeClusterAnnouncement();
-                    }
+                    JSONObject imageJson = JsonRequestHelper.getJSONImageObj(image);
+
+//                    boolean isWearingMask = sendImageToServerAndGetMaskDetectionResult(imageJson);
+//                    Log.i(TAG, "Wearing mask value: " + isWearingMask);
+//                    boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(imageJson);
+//                    Log.i(TAG, "Cluster detected value: " + clusterDetected);
+                    boolean isHuman = sendImageToServerAndGetHumanDetectionResult(imageJson);
+//                    if (!isWearingMask) {
+//                        mediaHelper.uploadImage(image, NOT_WEARING_MASK_DETECTED);
+//                        pauseAndMakeMaskAnnouncement();
+//                    }
+//                    if (clusterDetected) {
+//                        mediaHelper.uploadImage(image, CLUSTER_DETECTED);
+//                        pauseAndMakeClusterAnnouncement();
+//                    }
                 } catch (Exception e) {
                     Log.e(TAG, "Error in onPictureTaken: " + e.toString());
                     Toast.makeText(getActivity(), "Error while patrolling: " + e.toString(),
@@ -209,8 +209,6 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
                 } else if (config.getKey() == ConfigurationEnum.SERVER_IP_ADD) {
                     serverIp = config.getValue();
                     jsonPostman = new JsonPostman(serverIp);
-                } else if (config.getKey() == ConfigurationEnum.ADMIN_PW) {
-                    password = config.getValue();
                 }
             }
             Log.i(TAG, "Mask msg: " + maskDetectionCmd);
@@ -223,7 +221,8 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
 
 
 
-    private Boolean sendImageToServerAndGetMaskDetectionResult(JSONObject requestJson) {
+    private Boolean sendImageToServerAndGetMaskDetectionResult(JSONObject imageJson) {
+        JSONObject requestJson = JsonRequestHelper.generateJsonMessageForMaskDetection(imageJson);
         // for testing
         Future<Boolean> result = postmanExecutorService.submit(() ->
                 jsonPostman.postMaskDetectionRequestAndGetResult(requestJson));
@@ -235,7 +234,8 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
         }
     }
 
-    private Boolean sendImageToServerAndGetClusterDetectionResult(JSONObject requestJson) {
+    private Boolean sendImageToServerAndGetClusterDetectionResult(JSONObject imageJson) {
+        JSONObject requestJson = JsonRequestHelper.generateJsonMessageForHumanDistance(imageJson);
         // for testing
         Future<Boolean> result = postmanExecutorService.submit(() ->
                 jsonPostman.postHumanDistanceRequestAndGetResult(requestJson));
@@ -243,6 +243,19 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
             return result.get();
         } catch (ExecutionException | InterruptedException e) {
             Log.e(TAG, "sendImageToServerAndGetClusterDetectionResult error: " + e.toString());
+            return null;
+        }
+    }
+
+    private Boolean sendImageToServerAndGetHumanDetectionResult(JSONObject imageJson) {
+        JSONObject requestJson = JsonRequestHelper.generateJsonMessageForHumanDetection(imageJson);
+        // for testing
+        Future<Boolean> result = postmanExecutorService.submit(() ->
+                jsonPostman.postHumanDetectionRequestAndGetResult(requestJson));
+        try {
+            return result.get();
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e(TAG, "sendImageToServerAndGetHumanDetectionResult error: " + e.toString());
             return null;
         }
     }

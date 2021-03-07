@@ -2,8 +2,6 @@ package com.robosolutions.temipatrol.client;
 
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -14,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import static com.robosolutions.temipatrol.client.JsonParser.isClusterDetected;
+import static com.robosolutions.temipatrol.client.JsonParser.isHuman;
 import static com.robosolutions.temipatrol.client.JsonParser.isWearingMask;
 
 public class JsonPostman {
@@ -21,12 +20,14 @@ public class JsonPostman {
 
     private String AWS_HOST;
     private static final int MASK_DETECTION_PORT = 5000;
+    private static final int HUMAN_DETECTION_PORT = 5001;
     private static final int HUMAN_DISTANCE_PORT = 5002;
 
     private String MASK_DETECTION_POST_ENDPOINT;
+    private String HUMAN_DETECTION_POST_ENDPOINT;
     private String HUMAN_DISTANCE_POST_ENDPOINT;
 
-    private HttpURLConnection maskDetectionConnection, humanDistanceConnection;
+    private HttpURLConnection maskDetectionConnection, humanDetectionConnection, humanDistanceConnection;
 
 
     public JsonPostman(String serverIp) {
@@ -34,6 +35,7 @@ public class JsonPostman {
             // SETUP IP ADDRESS
             this.AWS_HOST = serverIp;
             MASK_DETECTION_POST_ENDPOINT = "http://" + AWS_HOST + ":" + MASK_DETECTION_PORT + "/api";
+            HUMAN_DETECTION_POST_ENDPOINT = "http://" + AWS_HOST + ":" + HUMAN_DETECTION_PORT + "/api";
             HUMAN_DISTANCE_POST_ENDPOINT = "http://" + AWS_HOST + ":" + HUMAN_DISTANCE_PORT + "/api";
         } catch (Exception e) {
             Log.e(TAG, "JsonPostman init exception: " + e.toString());
@@ -49,6 +51,16 @@ public class JsonPostman {
         maskDetectionConnection.setRequestProperty("Accept", "application/json");
         // To be able to write content to the connection output stream
         maskDetectionConnection.setDoOutput(true);
+    }
+
+    private void setupHumanDetectionConnection() throws IOException {
+        URL humanDetectionUrl = new URL(HUMAN_DETECTION_POST_ENDPOINT);
+        humanDetectionConnection = (HttpURLConnection) humanDetectionUrl.openConnection();
+        humanDetectionConnection.setRequestMethod("POST");
+        humanDetectionConnection.setRequestProperty("Content-Type", "application/json; utf-8");
+        humanDetectionConnection.setRequestProperty("Accept", "application/json");
+        // To be able to write content to the connection output stream
+        humanDetectionConnection.setDoOutput(true);
     }
 
     private void setupHumanDistanceConnection() throws IOException {
@@ -105,6 +117,31 @@ public class JsonPostman {
             }
             Log.i(TAG, " === RESPONSE ===\n" + response.toString());
             return isClusterDetected(response.toString());
+        } catch (Exception e) {
+            Log.e(TAG, "postHumanDistanceRequest exception: " + e.toString());
+            debugExceptionFromResult(humanDistanceConnection);
+            return false;
+        }
+    }
+
+    // True if wearing mask, false otherwise
+    public boolean postHumanDetectionRequestAndGetResult(JSONObject requestJson) {
+        try {
+            Log.i(TAG, "=== SENT ===\n" + requestJson.toString());
+            setupHumanDetectionConnection();
+            OutputStream os = humanDetectionConnection.getOutputStream();
+            byte[] input = requestJson.toString().getBytes("utf-8");
+            os.write(input, 0, input.length);
+
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(humanDetectionConnection.getInputStream(), "utf-8"));
+            StringBuilder response = new StringBuilder();
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine);
+            }
+            Log.i(TAG, " === RESPONSE ===\n" + response.toString());
+            return isHuman(response.toString());
         } catch (Exception e) {
             Log.e(TAG, "postHumanDistanceRequest exception: " + e.toString());
             debugExceptionFromResult(humanDistanceConnection);

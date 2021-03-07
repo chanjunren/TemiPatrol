@@ -9,8 +9,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class JsonRequestGenerator {
-    private static final String TAG = "JsonRequestGenerator";
+public class JsonRequestHelper {
+    private static final String TAG = "JsonRequestHelper";
 
     private static String encodeByteArrayToBase64String(byte[] image) {
         return Base64.encodeToString(image, Base64.DEFAULT);
