@@ -160,23 +160,14 @@ public class CreateRouteFragment extends Fragment {
     private void saveCurrentRoute() {
         if (viewModel.isRouteUpdate()) {
             TemiRoute updatingRoute = viewModel.getUpdatingRoute();
-            ArrayList<String> newRoute = new ArrayList<>();
-            Log.i(TAG, "Patrol count: " + patrolCount);
-            for (int i = 0; i < patrolCount; i++) {
-                newRoute.addAll(viewModel.getCreateRouteHelperList());
-            }
             updatingRoute.setRouteTitle(routeTitle.getText().toString());
-            updatingRoute.setDestinations(newRoute);
+            updatingRoute.setDestinations(viewModel.getCreateRouteHelperList());
+            updatingRoute.setPatrolCount(patrolCount);
+            Log.i(TAG, "Route updated: " + updatingRoute.toString());
             viewModel.updateRouteInRepo(updatingRoute);
-        } else {
-            ArrayList<String> createdRoute = new ArrayList<>();
-            Log.i(TAG, "Patrol count: " + patrolCount);
-            for (int i = 0; i < patrolCount; i++) {
-                createdRoute.addAll(viewModel.getCreateRouteHelperList());
-            }
-
+        } else { // New route being created
             TemiRoute temiRoute = new TemiRoute(routeTitle.getText().toString(),
-                    createdRoute);
+                    viewModel.getCreateRouteHelperList(), patrolCount);
             Log.i(TAG, "route added: " + temiRoute.toString());
             viewModel.insertRouteIntoRepo(temiRoute);
         }

@@ -1,5 +1,7 @@
 package com.robosolutions.temipatrol.model;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -12,17 +14,21 @@ import java.util.ArrayList;
 
 @Entity(tableName = "routeTable")
 public class TemiRoute {
+    private static final String TAG = "TemiRoute";
     @PrimaryKey(autoGenerate = true)
     @NonNull
     private int routeIdx;
     @ColumnInfo(name="routeTitle")
     private String routeTitle;
+    @ColumnInfo(name="patrolCount")
+    private int patrolCount;
     @TypeConverters(TypeConverter.class)
     private ArrayList<String> destinations;
 
-    public TemiRoute(String routeTitle, ArrayList<String> destinations) {
+    public TemiRoute(String routeTitle, ArrayList<String> destinations, int patrolCount) {
         this.routeTitle = routeTitle;
         this.destinations = destinations;
+        this.patrolCount = patrolCount;
     }
 
     public int getRouteIdx() {
@@ -47,6 +53,14 @@ public class TemiRoute {
 
     public void setDestinations(ArrayList<String> destinations) {
         this.destinations = destinations;
+    }
+
+    public int getPatrolCount() {
+        return patrolCount;
+    }
+
+    public void setPatrolCount(int patrolCount) {
+        this.patrolCount = patrolCount;
     }
 
     @Override
