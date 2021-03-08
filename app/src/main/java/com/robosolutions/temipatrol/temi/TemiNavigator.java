@@ -9,10 +9,12 @@ import com.robotemi.sdk.listeners.OnGoToLocationStatusChangedListener;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+
 public class TemiNavigator implements OnGoToLocationStatusChangedListener {
     private final String TAG = "TemiNavigator";
     private Robot temiRobot;
-    private TemiRoute currentPatrollingRoute;
+    private ArrayList<String> currentPatrollingRoute;
     private int currentIndex;
     private PatrolFragment patrolFragment;
 
@@ -24,18 +26,22 @@ public class TemiNavigator implements OnGoToLocationStatusChangedListener {
     }
 
     public void patrolRoute(TemiRoute route) {
-        this.currentPatrollingRoute = route;
+        this.currentPatrollingRoute = new ArrayList<>();
+        for (int i = 0; i < route.getPatrolCount(); i++) {
+            this.currentPatrollingRoute.addAll(route.getDestinations());
+        }
+        Log.i(TAG, "Patrolling: " + this.currentPatrollingRoute.toString());
         this.currentIndex = 0;
         goToNextDestination();
     }
 
     private void goToNextDestination() {
-        if (currentIndex >= currentPatrollingRoute.getDestinations().size()) {
+        if (currentIndex >= currentPatrollingRoute.size()) {
             // Reached final destination
             patrolFragment.navigateToHomePage();
             return;
         }
-        temiRobot.goTo(currentPatrollingRoute.getDestinations().get(currentIndex));
+        temiRobot.goTo(currentPatrollingRoute.get(currentIndex));
     }
 
     public void pausePatrol() {
