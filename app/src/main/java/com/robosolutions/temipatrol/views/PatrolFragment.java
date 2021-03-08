@@ -102,7 +102,6 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
         return inflater.inflate(R.layout.patrol_fragment, container, false);
     }
 
@@ -154,29 +153,29 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
             public void onPictureTaken(@NonNull PictureResult result) {
                 super.onPictureTaken(result);
                 byte[] image = result.getData();
-                    postmanExecutorService.execute(() -> {
-                        try {
-                            JSONObject imageJson = JsonRequestHelper.getJSONImageObj(image);
-//                            boolean isWearingMask = sendImageToServerAndGetMaskDetectionResult(imageJson);
-//                            Log.i(TAG, "Wearing mask value: " + isWearingMask);
-                            boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(imageJson);
-                            Log.i(TAG, "Cluster detected value: " + clusterDetected);
-                            boolean isHuman = sendImageToServerAndGetHumanDetectionResult(imageJson);
-//                            if (!isWearingMask) {
-//                                mediaHelper.uploadImage(image, NOT_WEARING_MASK_DETECTED);
-//                                pauseAndMakeMaskAnnouncement();
-//                            }
-//                            if (clusterDetected) {
-//                                mediaHelper.uploadImage(image, CLUSTER_DETECTED);
-//                                pauseAndMakeClusterAnnouncement();
-//                            }
-                        } catch (Exception e) {
-                            Log.e(TAG, "Error in onPictureTaken: " + e.toString());
-                            Toast.makeText(getActivity(), "Error while patrolling: " + e.toString(),
-                                    Toast.LENGTH_LONG).show();
-                            navController.navigate(R.id.action_patrolFragment_to_homeFragment);
+                postmanExecutorService.execute(() -> {
+                    try {
+                        JSONObject imageJson = JsonRequestHelper.getJSONImageObj(image);
+                        boolean isWearingMask = sendImageToServerAndGetMaskDetectionResult(imageJson);
+                        Log.i(TAG, "Wearing mask value: " + isWearingMask);
+                        boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(imageJson);
+                        Log.i(TAG, "Cluster detected value: " + clusterDetected);
+//                            boolean isHuman = sendImageToServerAndGetHumanDetectionResult(imageJson);
+                        if (!isWearingMask) {
+                            mediaHelper.uploadImage(image, NOT_WEARING_MASK_DETECTED);
+                            pauseAndMakeMaskAnnouncement();
                         }
-                });
+                        if (clusterDetected) {
+                            mediaHelper.uploadImage(image, CLUSTER_DETECTED);
+                            pauseAndMakeClusterAnnouncement();
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error in onPictureTaken: " + e.toString());
+                        Toast.makeText(getActivity(), "Error while patrolling: " + e.toString(),
+                                Toast.LENGTH_LONG).show();
+                        navController.navigate(R.id.action_patrolFragment_to_homeFragment);
+                    }
+            });
             }
         });
     }
