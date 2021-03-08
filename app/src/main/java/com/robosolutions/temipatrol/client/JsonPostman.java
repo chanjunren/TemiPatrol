@@ -115,7 +115,7 @@ public class JsonPostman {
             while ((responseLine = br.readLine()) != null) {
                 response.append(responseLine);
             }
-            Log.i(TAG, " === RESPONSE ===\n" + response.toString());
+            Log.i(TAG, " === HUMAN DISTANCE RESPONSE ===\n" + response.toString());
             return isClusterDetected(response.toString());
         } catch (Exception e) {
             Log.e(TAG, "postHumanDistanceRequest exception: " + e.toString());
@@ -140,7 +140,7 @@ public class JsonPostman {
             while ((responseLine = br.readLine()) != null) {
                 response.append(responseLine);
             }
-            Log.i(TAG, " === RESPONSE ===\n" + response.toString());
+            Log.i(TAG, " === HUMAN DETECTION RESPONSE ===\n" + response.toString());
             return isHuman(response.toString());
         } catch (Exception e) {
             Log.e(TAG, "postHumanDistanceRequest exception: " + e.toString());

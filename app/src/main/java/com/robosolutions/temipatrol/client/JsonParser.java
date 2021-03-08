@@ -27,13 +27,17 @@ public class JsonParser {
             JSONObject cluster = arr.getJSONObject(i);
             JSONArray matrix = cluster.getJSONArray(DISTANCE_MATRIX_KEY);
             Log.i(TAG, "Matrix: " + matrix.toString());
-            JSONArray miniMatrix = matrix.getJSONArray(0);
-            if (matrix.getJSONArray(0) != null) {
-                for (int j = 0; j < miniMatrix.length(); j++) {
-                    Log.i(TAG, Double.toString(miniMatrix.getDouble(j)));
-                    if (miniMatrix.getDouble(j) < HUMAN_DISTANCE_LIMIT) {
-                        Log.i(TAG, "Distance detected: " + miniMatrix.getDouble(j));
-                        return true;
+            // If no humans
+            if (matrix.length() > 0) {
+                JSONArray miniMatrix = matrix.getJSONArray(0);
+                // Checking that there is more than 1 person in the photo
+                if (miniMatrix.length() > 1) {
+                    for (int j = 0; j < miniMatrix.length(); j++) {
+                        Log.i(TAG, Double.toString(miniMatrix.getDouble(j)));
+                        if (miniMatrix.getDouble(j) < HUMAN_DISTANCE_LIMIT) {
+                            Log.i(TAG, "Distance detected: " + miniMatrix.getDouble(j));
+                            return true;
+                        }
                     }
                 }
             }
