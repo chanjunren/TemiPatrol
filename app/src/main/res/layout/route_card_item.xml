@@ -36,6 +36,19 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/patrolCountCardTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@+id/routePathTv"
+                app:layout_constraintStart_toEndOf="@+id/routeTitleTv"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="[Patrol Count: X]"
+                app:layout_constraintVertical_bias="1"
+                android:textColor="@color/black"
+                android:fontFamily="@font/roboto_condensed_regular"
+                android:textSize="24dp"
+                />
+            <TextView
                 android:id="@+id/routePathTv"
                 android:layout_width="570dp"
                 android:layout_height="77dp"

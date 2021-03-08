@@ -16,16 +16,26 @@ public class JsonParser {
     private static final String MASK_BOUNDING_POLY = "boundingPoly";
 
     private static final String DISTANCE_RESPONSE_ARRAY_NAME = "HUMAN_DISTANCE";
-    private static final String HUMAN_NUM = "human_num";
-    private static final int HUMAN_LIMIT = 8;
+    private static final String DISTANCE_MATRIX_KEY = "distanceMatrix";
+
+    private static final Double HUMAN_DISTANCE_LIMIT = 100d;
+
     public static boolean isClusterDetected(String jsonResponse) throws JSONException {
         JSONObject response = new JSONObject(jsonResponse);
         JSONArray arr = response.getJSONArray(DISTANCE_RESPONSE_ARRAY_NAME);
         for (int i = 0; i < arr.length(); i++) {
-            JSONObject cluster = (JSONObject) arr.get(i);
-            Log.i(TAG, "Number of hoomans detected: " + cluster.get(HUMAN_NUM));
-            if ((int) cluster.get(HUMAN_NUM) > HUMAN_LIMIT) {
-                return true;
+            JSONObject cluster = arr.getJSONObject(i);
+            JSONArray matrix = cluster.getJSONArray(DISTANCE_MATRIX_KEY);
+            Log.i(TAG, "Matrix: " + matrix.toString());
+            JSONArray miniMatrix = matrix.getJSONArray(0);
+            if (matrix.getJSONArray(0) != null) {
+                for (int j = 0; j < miniMatrix.length(); j++) {
+                    Log.i(TAG, Double.toString(miniMatrix.getDouble(j)));
+                    if (miniMatrix.getDouble(j) < HUMAN_DISTANCE_LIMIT) {
+                        Log.i(TAG, "Distance detected: " + miniMatrix.getDouble(j));
+                        return true;
+                    }
+                }
             }
         }
         return false;
@@ -41,13 +51,12 @@ public class JsonParser {
                 if (arrObject.has(MASK_BOUNDING_POLY)) {
                     JSONObject result = new JSONObject(arrObject.get(MASK_BOUNDING_POLY).toString());
 
-                    if(result.has(MASK_VALUE)) {
+                    if (result.has(MASK_VALUE)) {
                         Log.i(TAG, "RESULT VALUE: " + result.get(MASK_VALUE));
                         if (result.get(MASK_VALUE).equals(NOT_WEARING_MASK)) {
                             return false;
                         }
                     }
-
                 }
             }
         }

@@ -159,8 +159,8 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
 
 //                    boolean isWearingMask = sendImageToServerAndGetMaskDetectionResult(imageJson);
 //                    Log.i(TAG, "Wearing mask value: " + isWearingMask);
-//                    boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(imageJson);
-//                    Log.i(TAG, "Cluster detected value: " + clusterDetected);
+                    boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(imageJson);
+                    Log.i(TAG, "Cluster detected value: " + clusterDetected);
                     boolean isHuman = sendImageToServerAndGetHumanDetectionResult(imageJson);
 //                    if (!isWearingMask) {
 //                        mediaHelper.uploadImage(image, NOT_WEARING_MASK_DETECTED);

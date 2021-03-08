@@ -70,7 +70,7 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
     }
 
     public class RouteViewHolder extends RecyclerView.ViewHolder {
-        TextView routeTitleTv, routePathTv;
+        TextView routeTitleTv, routePathTv, routePatrolCountTv;
         ImageView dropDownBtn;
         CardView deleteRouteBtn, editRouteBtn, executeRouteBtn;
         ConstraintLayout expandLayout;
@@ -79,6 +79,7 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
             super(itemView);
             routeTitleTv = itemView.findViewById(R.id.routeTitleTv);
             routePathTv = itemView.findViewById(R.id.routePathTv);
+            routePatrolCountTv = itemView.findViewById(R.id.patrolCountCardTv);
             dropDownBtn = itemView.findViewById(R.id.dropDownBtn);
             expandLayout = itemView.findViewById(R.id.expandLayout);
             deleteRouteBtn = itemView.findViewById(R.id.deleteRouteBtn);
@@ -90,7 +91,12 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
         void setText(int position) {
             routeTitleTv.setText(routes.get(position).getRouteTitle());
             routePathTv.setText(getRouteString(routes.get(position)));
+            routePatrolCountTv.setText(getPatrolCountString(routes.get(position).getPatrolCount()));
         }
+    }
+
+    private String getPatrolCountString(int patrolCount) {
+        return "[Patrol count: " + patrolCount + "]";
     }
 
     private String getRouteString(TemiRoute temiRoute) {
