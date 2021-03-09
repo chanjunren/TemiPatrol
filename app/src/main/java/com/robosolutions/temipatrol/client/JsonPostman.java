@@ -2,6 +2,7 @@ package com.robosolutions.temipatrol.client;
 
 import android.util.Log;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -99,7 +100,7 @@ public class JsonPostman {
         }
     }
 
-    // True if wearing mask, false otherwise
+    // True if cluster detected, false otherwise
     public boolean postHumanDistanceRequestAndGetResult(JSONObject requestJson) {
         try {
             Log.i(TAG, "=== SENT ===\n" + requestJson.toString());
@@ -149,12 +150,52 @@ public class JsonPostman {
         }
     }
 
-    private void debugExceptionFromResult(HttpURLConnection connection) {
+    // True if wearing mask, false otherwise
+    public boolean testMaskDetectionConnection(JSONObject requestJson) throws IOException,
+            JSONException {
+        setupMaskDetectionConnection();
+        Log.i(TAG, "=== SENT ===\n" + requestJson.toString());
+        OutputStream os = maskDetectionConnection.getOutputStream();
+        byte[] input = requestJson.toString().getBytes("utf-8");
+        os.write(input, 0, input.length);
+
+        BufferedReader br = new BufferedReader(
+                new InputStreamReader(maskDetectionConnection.getInputStream(), "utf-8"));
+        StringBuilder response = new StringBuilder();
+        String responseLine = null;
+        while ((responseLine = br.readLine()) != null) {
+            response.append(responseLine);
+        }
+        Log.i(TAG, " === RESPONSE ===\n" + response.toString());
+        return isWearingMask(response.toString());
+    }
+
+    // True if cluster detected, false otherwise
+    public boolean testHumanDistanceConnection(JSONObject requestJson) throws IOException,
+            JSONException {
+        Log.i(TAG, "=== SENT ===\n" + requestJson.toString());
+        setupHumanDistanceConnection();
+        OutputStream os = humanDistanceConnection.getOutputStream();
+        byte[] input = requestJson.toString().getBytes("utf-8");
+        os.write(input, 0, input.length);
+
+        BufferedReader br = new BufferedReader(
+                new InputStreamReader(humanDistanceConnection.getInputStream(), "utf-8"));
+        StringBuilder response = new StringBuilder();
+        String responseLine = null;
+        while ((responseLine = br.readLine()) != null) {
+            response.append(responseLine);
+        }
+        Log.i(TAG, " === HUMAN DISTANCE RESPONSE ===\n" + response.toString());
+        return isClusterDetected(response.toString());
+    }
+
+    public static void debugExceptionFromResult(HttpURLConnection connection) {
         try {
             int status = connection.getResponseCode();
             Log.e(TAG, "Status: " + status);
             BufferedReader br = new BufferedReader(
-                    new InputStreamReader(humanDistanceConnection.getErrorStream(), "utf-8"));
+                    new InputStreamReader(connection.getErrorStream(), "utf-8"));
             StringBuilder errorResponse = new StringBuilder();
             String errorResponseLine = null;
             while ((errorResponseLine = br.readLine()) != null) {

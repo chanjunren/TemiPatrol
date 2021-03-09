@@ -98,4 +98,7 @@ dependencies {
 
     // TextView library for patrol page
     implementation 'com.tomer:fadingtextview:2.6'
+
+    // Loading animation for test
+    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
 }

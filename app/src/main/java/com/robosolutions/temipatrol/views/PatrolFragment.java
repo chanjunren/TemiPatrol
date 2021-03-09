@@ -198,7 +198,7 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
     }
 
     private void initConfigurations() {
-        final Observer<List<TemiConfiguration>> voiceCmdListener = configs -> {
+        final Observer<List<TemiConfiguration>> configListener = configs -> {
             temiConfigurations.clear();
             for (TemiConfiguration config: configs) {
                 if (config.getKey() == ConfigurationEnum.MASK_DETECTION_MSG) {
@@ -216,7 +216,7 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
             Log.i(TAG, "Server IP: " + serverIp);
         };
 
-        viewModel.getConfigurationLiveDataFromRepo().observe(getViewLifecycleOwner(), voiceCmdListener);
+        viewModel.getConfigurationLiveDataFromRepo().observe(getViewLifecycleOwner(), configListener);
     }
 
 

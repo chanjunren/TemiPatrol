@@ -16,6 +16,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ import com.robosolutions.temipatrol.model.ConfigurationEnum;
 import com.robosolutions.temipatrol.model.TemiConfiguration;
 import com.robosolutions.temipatrol.temi.TemiSpeaker;
 import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -268,7 +270,7 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
             String clusterCmd = temiConfigurations.get(1).getValue();
             temiSpeaker.temiSpeak(clusterCmd);
         } else if (v.getId() == R.id.testConnectionBtn) {
-
+            navController.navigate(R.id.action_configureFragment_to_testDialogFragment);
         }
     }
 }
