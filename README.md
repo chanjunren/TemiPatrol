@@ -2,14 +2,14 @@
 # TemiPatrol
 <!-- Heading 2 -->
 ## About
-Mask detection and human clustering detection applicaction made using Android Studio.
+This application is made for the detection of non-compliance of the mask wearing rule and at least one metre distancing between individuals in post Covid new normal
 
 This application allows users to create routes from locations saved in the Temi robot and patrol the route created. 
 
-Upon detecting that a person is not wearing a mask / clustering is detected, Temi will broadcast an announcement and upload the image captured to the Drive.
+Upon detection of non-compliance, Temi will broadcast an announcement and upload the image captured to the Drive.
 
 <!-- Blockquote -->
->Backend Docker Containers for image processing were provided by **IMDA**
+>Backend Docker Containers for image processing were setup with a license provided by IMDA
 
 ---
 ## Temi Configurations
