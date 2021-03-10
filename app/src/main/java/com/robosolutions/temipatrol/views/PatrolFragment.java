@@ -146,7 +146,7 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
 
     private void startCamera() {
         Timer timer = new Timer();
-        timer.schedule(new CameraTask(), 0, 5000);
+        timer.schedule(new CameraTask(), 0, 3000);
     }
 
     private void configureCamera(CameraView camera) {

@@ -12,30 +12,38 @@ Upon detecting that a person is not wearing a mask / clustering is detected, Tem
 >Backend Docker Containers for image processing were provided by **IMDA**
 
 ---
-## Configurations
+## Temi Configurations
 1. Stopping temi from following others 
-   > Settings > ...
+   > Settings > Tracking User > OFF
 2. Removing the display of the next location that Temi is going to
-   > Settings > ...
+   > Settings > General Settings > Fullscreen navigation notification | Navigation status label > OFF
+
+3. Disabling Interaction Button (Optional)
+   > Settings > General Settings > Interaction Button > Disabled
 
 ---
-## User Guide
-[Signing In](sign-in)
 
-[Route Creation](route-creation)
-
-[Route Options](route-options)
-
-[Stopping Patrol](stop-patrol)
-
-[Configurations](configurations)
-
-### Sign In
+## Sign In
 ![Alt Text](documentation/signIn.gif)
 
 Upon detecting that an image contains a person not wearing mask or clustering (< 1m apart), an image will be uploaded to the Google account that was logged in.
 
-### Route creation
+## App Configurations
+**Set the IP Address of the server hosting the containers**
+
+**Ensure that the Connection test passes in the Configurations Page**
+> Do this by clicking on the button next to the edit Server IP button
+
+![Alt Text](documentation/test_connection.gif)
+
+
+App configurations:
+- Mask Detection Message: Message broadcasted when a person not wearing mask is detected
+- Human Distance Message: Message broadcasted when there is a group (>2) of people standing less than 1 metre apart
+- Server IP Address: IP address where images are sent to for processing (*where the mask detection and human distance module is hosted*)
+- App master password - Master password for configuring application settings
+
+## Route creation
 ![Alt Text](documentation/addingRoute.gif)
 
 Tap on the locations to add it to the route
@@ -44,17 +52,17 @@ Tap on the locations to add it to the route
 
 - Route: Sequence of locations taken by Temi during the patrol
 
-#### Removing a location
+### Removing a location
 ![Alt Text](documentation/deletingLocation.gif)
 
 Swipe up or down on a inputted location to remove it
 
-#### Reordering a location
+### Reordering a location
 ![Alt Text](documentation/editingLocation.gif)
 
 Hold and drag a location card to change it's position
 
-### Stop Patrol
+## Stop Patrol
 ![Alt Text](documentation/stopPatrol.gif)
 
 Tap on the Robosolutions icon 6 times to stop the patrol
@@ -76,4 +84,3 @@ Tap on the Robosolutions icon 6 times to stop the patrol
 - [Fading Text View](https://github.com/rosenpin/fading-text-view)
 
 ---
-## Future Extensions

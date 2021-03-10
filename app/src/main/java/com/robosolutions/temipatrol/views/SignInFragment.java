@@ -1,6 +1,8 @@
 package com.robosolutions.temipatrol.views;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -85,6 +87,12 @@ public class SignInFragment extends Fragment {
         signInBtn.setOnClickListener(v -> {
             signIn();
         });
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setPositiveButton("Ok", (dialog, id) -> {
+            dialog.dismiss();
+        }).setView(R.layout.reminder_dialog);
+        builder.create().show();
 
         Scope WRITE_SCOPE = new Scope("https://www.googleapis.com/auth/drive.file");
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
