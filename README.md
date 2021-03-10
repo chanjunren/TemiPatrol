@@ -39,7 +39,7 @@ Upon detecting that an image contains a person not wearing mask or clustering (<
 
 App configurations:
 - Mask Detection Message: Message broadcasted when a person not wearing mask is detected
-- Human Distance Message: Message broadcasted when there is a group (>2) of people standing less than 1 metre apart
+- Human Distance Message: Message broadcasted when there is a group (> 1) of people standing less than 1 metre apart
 - Server IP Address: IP address where images are sent to for processing (*where the mask detection and human distance module is hosted*)
 - App master password - Master password for configuring application settings
 
