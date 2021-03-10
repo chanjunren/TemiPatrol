@@ -86,10 +86,10 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "Patrol Fragment created");
         viewModel = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
         globalExecutorService = viewModel.getExecutorService();
         postmanExecutorService = Executors.newFixedThreadPool(20);
-        temiNavigator = new TemiNavigator(viewModel.getTemiRobot(), this);
         temiSpeaker = new TemiSpeaker(viewModel.getTemiRobot());
         mediaHelper = new MediaHelper(getContext(), viewModel);
         temiConfigurations = new ArrayList<>();
@@ -115,7 +115,9 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
             Log.i(TAG, "Click counter: " + clickCounter);
             if (++clickCounter == NUMBER_OF_CLICKS_TO_STOP) {
                 Log.i(TAG, "Stopping...");
-                temiNavigator.getTemiRobot().stopMovement();
+                if (!isStationaryPatrol) {
+                    temiNavigator.getTemiRobot().stopMovement();
+                }
                 navController.navigate(R.id.action_patrolFragment_to_homeFragment);
             }
         });
@@ -191,10 +193,10 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
     }
 
     private void startPatrol() {
-        globalExecutorService.execute(() -> {
-            TemiRoute selectedRoute = viewModel.getSelectedRoute();
-            temiNavigator.patrolRoute(selectedRoute);
-        });
+        temiNavigator = TemiNavigator.getInstance(this);
+        TemiRoute selectedRoute = viewModel.getSelectedRoute();
+        temiNavigator.patrolRoute(selectedRoute);
+
     }
 
     private void initConfigurations() {
@@ -272,6 +274,8 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
     }
 
     public void navigateToHomePage() {
-        navController.navigate(R.id.action_patrolFragment_to_homeFragment);
+        if (navController.getCurrentDestination().getId() != R.id.homeFragment) {
+            navController.navigate(R.id.action_patrolFragment_to_homeFragment);
+        }
     }
 }

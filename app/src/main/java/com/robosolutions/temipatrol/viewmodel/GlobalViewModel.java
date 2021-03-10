@@ -35,7 +35,7 @@ public class GlobalViewModel extends AndroidViewModel {
     private TemiPatrolRepository temiPatrolRepo;
     private LiveData<List<TemiRoute>> routeLiveData;
     private ExecutorService executorService;
-    private HashMap<String, String> fileIdMap;
+    private volatile HashMap<String, String> fileIdMap;
     private Robot temiRobot;
 
     private ArrayList<String> createRouteHelperList;
@@ -63,6 +63,7 @@ public class GlobalViewModel extends AndroidViewModel {
 
     public void initializeTemiRobot() {
         temiRobot = Robot.getInstance();
+        temiRobot.setDetectionModeOn(false);
     }
 
     public void initializeGoogleServices(GoogleSignInAccount googleSignInAccount, Context context) {

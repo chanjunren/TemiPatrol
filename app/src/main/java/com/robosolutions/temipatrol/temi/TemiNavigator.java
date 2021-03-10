@@ -13,19 +13,32 @@ import java.util.ArrayList;
 
 public class TemiNavigator implements OnGoToLocationStatusChangedListener {
     private final String TAG = "TemiNavigator";
+
+    private static TemiNavigator INSTANCE;
+
     private Robot temiRobot;
     private ArrayList<String> currentPatrollingRoute;
-    private int currentIndex;
+    private volatile int currentIndex;
     private PatrolFragment patrolFragment;
 
-    public TemiNavigator(Robot temiRobot, PatrolFragment patrolFragment) {
-        this.temiRobot = temiRobot;
+    private TemiNavigator(PatrolFragment patrolFragment) {
+        this.temiRobot = Robot.getInstance();
         temiRobot.addOnGoToLocationStatusChangedListener(this);
         this.currentIndex = -1;
         this.patrolFragment = patrolFragment;
     }
 
+    public static TemiNavigator getInstance(PatrolFragment patrolFragment) {
+        if (INSTANCE == null) {
+            INSTANCE = new TemiNavigator(patrolFragment);
+            return INSTANCE;
+        }
+        INSTANCE.setPatrolFragment(patrolFragment);
+        return INSTANCE;
+    }
+
     public void patrolRoute(TemiRoute route) {
+        Log.i(TAG, "Instance ID: " + this.toString());
         this.currentPatrollingRoute = new ArrayList<>();
         for (int i = 0; i < route.getPatrolCount(); i++) {
             this.currentPatrollingRoute.addAll(route.getDestinations());
@@ -36,12 +49,13 @@ public class TemiNavigator implements OnGoToLocationStatusChangedListener {
     }
 
     private void goToNextDestination() {
-        if (currentIndex >= currentPatrollingRoute.size()) {
+        Log.i(TAG, "Current index: " + this.currentIndex);
+        if (this.currentIndex >= currentPatrollingRoute.size()) {
             // Reached final destination
             patrolFragment.navigateToHomePage();
             return;
         }
-        temiRobot.goTo(currentPatrollingRoute.get(currentIndex));
+        temiRobot.goTo(currentPatrollingRoute.get(this.currentIndex));
     }
 
     public void pausePatrol() {
@@ -55,15 +69,15 @@ public class TemiNavigator implements OnGoToLocationStatusChangedListener {
     @Override
     public void onGoToLocationStatusChanged(@NotNull String destination, @NotNull String status,
                                             int descriptionId, @NotNull String navStatus) {
-        if (status.equals(OnGoToLocationStatusChangedListener.GOING)) {
-            Log.i(TAG, "Tilting...");
-            temiRobot.tiltAngle(15);
-        }
-        else if (status.equals(OnGoToLocationStatusChangedListener.COMPLETE)) {
+        if (status.equals(OnGoToLocationStatusChangedListener.COMPLETE)) {
             Log.i(TAG, "Destination reached!");
-            currentIndex++;
+            this.currentIndex++;
             goToNextDestination();
         }
+    }
+
+    public void setPatrolFragment(PatrolFragment patrolFragment) {
+        this.patrolFragment = patrolFragment;
     }
 
     public Robot getTemiRobot() {

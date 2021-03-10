@@ -94,9 +94,9 @@ public class TestDialogFragment extends DialogFragment {
             boolean test1 = sendImageToServerAndGetHumanDistanceResult(jsonPostman, humanDistanceMsg);
             boolean test2 = sendImageToServerAndGetMaskDetectionResult(jsonPostman, maskDetectionMsg);
         } catch (Exception e) {
-            Log.e(TEST_TAG, "ERROR: " + e.toString());
+            Log.e(TEST_TAG, e.toString());
             errorEncountered = true;
-//            Toast.makeText(getContext(), "Error: " + e.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), e.toString(), Toast.LENGTH_LONG).show();
             showConnectionFailure();
         } finally {
             if (!errorEncountered) {
