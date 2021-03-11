@@ -8,9 +8,6 @@ This application allows users to create routes from locations saved in the Temi 
 
 Upon detection of non-compliance, Temi will broadcast an announcement and upload the image captured to the Drive.
 
-<!-- Blockquote -->
->Backend Docker Containers for image processing were setup with a license provided by IMDA
-
 ---
 ## Temi Configurations
 1. Stopping temi from following others 
