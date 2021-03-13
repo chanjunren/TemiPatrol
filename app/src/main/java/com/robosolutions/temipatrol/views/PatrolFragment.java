@@ -183,17 +183,21 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
     }
 
     private void pauseAndMakeMaskAnnouncement() {
-        temiNavigator.pausePatrol();
+        if (!isStationaryPatrol) {
+            temiNavigator.pausePatrol();
+        }
         temiSpeaker.temiSpeak(maskDetectionCmd);
     }
 
     private void pauseAndMakeClusterAnnouncement() {
-        temiNavigator.pausePatrol();
+        if (!isStationaryPatrol) {
+            temiNavigator.pausePatrol();
+        }
         temiSpeaker.temiSpeak(humanDistanceCmd);
     }
 
     private void startPatrol() {
-        temiNavigator = TemiNavigator.getInstance(this);
+        temiNavigator = TemiNavigator.getInstance(this, viewModel.getTemiRobot());
         TemiRoute selectedRoute = viewModel.getSelectedRoute();
         temiNavigator.patrolRoute(selectedRoute);
 
