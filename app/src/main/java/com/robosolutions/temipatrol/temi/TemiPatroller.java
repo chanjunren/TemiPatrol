@@ -1,42 +1,43 @@
 package com.robosolutions.temipatrol.temi;
 
+import android.os.Handler;
 import android.util.Log;
 
 import com.robosolutions.temipatrol.model.TemiRoute;
 import com.robosolutions.temipatrol.views.PatrolFragment;
 import com.robotemi.sdk.Robot;
+import com.robotemi.sdk.TtsRequest;
 import com.robotemi.sdk.listeners.OnGoToLocationStatusChangedListener;
-import com.robotemi.sdk.listeners.OnUserInteractionChangedListener;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
-public class TemiNavigator implements OnGoToLocationStatusChangedListener,
-        OnUserInteractionChangedListener {
-    private final String TAG = "TemiNavigator";
+public class TemiPatroller implements OnGoToLocationStatusChangedListener, Robot.TtsListener {
+    private final String TAG = "TemiPatroller";
 
-    private static TemiNavigator INSTANCE;
+    private static TemiPatroller INSTANCE;
 
     private Robot temiRobot;
     private ArrayList<String> currentPatrollingRoute;
     private volatile int currentIndex;
     private PatrolFragment patrolFragment;
+    private boolean isStationaryPatrol, abortedDueToSpeech, abortedDueToTap;
 
-    private TemiNavigator(PatrolFragment patrolFragment, Robot temiRobot) {
+    private TemiPatroller(PatrolFragment patrolFragment, Robot temiRobot) {
         this.temiRobot = temiRobot;
-        temiRobot.addOnGoToLocationStatusChangedListener(this);
-        temiRobot.addOnUserInteractionChangedListener(this);
         this.currentIndex = -1;
         this.patrolFragment = patrolFragment;
     }
 
-    public static TemiNavigator getInstance(PatrolFragment patrolFragment, Robot temiRobot) {
+    public static TemiPatroller getInstance(PatrolFragment patrolFragment, Robot temiRobot,
+                                            boolean isStationaryPatrol) {
         if (INSTANCE == null) {
-            INSTANCE = new TemiNavigator(patrolFragment, temiRobot);
+            INSTANCE = new TemiPatroller(patrolFragment, temiRobot);
             return INSTANCE;
         }
         INSTANCE.setPatrolFragment(patrolFragment);
+        INSTANCE.isStationaryPatrol = isStationaryPatrol;
         return INSTANCE;
     }
 
@@ -84,12 +85,26 @@ public class TemiNavigator implements OnGoToLocationStatusChangedListener,
             Log.i(TAG, "Destination reached!");
             this.currentIndex++;
             goToNextDestination();
+        } else if (status.equals(OnGoToLocationStatusChangedListener.ABORT)
+                && abortedDueToSpeech) { // When location is aborted due to speech
+            Log.i(TAG, "LocationStatusChangedListener");
+            abortedDueToSpeech = false;
+        } else if (status.equals(OnGoToLocationStatusChangedListener.ABORT)) { // When goTo is aborted due to someone touching the screen
+            Handler handler = new Handler();
+            handler.postDelayed(this::resumePatrol, 3000);
         }
+
     }
 
     @Override
-    public void onUserInteraction(boolean b) {
-        Log.i(TAG, "User interacted: " + b);
-        resumePatrol();
+    public void onTtsStatusChanged(@NotNull TtsRequest ttsRequest) {
+        if (ttsRequest.getStatus() == TtsRequest.Status.COMPLETED) {
+            Log.i(TAG, "SPEECH COMPLETED");
+            if (!isStationaryPatrol) {
+                resumePatrol();
+            }
+        } else if (ttsRequest.getStatus() == TtsRequest.Status.STARTED) {
+            abortedDueToSpeech = true;
+        }
     }
 }

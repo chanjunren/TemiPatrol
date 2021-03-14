@@ -27,7 +27,7 @@ import com.robosolutions.temipatrol.google.MediaHelper;
 import com.robosolutions.temipatrol.model.ConfigurationEnum;
 import com.robosolutions.temipatrol.model.TemiConfiguration;
 import com.robosolutions.temipatrol.model.TemiRoute;
-import com.robosolutions.temipatrol.temi.TemiNavigator;
+import com.robosolutions.temipatrol.temi.TemiPatroller;
 import com.robosolutions.temipatrol.temi.TemiSpeaker;
 import com.robosolutions.temipatrol.viewmodel.GlobalViewModel;
 import com.robotemi.sdk.Robot;
@@ -52,7 +52,7 @@ import static com.robosolutions.temipatrol.google.MediaHelper.NOT_WEARING_MASK_D
 
 
 // Page shown when Temi is patrolling
-public class PatrolFragment extends Fragment implements Robot.TtsListener {
+public class PatrolFragment extends Fragment {
     private static final String TAG = "PatrolFragment";
     private static final int NUMBER_OF_CLICKS_TO_STOP = 6;
 
@@ -69,7 +69,7 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
     private ExecutorService postmanExecutorService;
     private NavController navController;
     private JsonPostman jsonPostman;
-    private TemiNavigator temiNavigator;
+    private TemiPatroller temiPatroller;
     private TemiSpeaker temiSpeaker;
     private MediaHelper mediaHelper;
     private FadingTextView fadingTv;
@@ -93,7 +93,6 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
         temiSpeaker = new TemiSpeaker(viewModel.getTemiRobot());
         mediaHelper = new MediaHelper(getContext(), viewModel);
         temiConfigurations = new ArrayList<>();
-        viewModel.getTemiRobot().addTtsListener(this);
 
         clickCounter = 0;
     }
@@ -115,10 +114,10 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
             Log.i(TAG, "Click counter: " + clickCounter);
             if (++clickCounter == NUMBER_OF_CLICKS_TO_STOP) {
                 Log.i(TAG, "Stopping...");
+                navigateToHomePage();
                 if (!isStationaryPatrol) {
-                    temiNavigator.getTemiRobot().stopMovement();
+                    temiPatroller.getTemiRobot().stopMovement();
                 }
-                navController.navigate(R.id.action_patrolFragment_to_homeFragment);
             }
         });
 
@@ -175,7 +174,7 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
                         Log.e(TAG, "Error in onPictureTaken: " + e.toString());
                         Toast.makeText(getActivity(), "Error while patrolling: " + e.toString(),
                                 Toast.LENGTH_LONG).show();
-                        navController.navigate(R.id.action_patrolFragment_to_homeFragment);
+                        navigateToHomePage();
                     }
             });
             }
@@ -184,22 +183,26 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
 
     private void pauseAndMakeMaskAnnouncement() {
         if (!isStationaryPatrol) {
-            temiNavigator.pausePatrol();
+            temiPatroller.pausePatrol();
         }
         temiSpeaker.temiSpeak(maskDetectionCmd);
     }
 
     private void pauseAndMakeClusterAnnouncement() {
         if (!isStationaryPatrol) {
-            temiNavigator.pausePatrol();
+            temiPatroller.pausePatrol();
         }
         temiSpeaker.temiSpeak(humanDistanceCmd);
     }
 
     private void startPatrol() {
-        temiNavigator = TemiNavigator.getInstance(this, viewModel.getTemiRobot());
+        temiPatroller = TemiPatroller.getInstance(this, viewModel.getTemiRobot(), isStationaryPatrol);
+
+        viewModel.getTemiRobot().addOnGoToLocationStatusChangedListener(temiPatroller);
+        viewModel.getTemiRobot().addTtsListener(temiPatroller);
+
         TemiRoute selectedRoute = viewModel.getSelectedRoute();
-        temiNavigator.patrolRoute(selectedRoute);
+        temiPatroller.patrolRoute(selectedRoute);
 
     }
 
@@ -266,18 +269,11 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
         }
     }
 
-    @Override
-    public void onTtsStatusChanged(@NotNull TtsRequest ttsRequest) {
-        if (ttsRequest.getStatus() == TtsRequest.Status.COMPLETED) {
-            Log.i(TAG, "SPEECH COMPLETED");
-
-            if (!isStationaryPatrol) {
-                temiNavigator.resumePatrol();
-            }
-        }
-    }
-
     public void navigateToHomePage() {
+        viewModel.getTemiRobot().removeTtsListener(temiPatroller);
+        if (!isStationaryPatrol) {
+            viewModel.getTemiRobot().removeOnGoToLocationStatusChangedListener(temiPatroller);
+        }
         if (navController.getCurrentDestination().getId() != R.id.homeFragment) {
             navController.navigate(R.id.action_patrolFragment_to_homeFragment);
         }

@@ -65,8 +65,9 @@ public class TestDialogFragment extends DialogFragment {
         progressBar = view.findViewById(R.id.progressSpinner);
         dialogHeader = view.findViewById(R.id.dialogHeader);
         resultImage = view.findViewById(R.id.testResultImg);
-
-        testConnection();
+        viewModel.getExecutorService().execute(() -> {
+            testConnection();
+        });
 
         return builder.create();
     }
