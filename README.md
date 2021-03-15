@@ -33,6 +33,11 @@ Upon detecting that an image contains a person not wearing mask or clustering (<
 
 ![Alt Text](documentation/test_connection.gif)
 
+If the button shows the loading screen for quite some time, it is likely that there is an issue with the server or the IP address is inputted wrongly
+
+![Alt Text](documentation/loading_connection.gif)
+
+
 
 App configurations:
 - Mask Detection Message: Message broadcasted when a person not wearing mask is detected
@@ -58,6 +63,10 @@ Swipe up or down on a inputted location to remove it
 ![Alt Text](documentation/editingLocation.gif)
 
 Hold and drag a location card to change it's position
+
+## Stationary Patrol
+To create a stationary patrol, simply leave the Route empty.
+Temi will just be stationary and the camera will be activated for the monitoring of mask detection and human clustering
 
 ## Stop Patrol
 ![Alt Text](documentation/stopPatrol.gif)
