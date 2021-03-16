@@ -186,7 +186,9 @@ public class PatrolFragment extends Fragment {
     }
 
     private void pauseAndMakeCombinedAnnouncement() {
-        temiNavigator.pausePatrol();
+        if (!isStationaryPatrol) {
+            temiPatroller.pausePatrol();
+        }
         temiSpeaker.temiSpeak(combinedCmd);
     }
 
