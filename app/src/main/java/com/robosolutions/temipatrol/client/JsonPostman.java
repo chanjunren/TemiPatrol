@@ -80,7 +80,6 @@ public class JsonPostman {
             setupMaskDetectionConnection();
             Log.i(TAG, "=== SENT ===\n" + requestJson.toString());
             OutputStream os = maskDetectionConnection.getOutputStream();
-            Log.i(TAG, "Exception is thrown before me!");
             byte[] input = requestJson.toString().getBytes("utf-8");
             os.write(input, 0, input.length);
 

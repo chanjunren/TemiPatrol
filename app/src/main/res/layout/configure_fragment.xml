@@ -218,45 +218,66 @@
             android:layout_marginTop="280dp"
             android:layout_width="380dp"
             android:layout_height="44dp"
+            android:fillViewport="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.068"
             app:layout_constraintStart_toEndOf="@id/maskDetectionMsgLabelTv"
             app:layout_constraintTop_toTopOf="parent">
-            <TextView
-                android:id="@+id/maskDetectionMsgTv"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Text"
-                android:layout_gravity="center"
-                android:textAlignment="center"
-                android:textSize="30sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/roboto_condensed_regular"
-                android:textStyle="bold"
-                />
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/maskDetectionMsgTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/roboto_condensed_regular"
+                    android:scrollHorizontally="true"
+                    android:text="Text"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
         </HorizontalScrollView>
         <HorizontalScrollView
             android:id="@+id/humanDistanceMsgContainer"
             android:layout_width="380dp"
             android:layout_height="44dp"
             android:layout_marginTop="424dp"
+            android:fillViewport="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.07"
             app:layout_constraintStart_toEndOf="@+id/humanDistanceMsgLabelTv"
             app:layout_constraintTop_toTopOf="parent"
             >
-            <TextView
-                android:id="@+id/humanDistanceMsgTv"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Text"
-                android:textAlignment="center"
-                android:textSize="30sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/roboto_condensed_regular"
-                android:textStyle="bold"
-                />
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/humanDistanceMsgTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/roboto_condensed_regular"
+                    android:scrollHorizontally="true"
+                    android:text="Text"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
         </HorizontalScrollView>
 
 
