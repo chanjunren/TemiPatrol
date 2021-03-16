@@ -17,6 +17,7 @@ public class MediaHelper {
     private final String TAG = "MediaHelper";
     public static final int NOT_WEARING_MASK_DETECTED = 0;
     public static final int CLUSTER_DETECTED = 1;
+    public static final int NO_MASK_AND_CLUSTER = 2;
 
     private Context context;
     private GlobalViewModel viewModel;
@@ -60,6 +61,9 @@ public class MediaHelper {
         } else if (type == CLUSTER_DETECTED) {
             return new File(outputDir.getPath() + File.separator +
                     "IMG_CLUSTER_"+ timeStamp + ".jpg");
+        } else if (type == NO_MASK_AND_CLUSTER) {
+            return new File(outputDir.getPath() + File.separator +
+                    "IMG_NO_MASK_AND_CLUSTER_"+ timeStamp + ".jpg");
         } else {
             return null;
         }

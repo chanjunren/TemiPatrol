@@ -170,7 +170,7 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener{
     private FlatDialog buildHumanDistanceDialog() {
         FlatDialog flatDialog = new FlatDialog(getContext());
         flatDialog
-                .setSubtitle("Message broadcasted when a group of more than 8 people is detected")
+                .setSubtitle("Message broadcasted when a group of individuals are standing less than 1m apart")
                 .setFirstTextFieldHint("Message")
                 .setFirstButtonText("Update")
                 .setSecondButtonText("Cancel")

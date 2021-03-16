@@ -49,6 +49,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.robosolutions.temipatrol.google.MediaHelper.CLUSTER_DETECTED;
 import static com.robosolutions.temipatrol.google.MediaHelper.NOT_WEARING_MASK_DETECTED;
+import static com.robosolutions.temipatrol.google.MediaHelper.NO_MASK_AND_CLUSTER;
 
 
 // Page shown when Temi is patrolling
@@ -77,9 +78,7 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
     private boolean isStationaryPatrol;
 
     private ArrayList<TemiConfiguration> temiConfigurations;
-    private String maskDetectionCmd;
-    private String humanDistanceCmd;
-    private String serverIp;
+    private String maskDetectionCmd, humanDistanceCmd, combinedCmd, serverIp;
 
     private int clickCounter;
 
@@ -163,13 +162,18 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
                         boolean clusterDetected = sendImageToServerAndGetClusterDetectionResult(imageJson);
                         Log.i(TAG, "Cluster detected value: " + clusterDetected);
 //                            boolean isHuman = sendImageToServerAndGetHumanDetectionResult(imageJson);
-                        if (!isWearingMask) {
-                            mediaHelper.uploadImage(image, NOT_WEARING_MASK_DETECTED);
-                            pauseAndMakeMaskAnnouncement();
-                        }
-                        if (clusterDetected) {
-                            mediaHelper.uploadImage(image, CLUSTER_DETECTED);
-                            pauseAndMakeClusterAnnouncement();
+                        if (!isWearingMask && clusterDetected) {
+                            mediaHelper.uploadImage(image, NO_MASK_AND_CLUSTER);
+                            pauseAndMakeCombinedAnnouncement();
+                        } else {
+                            if (!isWearingMask) {
+                                mediaHelper.uploadImage(image, NOT_WEARING_MASK_DETECTED);
+                                pauseAndMakeMaskAnnouncement();
+                            }
+                            if (clusterDetected) {
+                                mediaHelper.uploadImage(image, CLUSTER_DETECTED);
+                                pauseAndMakeClusterAnnouncement();
+                            }
                         }
                     } catch (Exception e) {
                         Log.e(TAG, "Error in onPictureTaken: " + e.toString());
@@ -180,6 +184,11 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
             });
             }
         });
+    }
+
+    private void pauseAndMakeCombinedAnnouncement() {
+        temiNavigator.pausePatrol();
+        temiSpeaker.temiSpeak(combinedCmd);
     }
 
     private void pauseAndMakeMaskAnnouncement() {
@@ -213,6 +222,8 @@ public class PatrolFragment extends Fragment implements Robot.TtsListener {
                     jsonPostman = new JsonPostman(serverIp);
                 }
             }
+
+            combinedCmd = maskDetectionCmd + " and " + humanDistanceCmd;
             Log.i(TAG, "Mask msg: " + maskDetectionCmd);
             Log.i(TAG, "Human Distance msg: " + humanDistanceCmd);
             Log.i(TAG, "Server IP: " + serverIp);
