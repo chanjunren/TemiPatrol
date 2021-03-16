@@ -97,12 +97,14 @@ public class TestDialogFragment extends DialogFragment {
         } catch (Exception e) {
             Log.e(TEST_TAG, e.toString());
             errorEncountered = true;
-            Toast.makeText(getContext(), e.toString(), Toast.LENGTH_LONG).show();
-            showConnectionFailure();
+            getActivity().runOnUiThread(() -> {
+                Toast.makeText(getContext(), e.toString(), Toast.LENGTH_LONG).show();
+            });
+            getActivity().runOnUiThread(this::showConnectionFailure);
         } finally {
             if (!errorEncountered) {
 //                Toast.makeText(getContext(), "Connection Success!", Toast.LENGTH_SHORT).show();
-                showConnectionSuccess();
+                getActivity().runOnUiThread(this::showConnectionSuccess);
             }
         }
     }

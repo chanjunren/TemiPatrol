@@ -97,7 +97,7 @@ public class TemiPatrolRepository {
         TemiConfiguration configuration1 = new TemiConfiguration("Please put on your mask", MASK_DETECTION_MSG);
         TemiConfiguration configuration2 = new TemiConfiguration("Clustering has been detected, " +
                 "please keep 1 metre away from one another", HUMAN_DIST_MSG);
-        TemiConfiguration configuration3 = new TemiConfiguration("13.213.6.222", SERVER_IP_ADD);
+        TemiConfiguration configuration3 = new TemiConfiguration("13.212.142.52", SERVER_IP_ADD);
         TemiConfiguration configuration4 = new TemiConfiguration("Robosolutions", ADMIN_PW);
         List<TemiConfiguration> configurations = new ArrayList<>();
         configurations.add(configuration1);
