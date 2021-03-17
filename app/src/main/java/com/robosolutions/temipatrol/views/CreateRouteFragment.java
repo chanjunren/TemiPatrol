@@ -139,7 +139,7 @@ public class CreateRouteFragment extends Fragment {
     }
 
     private void buildSlider() {
-        final int max = 20;
+        final int max = 100;
         final int min = 1;
         final int total = max - min;
 
