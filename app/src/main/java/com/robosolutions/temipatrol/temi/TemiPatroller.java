@@ -17,12 +17,13 @@ public class TemiPatroller implements OnGoToLocationStatusChangedListener, Robot
     private final String TAG = "TemiPatroller";
 
     private static TemiPatroller INSTANCE;
+    private static final int MIN_BATT = 90;
 
     private Robot temiRobot;
     private ArrayList<String> currentPatrollingRoute;
     private volatile int currentIndex;
     private PatrolFragment patrolFragment;
-    private boolean isStationaryPatrol, abortedDueToSpeech, abortedDueToTap;
+    private boolean isStationaryPatrol, abortedDueToSpeech, abortedDueToTap, isContinuosPatrol;
 
     private TemiPatroller(PatrolFragment patrolFragment, Robot temiRobot) {
         this.temiRobot = temiRobot;
@@ -42,11 +43,17 @@ public class TemiPatroller implements OnGoToLocationStatusChangedListener, Robot
     }
 
     public void patrolRoute(TemiRoute route) {
-        Log.i(TAG, "Instance ID: " + this.toString());
-        this.currentPatrollingRoute = new ArrayList<>();
-        for (int i = 0; i < route.getPatrolCount(); i++) {
-            this.currentPatrollingRoute.addAll(route.getDestinations());
+        Log.i(TAG, "Battery: " + temiRobot.getBatteryData().getBatteryPercentage());
+        if (route.getPatrolCount() == Integer.MAX_VALUE) {
+            isContinuosPatrol = true;
+            this.currentPatrollingRoute = route.getDestinations();
+        } else {
+            this.currentPatrollingRoute = new ArrayList<>();
+            for (int i = 0; i < route.getPatrolCount(); i++) {
+                this.currentPatrollingRoute.addAll(route.getDestinations());
+            }
         }
+
         Log.i(TAG, "Patrolling: " + this.currentPatrollingRoute.toString());
         this.currentIndex = 0;
         goToNextDestination();
@@ -55,8 +62,21 @@ public class TemiPatroller implements OnGoToLocationStatusChangedListener, Robot
     private void goToNextDestination() {
         Log.i(TAG, "Current index: " + this.currentIndex);
         if (this.currentIndex >= currentPatrollingRoute.size()) {
-            // Reached final destination
+            if (isContinuosPatrol) {
+                this.currentIndex = 0;
+            } else {
+                // Reached final destination
+                patrolFragment.navigateToHomePage();
+                return;
+            }
+        }
+        if (temiRobot.getBatteryData().getBatteryPercentage() < MIN_BATT) {
+            Log.i(TAG, "Low battery, returning to home...");
+            TtsRequest goHomeMsg =
+                    TtsRequest.create("My battery is low, I'm going home now. Good Bye", false);
+            temiRobot.speak(goHomeMsg);
             patrolFragment.navigateToHomePage();
+            temiRobot.goTo("home base");
             return;
         }
         temiRobot.goTo(currentPatrollingRoute.get(this.currentIndex));
