@@ -175,10 +175,17 @@ public class CreateRouteFragment extends Fragment {
             TemiRoute updatingRoute = viewModel.getUpdatingRoute();
             updatingRoute.setRouteTitle(routeTitle.getText().toString());
             updatingRoute.setDestinations(viewModel.getCreateRouteHelperList());
-            updatingRoute.setPatrolCount(patrolCount);
+            if (isContinuousPatrol) {
+                updatingRoute.setPatrolCount(Integer.MAX_VALUE);
+            } else {
+                updatingRoute.setPatrolCount(patrolCount);
+            }
             Log.i(TAG, "Route updated: " + updatingRoute.toString());
             viewModel.updateRouteInRepo(updatingRoute);
         } else { // New route being created
+            if (isContinuousPatrol) {
+                patrolCount = Integer.MAX_VALUE;
+            }
             TemiRoute temiRoute = new TemiRoute(routeTitle.getText().toString(),
                     viewModel.getCreateRouteHelperList(), patrolCount);
             Log.i(TAG, "route added: " + temiRoute.toString());

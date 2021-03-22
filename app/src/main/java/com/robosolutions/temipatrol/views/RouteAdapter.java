@@ -96,7 +96,8 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
     }
 
     private String getPatrolCountString(int patrolCount) {
-        return "[Patrol count: " + patrolCount + "]";
+        return patrolCount == Integer.MAX_VALUE ? "[Continuous]":
+                "[Patrol count: " + patrolCount + "]";
     }
 
     private String getRouteString(TemiRoute temiRoute) {
