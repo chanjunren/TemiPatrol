@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -26,6 +27,7 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.ramotion.fluidslider.FluidSlider;
@@ -43,7 +45,7 @@ public class CreateRouteFragment extends Fragment {
     private final String TAG = "CreateRouteFragment";
     private CreateRouteAdapter createRouteAdapter;
     private LocationsAdapter locationsAdapter;
-    private CardView saveRouteBtn;
+    private CardView saveRouteBtn, continuousPatrolToggleBtn;
     private EditText routeTitle;
     private RecyclerView createRouteRv, locationsRv;
     private TemiSpeaker temiSpeaker;
@@ -52,9 +54,12 @@ public class CreateRouteFragment extends Fragment {
     private FluidSlider slider;
     private FrameLayout parentLayout;
     private int patrolCount;
-    private ConstraintLayout exitBtn;
+    private ConstraintLayout exitBtn, containerLayout, continuousPatrolButtonBackground;
+
+    private TextView continuousPatrolTv;
 
     private String deletedDestination;
+    private boolean isContinuousPatrol;
 
     public CreateRouteFragment() {
         // Required empty public constructor
@@ -66,6 +71,7 @@ public class CreateRouteFragment extends Fragment {
         viewModel = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
         temiSpeaker = new TemiSpeaker(viewModel.getTemiRobot());
         deletedDestination = null;
+        this.isContinuousPatrol = false;
     }
 
     @Override
@@ -118,6 +124,13 @@ public class CreateRouteFragment extends Fragment {
             navController.navigate(R.id.action_createRouteFragment_to_homeFragment);
         });
 
+        continuousPatrolToggleBtn = view.findViewById(R.id.infinitePatrolBtn);
+        continuousPatrolToggleBtn.setOnClickListener(v -> toggleInfinitePatrol());
+
+        containerLayout = view.findViewById(R.id.createRouteParentLayout);
+
+        continuousPatrolTv = view.findViewById(R.id.continuousPatrolBtnTv);
+        continuousPatrolButtonBackground = view.findViewById(R.id.continuousPatrolBtnContainer);
     }
 
     private void buildRouteRecyclerView() {
@@ -235,5 +248,42 @@ public class CreateRouteFragment extends Fragment {
     public void hideKeyboard(View view) {
         InputMethodManager inputMethodManager =(InputMethodManager)getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    private void toggleInfinitePatrol() {
+        this.isContinuousPatrol = !this.isContinuousPatrol;
+        toggleMargins();
+        toggleColors();
+    }
+
+    private void toggleMargins() {
+        ConstraintSet constraintSet = new ConstraintSet();
+        constraintSet.clone(containerLayout);
+        if (this.isContinuousPatrol) {
+            // Adjusting margins
+            constraintSet.clear(R.id.infinitePatrolBtn, ConstraintSet.START);
+            constraintSet.connect(R.id.infinitePatrolBtn, ConstraintSet.START,
+                    R.id.createRouteParentLayout, ConstraintSet.START);
+            constraintSet.connect(R.id.infinitePatrolBtn, ConstraintSet.END,
+                    R.id.createRouteParentLayout, ConstraintSet.END);
+            constraintSet.setVisibility(R.id.patrolCountSlider, View.GONE);
+        } else {
+            constraintSet.clear(R.id.infinitePatrolBtn, ConstraintSet.START);
+            constraintSet.connect(R.id.infinitePatrolBtn, ConstraintSet.START,
+                    R.id.patrolCountSlider, ConstraintSet.END);
+            constraintSet.connect(R.id.infinitePatrolBtn, ConstraintSet.END,
+                    R.id.createRouteParentLayout, ConstraintSet.END);
+            constraintSet.setVisibility(R.id.patrolCountSlider, View.VISIBLE);
+        }
+        constraintSet.applyTo(containerLayout);
+    }
+
+    private void toggleColors() {
+        if (isContinuousPatrol) {
+            continuousPatrolButtonBackground.setBackground(getResources().getDrawable(R.color.slider_color));
+            continuousPatrolTv.setTextColor(getResources().getColor(R.color.white));
+        } else {
+            continuousPatrolButtonBackground.setBackground(getResources().getDrawable(R.color.white));
+            continuousPatrolTv.setTextColor(getResources().getColor(R.color.slider_color));        }
     }
 }
