@@ -283,8 +283,8 @@ public class PatrolFragment extends Fragment {
     }
 
     public void navigateToHomePage() {
-        viewModel.getTemiRobot().removeTtsListener(temiPatroller);
         if (!isStationaryPatrol) {
+            viewModel.getTemiRobot().removeTtsListener(temiPatroller);
             viewModel.getTemiRobot().removeOnGoToLocationStatusChangedListener(temiPatroller);
         }
         if (navController.getCurrentDestination().getId() != R.id.homeFragment) {
