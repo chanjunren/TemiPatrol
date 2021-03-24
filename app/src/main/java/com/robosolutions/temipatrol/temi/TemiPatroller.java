@@ -17,7 +17,7 @@ public class TemiPatroller implements OnGoToLocationStatusChangedListener, Robot
     private final String TAG = "TemiPatroller";
 
     private static TemiPatroller INSTANCE;
-    private static final int MIN_BATT = 90;
+    private static final int MIN_BATT = 15;
 
     private Robot temiRobot;
     private ArrayList<String> currentPatrollingRoute;

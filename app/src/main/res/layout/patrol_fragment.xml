@@ -24,7 +24,7 @@
             <com.otaliastudios.cameraview.CameraView
                 android:id="@+id/camera"
                 android:layout_width="800dp"
-                android:layout_height="500dp"
+                android:layout_height="450dp"
                 app:cameraAudio="off"
                 app:cameraEngine="camera2"
                 app:cameraExperimental="true"
