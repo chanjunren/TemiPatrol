@@ -56,6 +56,7 @@ import static com.robosolutions.temipatrol.google.MediaHelper.NO_MASK_AND_CLUSTE
 public class PatrolFragment extends Fragment {
     private static final String TAG = "PatrolFragment";
     private static final int NUMBER_OF_CLICKS_TO_STOP = 6;
+    private static final int CAMERA_INTERVAL = 7000;
 
     private class CameraTask extends TimerTask {
         @Override
@@ -144,7 +145,7 @@ public class PatrolFragment extends Fragment {
 
     private void startCamera() {
         Timer timer = new Timer();
-        timer.schedule(new CameraTask(), 0, 3000);
+        timer.schedule(new CameraTask(), 0, CAMERA_INTERVAL);
     }
 
     private void configureCamera(CameraView camera) {
